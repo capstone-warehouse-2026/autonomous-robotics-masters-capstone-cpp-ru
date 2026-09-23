@@ -33,12 +33,12 @@
 
 ## Git-процесс
 
-- Один общий репозиторий с пакетами `capstone_localization`, `capstone_perception`, `capstone_planning`, `capstone_control`, `capstone_safety`, `capstone_mission`, `capstone_benchmark`. В starter существует только `capstone_bringup`; остальные пакеты создают группы.
+- Один общий репозиторий с пакетами `capstone_localization`, `capstone_perception`, `capstone_planning`, `capstone_control`, `capstone_safety`, `capstone_mission`, `capstone_benchmark`. Все пакеты уже созданы как заготовки: узел с параметром `method: classical|learned` и тесты; группы наполняют их кодом. Владельцы пакетов записаны в [.github/CODEOWNERS](../.github/CODEOWNERS).
 - Branch `gN/issue-description`, короткие PR (Pull Request — запрос на включение изменений в репозиторий) в `main`. Один review внутри группы; для интерфейса — review группы-потребителя. В PR: задача, изменения, проверки, reproduction command и связанные issues.
 - Issues имеют group, milestone и owner. Чисто документальная правка не требует симуляции, но изменение интерфейса требует contract test.
 - Не коммитить bags/checkpoints/secrets/build products. Малые fixtures — с происхождением и лицензией; модели — release assets с SHA256 (Secure Hash Algorithm, 256-bit — алгоритм хеширования с результатом длиной 256 бит).
 - Теги: `v0.1-contracts`, `v0.2-classical`, `v0.3-learned`, `v1.0-submission`. Starter публикуется как `v0.1.0-assignment`, чтобы не путать его с результатами студентов.
-- Защитить `main` и включить required CI (Continuous Integration — непрерывная интеграция; автоматическая сборка и проверки)/review в настройках при запуске учебной команды. Эти настройки должен включить владелец; наличие текста здесь не означает, что branch protection уже настроен.
+- `main` защищён: изменения только через PR, обязательны зелёный CI (Continuous Integration — непрерывная интеграция; автоматическая сборка и проверки) на Ubuntu 22.04 и 24.04 и одобрение владельца изменённого кода по CODEOWNERS. Владелец репозитория включает это один раз по [GITHUB_SETUP.md](GITHUB_SETUP.md).
 
 ## Совместная разработка без блокировок
 

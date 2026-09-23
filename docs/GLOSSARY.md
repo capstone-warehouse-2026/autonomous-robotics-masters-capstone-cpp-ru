@@ -67,7 +67,6 @@
 | RPE | Relative Pose Error | относительная ошибка положения и ориентации |
 | RSS | Resident Set Size | объём физической памяти, занятой процессом |
 | RViz | ROS Visualization | средство визуализации данных робототехнической платформы |
-| SDF | Simulation Description Format | формат описания симуляционных миров и моделей |
 | SE(2) | Special Euclidean Group in Two Dimensions | группа перемещений и поворотов твёрдого тела на плоскости |
 | SHA | Secure Hash Algorithm | семейство алгоритмов хеширования; здесь обозначение хеша коммита |
 | SHA256 | Secure Hash Algorithm, 256-bit | алгоритм хеширования с результатом длиной 256 бит |
@@ -105,7 +104,9 @@
 | Имя или часть имени | Расшифровка и назначение |
 |---|---|
 | rclcpp | ROS Client Library for C++ — клиентская библиотека платформы для языка C++ |
-| ros_gz, gz | Интеграция Robot Operating System с Gazebo; gz — командное имя Gazebo |
+| webots_ros2 | Интеграция Robot Operating System 2 с симулятором Webots |
+| .wbt, PROTO | Файл мира Webots; PROTO — параметризуемое описание модели или объекта Webots |
+| Xvfb | X virtual framebuffer — виртуальный дисплей X11 для запуска Webots без экрана |
 | CycloneDDS | Реализация стандарта Data Distribution Service (служба распределения данных) |
 | RMW_IMPLEMENTATION | ROS Middleware Implementation — выбор реализации промежуточного слоя связи |
 | ROS_DOMAIN_ID | Robot Operating System Domain Identifier — идентификатор домена связи |
@@ -127,4 +128,4 @@
 
 ## Названия, которые не нужно искусственно расшифровывать
 
-**C++** — название языка, а C++17 — его стандарт 2017 года. **CMake** — имя системы настройки сборки, **CTest** — её инструмент тестирования. **Git**, **Docker**, **Gazebo**, **Eigen**, **ament**, **colcon**, **LibTorch** и **GitHub** — имена инструментов и библиотек, а не сокращения алгоритмов. **MIT** в лицензии отсылает к Massachusetts Institute of Technology (Массачусетский технологический институт); текст лицензии сохраняется без изменений.
+**C++** — название языка, а C++17 — его стандарт 2017 года. **CMake** — имя системы настройки сборки, **CTest** — её инструмент тестирования. **Git**, **Docker**, **Webots**, **Mesa**, **Eigen**, **ament**, **colcon**, **LibTorch** и **GitHub** — имена инструментов и библиотек, а не сокращения алгоритмов. **MIT** в лицензии отсылает к Massachusetts Institute of Technology (Массачусетский технологический институт); текст лицензии сохраняется без изменений.

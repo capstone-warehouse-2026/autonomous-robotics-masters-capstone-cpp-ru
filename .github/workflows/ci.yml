@@ -1,24 +1,41 @@
-name: Starter infrastructure
+name: CI
 on:
-  push:
   pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+# Job names are required status checks of main (scripts/github/bootstrap_repo.sh); rename both together.
 jobs:
-  container-smoke:
+  shellcheck:
+    name: shellcheck
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check shell scripts
+        run: shellcheck scripts/*.sh scripts/github/*.sh docker/*.sh
+  setup:
+    # The same first-run path as a team member: both Ubuntu versions used by the team.
+    name: make setup (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - name: Validate Compose
         run: docker compose config --quiet
-      - name: Build C++ and run unit tests in image
-        run: docker compose build
-      - name: Verify clock across two containers
-        run: timeout 90s docker compose up --abort-on-container-exit --exit-code-from autonomy
+      - name: make setup (host check, images, build, tests, Webots scene smoke)
+        run: make setup
       - name: Container logs
-        if: always()
+        if: failure()
         run: docker compose logs --no-color
       - name: Cleanup
         if: always()
-        run: docker compose down --remove-orphans
+        run: make down

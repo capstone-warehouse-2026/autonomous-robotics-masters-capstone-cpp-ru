@@ -1,23 +1,44 @@
+x-ros-env: &ros-env
+  ROS_DOMAIN_ID: "42"
+  ROS_LOCALHOST_ONLY: "0"
+  RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
+
 services:
   simulator:
+    image: capstone-simulator:local
     build:
       context: .
       dockerfile: docker/Dockerfile
       target: simulator
-    environment:
-      ROS_DOMAIN_ID: "42"
-      ROS_LOCALHOST_ONLY: "0"
-      RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
+    environment: *ros-env
+    # Webots passes sensor images to controllers through shared memory; Docker's 64 MB default is too small.
+    shm_size: 1gb
     init: true
   autonomy:
+    image: capstone-autonomy:local
     build:
       context: .
       dockerfile: docker/Dockerfile
       target: autonomy
-    environment:
-      ROS_DOMAIN_ID: "42"
-      ROS_LOCALHOST_ONLY: "0"
-      RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
+    environment: *ros-env
     depends_on:
       - simulator
+    init: true
+  # Development container for `make shell/build/test`: the repository is mounted, so code changes
+  # need no image rebuild. It runs as the host user; `docker compose up` does not start it.
+  dev:
+    image: capstone-dev:local
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: dev
+    profiles: ["dev"]
+    environment:
+      <<: *ros-env
+      HOME: /workspace/.cache/home
+      CCACHE_DIR: /workspace/.cache/ccache
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    volumes:
+      - .:/workspace
+    working_dir: /workspace/ros2_ws
     init: true

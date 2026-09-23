@@ -6,3 +6,4 @@ results
 *.bag
 *.mcap
 *.db3
+.cache

@@ -1,0 +1,14 @@
+# Opens the Webots window on the host display (used by `make sim-gui`, see scripts/sim_gui.sh).
+services:
+  simulator:
+    environment:
+      SIM_GUI: "1"
+      DISPLAY: "${DISPLAY:?DISPLAY is not set, run make sim-gui from a desktop session}"
+      XAUTHORITY: /tmp/.capstone.xauth
+      HOME: /tmp/home
+    # Host user, so the X11 cookie is readable and worlds saved from the window keep host ownership.
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - "${CAPSTONE_XAUTH:?CAPSTONE_XAUTH is set by scripts/sim_gui.sh}:/tmp/.capstone.xauth:ro"
+      - ./simulation:/opt/capstone/simulation

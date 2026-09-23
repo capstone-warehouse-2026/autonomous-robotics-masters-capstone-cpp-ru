@@ -1,0 +1,9 @@
+# Hardware OpenGL through the host GPU (Intel/AMD, or NVIDIA with the open Mesa driver).
+# Added by scripts/sim_gui.sh when /dev/dri exists; without it Webots renders in software.
+services:
+  simulator:
+    devices:
+      - /dev/dri:/dev/dri
+    # Group owning /dev/dri/renderD128 on the host (render, or video on older systems).
+    group_add:
+      - "${DRI_GID:-44}"

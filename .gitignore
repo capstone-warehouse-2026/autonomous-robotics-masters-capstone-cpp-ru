@@ -13,3 +13,4 @@ __pycache__/
 *.zip
 results/
 .DS_Store
+.cache/

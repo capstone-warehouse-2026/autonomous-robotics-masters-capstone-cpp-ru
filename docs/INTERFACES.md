@@ -6,7 +6,7 @@
 
 ## Координаты и время
 
-SI (Système international d’unités — Международная система единиц) units, правосторонние системы ROS (Robot Operating System — программная платформа для робототехники): `x` вперёд, `y` влево, `z` вверх; yaw в радианах. TF (Transform library — библиотека преобразований между системами координат): `map → odom → base_link → lidar_link / imu_link / camera_link → camera_optical_frame`. Optical frame: `z` вперёд, `x` вправо, `y` вниз. G1 владеет двумя динамическими transforms, simulator adapter — только sensor static transforms. Исключить duplicate TF publishers от Gazebo/Nav2 (Navigation 2 — стек навигации для второй версии платформы Robot Operating System).
+SI (Système international d’unités — Международная система единиц) units, правосторонние системы ROS (Robot Operating System — программная платформа для робототехники): `x` вперёд, `y` влево, `z` вверх; yaw в радианах. TF (Transform library — библиотека преобразований между системами координат): `map → odom → base_link → lidar_link / imu_link / camera_link → camera_optical_frame`. Optical frame: `z` вперёд, `x` вправо, `y` вниз. G1 владеет двумя динамическими transforms, simulator adapter — только sensor static transforms. Исключить duplicate TF publishers от Webots/Nav2 (Navigation 2 — стек навигации для второй версии платформы Robot Operating System).
 
 Единственный источник `/clock` — симулятор через bridge. Runtime nodes используют `use_sim_time=true`. Latency вычисляется steady clock; возраст измерения — simulation time. При reset времени очистить фильтры, histories, action states, cached TF и команду; episode ID (Identifier — идентификатор) меняется. Watchdog остановки использует также steady clock, чтобы зависший `/clock` не скрывал отказ.
 
