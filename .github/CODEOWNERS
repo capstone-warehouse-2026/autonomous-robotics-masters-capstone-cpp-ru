@@ -3,33 +3,33 @@
 # The last matching rule wins. Any single member of a listed team can approve.
 
 # Everything not listed below: infrastructure owner.
-*                                       @ORG/infra
+*                                       @capstone-warehouse-2026/infra
 
-/ros2_ws/src/capstone_localization/     @ORG/g1
-/simulation/                            @ORG/g1
-/projects/01_localization.md            @ORG/g1
+/ros2_ws/src/capstone_localization/     @capstone-warehouse-2026/g1
+/simulation/                            @capstone-warehouse-2026/g1
+/projects/01_localization.md            @capstone-warehouse-2026/g1
 
-/ros2_ws/src/capstone_perception/       @ORG/g2
-/projects/02_perception.md              @ORG/g2
+/ros2_ws/src/capstone_perception/       @capstone-warehouse-2026/g2
+/projects/02_perception.md              @capstone-warehouse-2026/g2
 
-/ros2_ws/src/capstone_planning/         @ORG/g3
-/projects/03_planning.md                @ORG/g3
+/ros2_ws/src/capstone_planning/         @capstone-warehouse-2026/g3
+/projects/03_planning.md                @capstone-warehouse-2026/g3
 
-/ros2_ws/src/capstone_control/          @ORG/g4
-/ros2_ws/src/capstone_safety/           @ORG/g4
-/projects/04_control.md                 @ORG/g4
+/ros2_ws/src/capstone_control/          @capstone-warehouse-2026/g4
+/ros2_ws/src/capstone_safety/           @capstone-warehouse-2026/g4
+/projects/04_control.md                 @capstone-warehouse-2026/g4
 
-/ros2_ws/src/capstone_mission/          @ORG/g5
-/ros2_ws/src/capstone_benchmark/        @ORG/g5
-/ros2_ws/src/capstone_bringup/          @ORG/g5
-/projects/05_mission.md                 @ORG/g5
+/ros2_ws/src/capstone_mission/          @capstone-warehouse-2026/g5
+/ros2_ws/src/capstone_benchmark/        @capstone-warehouse-2026/g5
+/ros2_ws/src/capstone_bringup/          @capstone-warehouse-2026/g5
+/projects/05_mission.md                 @capstone-warehouse-2026/g5
 
 # Integration contracts: a review from any group; the consumer group is also asked in the PR (docs/WORKFLOW.md).
-/docs/INTERFACES.md                     @ORG/g1 @ORG/g2 @ORG/g3 @ORG/g4 @ORG/g5
+/docs/INTERFACES.md                     @capstone-warehouse-2026/g1 @capstone-warehouse-2026/g2 @capstone-warehouse-2026/g3 @capstone-warehouse-2026/g4 @capstone-warehouse-2026/g5
 
 # Build environment, CI and scripts.
-/docker/                                @ORG/infra
-/compose*.yml                           @ORG/infra
-/Makefile                               @ORG/infra
-/scripts/                               @ORG/infra
-/.github/                               @ORG/infra
+/docker/                                @capstone-warehouse-2026/infra
+/compose*.yml                           @capstone-warehouse-2026/infra
+/Makefile                               @capstone-warehouse-2026/infra
+/scripts/                               @capstone-warehouse-2026/infra
+/.github/                               @capstone-warehouse-2026/infra
