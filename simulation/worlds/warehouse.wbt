@@ -1,0 +1,296 @@
+#VRML_SIM R2025a utf8
+# Capstone warehouse, 20 x 20 m: four rows of racks with 2.1 m aisles, a staging area in the east,
+# six delivery stations (yellow floor markers) and the TIAGo Base (PAL Robotics PMB2) controlled from ROS 2.
+# x points east, y north; the robot starts in the west zone facing +x.
+# Standard assets are pinned to R2025a and stored in simulation/webots_assets (scripts/update_webots_assets.sh).
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/RoughConcrete.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/Roughcast.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/factory/containers/protos/CardboardBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/factory/containers/protos/WoodenBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/factory/containers/protos/PlasticCrate.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/factory/pallet/protos/WoodenPallet.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/factory/pallet/protos/WoodenPalletStack.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/pal_robotics/tiago_base/protos/TiagoBase.proto"
+EXTERNPROTO "../protos/WarehouseRack.proto"
+
+WorldInfo {
+  info [
+    "Capstone warehouse with the TIAGo Base differential-drive robot."
+  ]
+  title "Capstone warehouse"
+  # 4 ms divides the 20 ms (50 Hz) and 100 ms (10 Hz) sensor periods of docs/INTERFACES.md.
+  basicTimeStep 4
+  randomSeed 0
+  optimalThreadCount 1
+}
+Viewpoint {
+  orientation -0.2356 0.5688 0.788 0.9679
+  position -14 -14 13
+}
+TexturedBackground {
+  texture "factory"
+}
+TexturedBackgroundLight {
+  texture "factory"
+}
+RectangleArena {
+  name "warehouse"
+  floorSize 20 20
+  floorTileSize 2 2
+  floorAppearance RoughConcrete {
+  }
+  wallThickness 0.2
+  wallHeight 2.5
+  wallAppearance Roughcast {
+    colorOverride 0.85 0.85 0.8
+  }
+}
+
+# Rack rows (y = 5, 2, -1, -4), each split by a 2 m cross aisle at x = -1.
+WarehouseRack {
+  translation -4 5 0
+  name "rack 1"
+}
+WarehouseRack {
+  translation 2 5 0
+  name "rack 2"
+}
+WarehouseRack {
+  translation -4 2 0
+  name "rack 3"
+}
+WarehouseRack {
+  translation 2 2 0
+  name "rack 4"
+}
+WarehouseRack {
+  translation -4 -1 0
+  name "rack 5"
+}
+WarehouseRack {
+  translation 2 -1 0
+  name "rack 6"
+}
+WarehouseRack {
+  translation -4 -4 0
+  name "rack 7"
+}
+WarehouseRack {
+  translation 2 -4 0
+  name "rack 8"
+}
+
+# Goods on the shelves: lower shelf top at z = 0.17 m, middle shelf top at z = 1.145 m.
+CardboardBox {
+  translation -5.2 5 0.37
+  name "shelf box 1"
+  size 0.4 0.4 0.4
+}
+CardboardBox {
+  translation -4.6 5 0.37
+  name "shelf box 2"
+  size 0.4 0.4 0.4
+}
+CardboardBox {
+  translation -3 5 1.345
+  name "shelf box 3"
+  size 0.4 0.4 0.4
+}
+WoodenBox {
+  translation 1 5 1.395
+  name "shelf box 4"
+  size 0.5 0.5 0.5
+}
+CardboardBox {
+  translation 3.2 5 0.37
+  name "shelf box 5"
+  size 0.4 0.4 0.4
+}
+CardboardBox {
+  translation -4.8 2 1.345
+  name "shelf box 6"
+  size 0.4 0.4 0.4
+}
+CardboardBox {
+  translation -3.4 2 1.345
+  name "shelf box 7"
+  size 0.4 0.4 0.4
+}
+WoodenBox {
+  translation 0.8 2 0.37
+  name "shelf box 8"
+  size 0.4 0.4 0.4
+}
+CardboardBox {
+  translation -4 -1 1.345
+  name "shelf box 9"
+  size 0.4 0.4 0.4
+}
+CardboardBox {
+  translation 2.5 -1 0.37
+  name "shelf box 10"
+  size 0.4 0.4 0.4
+}
+CardboardBox {
+  translation 3.1 -1 0.37
+  name "shelf box 11"
+  size 0.4 0.4 0.4
+}
+CardboardBox {
+  translation 1.2 -1 1.345
+  name "shelf box 12"
+  size 0.4 0.4 0.4
+}
+WoodenBox {
+  translation -5 -4 0.37
+  name "shelf box 13"
+  size 0.4 0.4 0.4
+}
+CardboardBox {
+  translation 2 -4 1.345
+  name "shelf box 14"
+  size 0.4 0.4 0.4
+}
+
+# Staging area in the east: pallet stacks, a loaded pallet and wooden boxes on the floor.
+WoodenPalletStack {
+  translation 7.8 4 0
+  name "pallet stack 1"
+  palletNumber 6
+}
+WoodenPalletStack {
+  translation 7.8 2.6 0
+  name "pallet stack 2"
+  palletNumber 4
+}
+WoodenPallet {
+  translation 6.3 0.8 0
+  name "loaded pallet"
+}
+CardboardBox {
+  translation 6 0.8 0.39
+  name "pallet box 1"
+  size 0.5 0.5 0.5
+}
+CardboardBox {
+  translation 6.6 0.8 0.39
+  name "pallet box 2"
+  size 0.5 0.5 0.5
+}
+CardboardBox {
+  translation 6.3 0.8 0.89
+  name "pallet box 3"
+  size 0.5 0.5 0.5
+}
+WoodenBox {
+  translation 6.6 -2.6 0.3
+  name "floor box 1"
+}
+WoodenBox {
+  translation 7.3 -2.6 0.3
+  name "floor box 2"
+}
+WoodenBox {
+  translation 6.95 -3.3 0.3
+  name "floor box 3"
+}
+
+# Loose obstacles in the perimeter corridors.
+CardboardBox {
+  translation -3.5 -7 0.3
+  name "corridor box 1"
+}
+CardboardBox {
+  translation 3.5 7.2 0.25
+  name "corridor box 2"
+  size 0.5 0.5 0.5
+}
+
+# Plastic crates next to the stations.
+PlasticCrate {
+  translation -9.3 5.8 0
+  name "crate 1"
+  size 0.6 0.4 0.3
+}
+PlasticCrate {
+  translation -9.3 5.8 0.3
+  name "crate 2"
+  size 0.6 0.4 0.3
+}
+PlasticCrate {
+  translation -9.3 -5.8 0
+  name "crate 3"
+  size 0.6 0.4 0.3
+  color 0.2 0.6 0.2
+}
+PlasticCrate {
+  translation 9.3 -5.8 0
+  name "crate 4"
+  size 0.6 0.4 0.3
+  color 0.2 0.3 0.8
+}
+
+# Delivery stations: 1.2 x 1.2 m floor markers without collision geometry.
+DEF STATION_1 Solid {
+  translation -8.8 7.5 0.002
+  children [
+    DEF STATION_MARKER Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.8 0
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 1.2 1.2 0.004
+      }
+    }
+  ]
+  name "station 1"
+}
+DEF STATION_2 Solid {
+  translation -8.8 -7.5 0.002
+  children [
+    USE STATION_MARKER
+  ]
+  name "station 2"
+}
+DEF STATION_3 Solid {
+  translation 8.8 7.5 0.002
+  children [
+    USE STATION_MARKER
+  ]
+  name "station 3"
+}
+DEF STATION_4 Solid {
+  translation 8.8 -7.5 0.002
+  children [
+    USE STATION_MARKER
+  ]
+  name "station 4"
+}
+DEF STATION_5 Solid {
+  translation -1 8.8 0.002
+  children [
+    USE STATION_MARKER
+  ]
+  name "station 5"
+}
+DEF STATION_6 Solid {
+  translation -1 -8.8 0.002
+  children [
+    USE STATION_MARKER
+  ]
+  name "station 6"
+}
+
+# The robot: round differential-drive base, radius 0.272 m; driven by capstone_sim (resource/tiago_base.urdf).
+# Built-in IMU (accelerometer, gyro, inertial unit) and wheel encoders; lidarSlot and bodySlot are free for G1 sensors.
+TiagoBase {
+  translation -8 0 0.095
+  name "tiago_base"
+  controller "<extern>"
+}

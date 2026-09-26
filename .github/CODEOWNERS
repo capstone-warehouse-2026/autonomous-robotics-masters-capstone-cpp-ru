@@ -6,6 +6,7 @@
 *                                       @capstone-warehouse-2026/infra
 
 /ros2_ws/src/capstone_localization/     @capstone-warehouse-2026/g1
+/ros2_ws/src/capstone_sim/              @capstone-warehouse-2026/g1
 /simulation/                            @capstone-warehouse-2026/g1
 /projects/01_localization.md            @capstone-warehouse-2026/g1
 

@@ -1,0 +1,69 @@
+#VRML_SIM R2025a utf8
+# Static pallet rack of the capstone warehouse: four uprights and evenly spaced shelves.
+# Only plain colors are used, so the rack needs no downloaded textures.
+# template language: javascript
+
+PROTO WarehouseRack [
+  field SFVec3f    translation 0 0 0
+  field SFRotation rotation    0 0 1 0
+  field SFString   name        "rack"
+  field SFVec3f    size        4 0.9 2.2  # Length along x, depth along y, height (m).
+  field SFInt32    shelves     3          # Number of shelves; the lowest one is 0.15 m above the floor.
+]
+{
+  %<
+    const length = fields.size.value.x;
+    const depth = fields.size.value.y;
+    const height = fields.size.value.z;
+    const shelves = Math.max(2, fields.shelves.value);
+    const post = 0.08;
+    const board = 0.04;
+    const parts = [];
+    for (const sx of [-1, 1])
+      for (const sy of [-1, 1])
+        parts.push({x: sx * (length - post) / 2, y: sy * (depth - post) / 2, z: height / 2,
+                    size: [post, post, height], color: '0.95 0.45 0.1'});
+    for (let i = 0; i < shelves; ++i)
+      parts.push({x: 0, y: 0, z: 0.15 + i * (height - 0.25) / (shelves - 1),
+                  size: [length, depth, board], color: '0.55 0.57 0.6'});
+  >%
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    model "warehouse rack"
+    children [
+      %< for (const p of parts) { >%
+      Pose {
+        translation %<= p.x >% %<= p.y >% %<= p.z >%
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor %<= p.color >%
+              roughness 0.6
+              metalness 0
+            }
+            geometry Box {
+              size %<= p.size[0] >% %<= p.size[1] >% %<= p.size[2] >%
+            }
+          }
+        ]
+      }
+      %< } >%
+    ]
+    boundingObject Group {
+      children [
+        %< for (const p of parts) { >%
+        Pose {
+          translation %<= p.x >% %<= p.y >% %<= p.z >%
+          children [
+            Box {
+              size %<= p.size[0] >% %<= p.size[1] >% %<= p.size[2] >%
+            }
+          ]
+        }
+        %< } >%
+      ]
+    }
+  }
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- webots_ros2_driver description of the TIAGo Base in simulation/worlds/*.wbt (Robot name "tiago_base"). -->
+<robot name="tiago_base">
+  <webots>
+    <plugin type="capstone_sim::DiffDrive">
+      <!-- Motors and geometry of TiagoBase.proto (Webots R2025a): wheels at y = +/-0.2022 m. -->
+      <leftMotor>wheel_left_joint</leftMotor>
+      <rightMotor>wheel_right_joint</rightMotor>
+      <wheelRadius>0.0985</wheelRadius>
+      <wheelSeparation>0.4044</wheelSeparation>
+      <!-- Stop the wheels when no /cmd_vel arrives for this long (steady clock), docs/INTERFACES.md. -->
+      <cmdVelTimeout>0.3</cmdVelTimeout>
+    </plugin>
+  </webots>
+</robot>
