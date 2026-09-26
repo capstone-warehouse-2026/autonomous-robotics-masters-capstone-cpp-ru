@@ -1,0 +1,5 @@
+<library path="capstone_sim">
+  <class type="capstone_sim::DiffDrive" base_class_type="webots_ros2_driver::PluginInterface">
+    <description>Differential drive: /cmd_vel (TwistStamped) to two wheel velocities with a watchdog.</description>
+  </class>
+</library>

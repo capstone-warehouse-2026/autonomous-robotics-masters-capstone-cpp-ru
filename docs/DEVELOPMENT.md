@@ -6,8 +6,9 @@
 
 - Три Docker build targets: `simulator` (Webots R2025a + `webots_ros2_driver`), `dev` (компиляторы, ccache, gdb и все зависимости из `package.xml` через rosdep) и `autonomy` (`dev` + собранный и протестированный workspace C++ ROS (Robot Operating System — программная платформа для робототехники) для CI и сдачи).
 - Заготовки пакетов всех групп в `ros2_ws/src`: узел с параметром `method: classical|learned`, общая библиотека узла и gtest-тесты. Владельцы — в `.github/CODEOWNERS`.
-- Мир `simulation/worlds/smoke.wbt`: только пол 20 × 20 м, без робота, склада, датчиков и ground truth adapter. Используются лишь встроенные узлы Webots, поэтому при запуске ничего не скачивается.
-- `simulation/launch/smoke.launch.py`: запускает Webots с этим миром и `Ros2Supervisor`, который публикует `/clock`. Любая строка `ERROR:` в выводе Webots (ошибка разбора мира, неизвестный узел, ненайденный PROTO или текстура) либо остановка Webots завершают симулятор с ненулевым кодом.
+- Мир `simulation/worlds/warehouse.wbt`: склад 20 × 20 м со стеллажами, ящиками, поддонами, шестью станциями и роботом TIAGo Base — круглой дифференциальной платформой PAL Robotics ([ADR 0002](adr/0002-tiago-base-warehouse.md)). LiDAR, RGB-D камеры и ground truth adapter пока нет.
+- `ros2_ws/src/capstone_sim`: C++ плагин `webots_ros2_driver` `DiffDrive`, который переводит `/cmd_vel` (`TwistStamped`) в скорости двух колёс робота и останавливает их без свежей команды 300 мс. Моторы и геометрия колёс задаются в `resource/tiago_base.urdf`. Собирается в этапе `simulator-build` и копируется в образ симулятора.
+- `simulation/launch/warehouse.launch.py`: запускает Webots, `Ros2Supervisor` (публикует `/clock`) и драйвер робота. Любая строка `ERROR:` в выводе Webots (ошибка разбора мира, неизвестный узел, ненайденный PROTO или текстура), остановка Webots или драйвера завершают симулятор с ненулевым кодом. `SIM_WORLD=другой.wbt` выбирает другой мир из `simulation/worlds`.
 - `capstone_bringup/clock_probe`: C++ подписчик, проверяющий несколько строго возрастающих значений `/clock` и завершающийся с ненулевым кодом при wall-clock timeout.
 - Unit test на frozen/regressing/invalid clock; в GitHub Actions — shellcheck скриптов и полный `make setup` на Ubuntu 22.04 и 24.04.
 
@@ -28,7 +29,7 @@
 | `make images` | принудительно пересобрать все образы |
 | `make down`, `make clean` | остановить контейнеры; удалить `ros2_ws/build`, `install`, `log` |
 
-Ожидаемый итог `make smoke` — `PASS: simulation clock advanced`. Сломанная сцена даёт в логе симулятора `FAIL: Webots could not load the world cleanly: ...`, exit code 1 симулятора и ненулевой итог всей команды.
+Ожидаемый итог `make smoke` — `PASS: simulation clock advanced`. Сломанная сцена даёт в логе симулятора `FAIL: simulation did not start cleanly: ...`, exit code 1 симулятора и ненулевой итог всей команды.
 
 ### Контейнер разработки
 
@@ -41,6 +42,25 @@
 ### Окно Webots
 
 `make sim-gui` передаёт в контейнер X11-сокет и копию cookie дисплея (`xauth`), работает на Xorg и на Wayland через XWayland. Если есть `/dev/dri`, Webots использует видеокарту (Intel/AMD, открытый драйвер Mesa); иначе рисует программно — медленнее, но сцена та же. Проприетарный драйвер NVIDIA в контейнер не пробрасывается. Мир монтируется из рабочей копии с правом записи: сохранённый в окне `.wbt` сразу появляется в Git. Сохранять миры только из этого Webots R2025a.
+
+### Мир и модели Webots
+
+Стандартные модели Webots (TIAGo Base, ящики, поддоны, покрытия) не входят в архив Webots: сам Webots загружает их с GitHub по адресам `EXTERNPROTO` версии R2025a, и на части сетей эта загрузка обрывается. Поэтому нужные миру файлы лежат в репозитории, в [simulation/webots_assets](../simulation/webots_assets/README.md) (17 МБ, пути как в репозитории Webots). При сборке образа они копируются в кэш Webots `/opt/webots-cache`, затем `docker/check_webots_worlds.sh` загружает каждый мир **без сети** и останавливает сборку, если чего-то не хватает. Ни сборка, ни запуск ничего не скачивают, у всех участников и в CI одинаковые файлы.
+
+Правила редактирования мира (`make sim-gui`, файл сохраняется прямо в рабочую копию):
+
+- перед сохранением вернуть симуляцию в начало (**Reset Simulation**), иначе в файл попадут строки `hidden ...` с текущими скоростями и положениями;
+- новые стандартные объекты добавлять через **Add node** из Webots R2025a — адрес `EXTERNPROTO` будет с тегом `R2025a`; затем выполнить `scripts/update_webots_assets.sh` (один раз скачивает архив ресурсов Webots 693 МБ в `.cache/` и добавляет нужные файлы в `simulation/webots_assets`) и закоммитить результат; собственные PROTO класть в `simulation/protos` и подключать относительным путём;
+- комментарии `#` Webots при сохранении удаляет — пояснения к миру держать в [ADR 0002](adr/0002-tiago-base-warehouse.md);
+- после изменения мира `make smoke` проверяет, что он загружается без ошибок.
+
+Проверить управление: в одном терминале `make sim`, в другом `make shell` и
+
+```bash
+ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/TwistStamped "{twist: {linear: {x: 0.3}}}"
+```
+
+Робот едет, пока идут команды, и останавливается через 0.3 с после `Ctrl+C`.
 
 ### Без Docker
 
