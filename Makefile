@@ -17,7 +17,7 @@ BUILD_ARGS := --symlink-install $(if $(PKG),--packages-up-to $(PKG)) \
 TEST_ARGS := $(if $(PKG),--packages-select $(PKG))
 TEST_RESULT_ARGS := $(if $(PKG),--test-result-base build/$(PKG))
 
-.PHONY: help setup doctor images build test shell smoke sim sim-gui down clean dev-image dirs
+.PHONY: help setup doctor images build test shell smoke sim sim-gui rqt-graph rqt rviz down clean dev-image dirs
 
 help: ## Показать эту справку
 	@echo "Команды проекта (PKG=имя_пакета ограничивает build/test одним пакетом):"
@@ -68,11 +68,19 @@ sim: ## Запустить симулятор без окна (остановк�
 	[ $$status -eq 0 ] || [ $$status -eq 130 ] || exit $$status
 
 sim-gui: ## Открыть сцену в окне Webots
-	$(COMPOSE) build simulator
-	@scripts/sim_gui.sh
+	@scripts/gui.sh simulator
+
+rqt-graph: dev-image ## Граф узлов и топиков ROS (rqt_graph)
+	@scripts/gui.sh gui rqt_graph
+
+rqt: dev-image ## Инструменты rqt: изображения камеры, дерево TF, топики, логи
+	@scripts/gui.sh gui rqt
+
+rviz: dev-image ## RViz с конфигурацией проекта (rviz/capstone.rviz)
+	@scripts/gui.sh gui rviz2 -d /workspace/rviz/capstone.rviz
 
 down: ## Остановить все контейнеры проекта
-	$(COMPOSE) --profile dev down --remove-orphans
+	$(COMPOSE) --profile dev --profile gui down --remove-orphans
 
 clean: ## Удалить результаты сборки (ros2_ws/build, install, log)
 	rm -rf ros2_ws/build ros2_ws/install ros2_ws/log

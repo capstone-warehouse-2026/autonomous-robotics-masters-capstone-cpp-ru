@@ -27,6 +27,15 @@ RUN apt-get update \
 COPY docker/dev_env.sh /etc/capstone_dev.sh
 RUN echo "source /etc/capstone_dev.sh" >> /etc/bash.bashrc
 
+# Graphical ROS tools (`make rqt-graph`, `make rqt`, `make rviz`): the dev environment plus rqt and RViz.
+# A separate image, so the dev image stays small for those who never open a window.
+FROM dev AS gui
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-jazzy-rviz2 ros-jazzy-rqt ros-jazzy-rqt-common-plugins ros-jazzy-rqt-tf-tree libgl1-mesa-dri \
+    && rm -rf /var/lib/apt/lists/*
+# X11 in the container (XWayland/Xorg of the host), as for the Webots window.
+ENV QT_QPA_PLATFORM=xcb
+
 # Simulator plugins (capstone_sim: drive, capstone_sim_rgbd: camera) for the simulator image; its dependencies come from the dev image.
 FROM dev AS simulator-build
 COPY ros2_ws/src/capstone_sim /opt/capstone/sim_ws/src/capstone_sim
