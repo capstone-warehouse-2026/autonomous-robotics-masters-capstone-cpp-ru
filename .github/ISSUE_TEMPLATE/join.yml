@@ -1,0 +1,35 @@
+name: Заявка в команду проекта
+description: Попросить доступ к репозиторию и место в своей группе G1–G5.
+title: "[join] "
+labels: ["join"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Логин GitHub указывать не нужно: заявка приходит от вашего аккаунта.
+        После одобрения придёт приглашение в организацию на почту и в уведомления GitHub; его нужно принять в течение 7 дней.
+  - type: dropdown
+    id: group
+    attributes:
+      label: Группа
+      options:
+        - G1 — локализация, карта и симулятор
+        - G2 — восприятие
+        - G3 — планирование
+        - G4 — управление и безопасность
+        - G5 — миссии и общая сборка
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: Имя и фамилия
+      description: Чтобы владелец репозитория понял, кто подаёт заявку.
+      placeholder: Иван Петров
+    validations:
+      required: true
+  - type: textarea
+    id: comment
+    attributes:
+      label: Комментарий
+      description: Необязательно.

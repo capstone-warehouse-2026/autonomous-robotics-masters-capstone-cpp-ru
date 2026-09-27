@@ -66,6 +66,10 @@ fi
 echo "== Настройки репозитория"
 run gh api -X PATCH "repos/$org/$repo" -F delete_branch_on_merge=true >/dev/null
 echo "  ветки удаляются после слияния PR"
+# Label of join requests (.github/ISSUE_TEMPLATE/join.yml); an existing label is kept.
+run gh api "repos/$org/$repo/labels" -f name=join -f color=0e8a16 \
+  -f description="Join request, processed by scripts/github/approve_join.sh" >/dev/null 2>&1 || true
+echo "  метка join для заявок в команду"
 
 echo "== Защита main"
 contexts="$(printf '"%s",' "${checks[@]}")"
@@ -93,4 +97,5 @@ elif ! gh api -X PUT "repos/$org/$repo/branches/main/protection" --input - <<< "
 fi
 echo "  main: только через PR, CI (${checks[*]}), одно одобрение владельцев кода"
 echo
-echo "Готово. Добавьте участников в команды: https://github.com/orgs/$org/teams"
+echo "Готово. Ссылка для заявок участников: https://github.com/$org/$repo/issues/new?template=join.yml"
+echo "Заявки обрабатываются командой scripts/github/approve_join.sh"
