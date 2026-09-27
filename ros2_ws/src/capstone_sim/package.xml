@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>capstone_sim</name>
+  <version>0.1.0</version>
+  <description>G1: Webots adapter of the differential-drive robot: /cmd_vel to wheel velocities with a command watchdog.</description>
+  <maintainer email="g1@example.invalid">G1</maintainer>
+  <license>MIT</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <!-- Dependencies are rosdep keys; `make build` installs them into the dev image. -->
+  <depend>rclcpp</depend>
+  <depend>pluginlib</depend>
+  <depend>webots_ros2_driver</depend>
+  <depend>geometry_msgs</depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

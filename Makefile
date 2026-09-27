@@ -48,7 +48,7 @@ dirs:
 build: dev-image ## Собрать код (быстро, собирается только изменённое)
 	$(DEV_RUN) '$(DEV_ENV) && colcon build $(BUILD_ARGS)'
 
-test: dev-image ## Запустить тесты
+test: build ## Собрать код и запустить тесты
 	$(DEV_RUN) '$(DEV_ENV) && colcon test $(TEST_ARGS) --event-handlers console_direct+ \
 		&& colcon test-result --verbose $(TEST_RESULT_ARGS)'
 
