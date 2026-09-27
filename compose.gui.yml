@@ -1,4 +1,5 @@
-# Opens the Webots window on the host display (used by `make sim-gui`, see scripts/sim_gui.sh).
+# Windows on the host display: Webots (`make sim-gui`) and ROS tools (`make rqt-graph`, `make rqt`, `make rviz`).
+# Used by scripts/gui.sh, which sets CAPSTONE_XAUTH and the host user.
 services:
   simulator:
     environment:
@@ -10,5 +11,20 @@ services:
     user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:ro
-      - "${CAPSTONE_XAUTH:?CAPSTONE_XAUTH is set by scripts/sim_gui.sh}:/tmp/.capstone.xauth:ro"
+      - "${CAPSTONE_XAUTH:?CAPSTONE_XAUTH is set by scripts/gui.sh}:/tmp/.capstone.xauth:ro"
       - ./simulation:/opt/capstone/simulation
+  # rqt and RViz: the dev container (repository mounted, host user, built workspace) with a display.
+  gui:
+    extends:
+      file: compose.yml
+      service: dev
+    image: capstone-gui:local
+    build:
+      target: gui
+    profiles: ["gui"]
+    environment:
+      DISPLAY: "${DISPLAY:?DISPLAY is not set, run the command from a desktop session}"
+      XAUTHORITY: /tmp/.capstone.xauth
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - "${CAPSTONE_XAUTH:?CAPSTONE_XAUTH is set by scripts/gui.sh}:/tmp/.capstone.xauth:ro"

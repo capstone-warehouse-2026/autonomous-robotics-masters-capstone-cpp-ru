@@ -1,0 +1,103 @@
+# RViz configuration of the project (`make rviz`). Fixed frame base_link until G1 publishes odom.
+# Sensor topics use best effort (sensor data QoS), /perception/obstacles reliable, as in docs/INTERFACES.md.
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Views
+    Name: Views
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Reference Frame: <Fixed Frame>
+      Plane: XY
+      Cell Size: 1
+      Plane Cell Count: 20
+      Color: 160; 160; 164
+      Alpha: 0.5
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: true
+      Show Names: true
+      Show Axes: true
+      Show Arrows: true
+      Marker Scale: 0.5
+    - Class: rviz_default_plugins/DepthCloud
+      Name: Depth cloud (G2 camera)
+      Enabled: true
+      Topic Filter: true
+      Depth Map Topic: /sensors/depth
+      Depth Map Transport Hint: raw
+      CameraInfo Topic: /sensors/camera_info
+      Color Image Topic: /sensors/rgb
+      Color Transport Hint: raw
+      Reliability Policy: Best effort
+      Queue Size: 5
+      Occlusion Compensation: false
+      Style: Points
+      Size (Pixels): 2
+      Alpha: 1
+      Color Transformer: RGB8
+    - Class: rviz_default_plugins/Map
+      Name: Obstacles (/perception/obstacles)
+      Enabled: true
+      Color Scheme: costmap
+      Alpha: 0.7
+      Draw Behind: false
+      Topic:
+        Value: /perception/obstacles
+        Depth: 1
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Durability Policy: Volatile
+    - Class: rviz_default_plugins/Image
+      Name: RGB
+      Enabled: true
+      Topic:
+        Value: /sensors/rgb
+        Depth: 5
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Durability Policy: Volatile
+    - Class: rviz_default_plugins/Image
+      Name: Depth
+      Enabled: true
+      Normalize Range: false
+      Min Value: 0.6
+      Max Value: 8
+      Topic:
+        Value: /sensors/depth
+        Depth: 5
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Durability Policy: Volatile
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: base_link
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/Measure
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Name: Current View
+      Target Frame: <Fixed Frame>
+      Focal Point:
+        X: 2.5
+        Y: 0
+        Z: 0.3
+      Distance: 7
+      Pitch: 0.55
+      Yaw: 3.4
+    Saved: ~
+Window Geometry:
+  Width: 1400
+  Height: 900

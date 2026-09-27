@@ -26,7 +26,8 @@
 | `make shell` | интерактивный bash в `dev` с настроенными ROS и workspace |
 | `make smoke` | сборка `simulator` и `autonomy`, затем `docker compose up` — та же проверка, что в CI |
 | `make sim` | симулятор без окна; мир берётся из рабочей копии `simulation/`, пересборка образа не нужна |
-| `make sim-gui` | симулятор с окном Webots (`scripts/sim_gui.sh`) |
+| `make sim-gui` | симулятор с окном Webots (`scripts/gui.sh`) |
+| `make rqt-graph`, `make rqt`, `make rviz` | окна ROS-инструментов из образа `gui`: граф узлов и топиков; rqt (Image View, TF Tree, Topic Monitor, Console и другие плагины в меню Plugins); RViz с [rviz/capstone.rviz](../rviz/capstone.rviz) |
 | `make images` | принудительно пересобрать все образы |
 | `make down`, `make clean` | остановить контейнеры; удалить `ros2_ws/build`, `install`, `log` |
 
@@ -40,9 +41,11 @@
 
 Пакеты собраны с `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`; `compile_commands.json` в `ros2_ws/build/<пакет>` содержит пути контейнера (`/workspace/...`).
 
-### Окно Webots
+### Окна: Webots, rqt, RViz
 
-`make sim-gui` передаёт в контейнер X11-сокет и копию cookie дисплея (`xauth`), работает на Xorg и на Wayland через XWayland. Если есть `/dev/dri`, Webots использует видеокарту (Intel/AMD, открытый драйвер Mesa); иначе рисует программно — медленнее, но сцена та же. Проприетарный драйвер NVIDIA в контейнер не пробрасывается. Мир монтируется из рабочей копии с правом записи: сохранённый в окне `.wbt` сразу появляется в Git. Сохранять миры только из этого Webots R2025a.
+`make sim-gui`, `make rqt-graph`, `make rqt` и `make rviz` запускаются через `scripts/gui.sh`: он передаёт в контейнер X11-сокет и копию cookie дисплея (`xauth`), работает на Xorg и на Wayland через XWayland. Если есть `/dev/dri`, Webots использует видеокарту (Intel/AMD, открытый драйвер Mesa); иначе рисует программно — медленнее, но сцена та же. Проприетарный драйвер NVIDIA в контейнер не пробрасывается. Мир монтируется из рабочей копии с правом записи: сохранённый в окне `.wbt` сразу появляется в Git. Сохранять миры только из этого Webots R2025a.
+
+rqt и RViz работают в отдельном образе `gui` (образ `dev` + rqt, RViz; около 0.5 ГБ сверху), который собирается при первом запуске этих команд, поэтому образ разработки не растёт. Контейнер `gui` — это контейнер разработки с окном: репозиторий смонтирован, собранный workspace подключён, видны все узлы симулятора и `make shell`. Конфигурация RViz [rviz/capstone.rviz](../rviz/capstone.rviz): TF, изображения камеры, цветное облако точек из глубины (проверка проекции камеры) и карта `/perception/obstacles`; фиксированная система координат `base_link`, пока G1 не публикует `odom`. Изменённую в окне конфигурацию сохранять через **File → Save Config** в тот же файл. RViz 2 часто падает при выходе (код 134, `Aborted`) — известная ошибка RViz, `scripts/gui.sh` считает такой выход нормальным.
 
 ### Мир и модели Webots
 

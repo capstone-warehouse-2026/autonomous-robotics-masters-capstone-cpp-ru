@@ -207,6 +207,7 @@ cd autonomous-robotics-masters-capstone-cpp-ru
 | `make test PKG=capstone_perception` | тесты своего пакета |
 | `make shell` | терминал в контейнере: `ros2 topic list`, `ros2 run ...` |
 | `make sim` / `make sim-gui` | симулятор без окна / сцена в окне Webots |
+| `make rqt-graph` / `make rqt` / `make rviz` | граф узлов и топиков / инструменты rqt (изображения, TF, топики) / RViz с конфигурацией проекта |
 | `make smoke` | проверка как в CI: сцена Webots загружается, `/clock` доходит до второго контейнера |
 | `make doctor` | проверить компьютер и получить подсказку, что исправить |
 | `make` | список всех команд |
