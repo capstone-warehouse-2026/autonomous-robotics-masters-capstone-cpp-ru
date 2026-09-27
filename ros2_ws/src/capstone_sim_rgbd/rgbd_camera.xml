@@ -1,0 +1,5 @@
+<library path="capstone_sim_rgbd">
+  <class type="capstone_sim_rgbd::RgbdCamera" base_class_type="webots_ros2_driver::PluginInterface">
+    <description>RGB-D camera: rgb8 image, depth registered to the color camera, CameraInfo and static TF.</description>
+  </class>
+</library>

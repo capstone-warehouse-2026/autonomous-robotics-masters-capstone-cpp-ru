@@ -27,9 +27,10 @@ RUN apt-get update \
 COPY docker/dev_env.sh /etc/capstone_dev.sh
 RUN echo "source /etc/capstone_dev.sh" >> /etc/bash.bashrc
 
-# Robot driver plugin (capstone_sim) for the simulator image; its dependencies come from the dev image.
+# Simulator plugins (capstone_sim: drive, capstone_sim_rgbd: camera) for the simulator image; its dependencies come from the dev image.
 FROM dev AS simulator-build
 COPY ros2_ws/src/capstone_sim /opt/capstone/sim_ws/src/capstone_sim
+COPY ros2_ws/src/capstone_sim_rgbd /opt/capstone/sim_ws/src/capstone_sim_rgbd
 RUN source /opt/ros/jazzy/setup.bash \
     && cd /opt/capstone/sim_ws \
     && colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF

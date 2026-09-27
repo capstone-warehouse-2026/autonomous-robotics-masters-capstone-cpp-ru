@@ -1,0 +1,31 @@
+cmake_minimum_required(VERSION 3.16)
+project(capstone_sim_rgbd LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(webots_ros2_driver REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+
+# webots_ros2_driver loads this library as a plugin named in capstone_sim/resource/tiago_base.urdf.
+pluginlib_export_plugin_description_file(webots_ros2_driver rgbd_camera.xml)
+add_library(${PROJECT_NAME} SHARED src/rgbd_camera.cpp)
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+ament_target_dependencies(${PROJECT_NAME} pluginlib rclcpp webots_ros2_driver sensor_msgs geometry_msgs tf2 tf2_ros)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
+install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib)
+
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_rgbd_image test/test_rgbd_image.cpp)
+  target_include_directories(test_rgbd_image PRIVATE include)
+endif()
+
+ament_export_libraries(${PROJECT_NAME})
+ament_package()

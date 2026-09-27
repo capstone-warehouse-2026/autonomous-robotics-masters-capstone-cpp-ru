@@ -33,6 +33,8 @@ SI (Système international d’unités — Международная систе
 | `/mission/status` | `diagnostic_msgs/msg/DiagnosticArray` | G5 → logger | events + 1 Hz | reliable, volatile, depth 10 |
 | `/evaluation/ground_truth` | `nav_msgs/msg/Odometry` | simulator → evaluator only | 50 Hz | reliable, volatile, depth 10; frame `map` |
 
+RGB-D в симуляции ([ADR 0003](adr/0003-g2-rgbd-camera.md)): `/sensors/depth` пересчитана в цветную камеру и использует ту же `/sensors/camera_info` и `camera_optical_frame`, что `/sensors/rgb`; `NaN` — нет измерения (ближе minRange, дальше maxRange, тень от сдвига камер). `camera_link` — цветная камера.
+
 Budgets относятся к обработке одного входа/цикла на выбранной машине, не к времени успешной доставки. Зафиксировать CPU (Central Processing Unit — центральный процессор)/GPU (Graphics Processing Unit — графический процессор)/thread count и измерять очереди отдельно. Ни одна группа не должна молча менять rate, frame или тип сообщения. Для будущего Nav2 plugin deployment эти topics remap-ятся явно; stock Nav2 bringup не предполагается автоматически совместимым.
 
 Grid: row-major, cell index `y * width + x`, origin pose задаёт угол и начало сетки; 0 = free, 100 = occupied, −1 = unknown. В планировании unknown блокируется, если иной единый режим не зафиксирован до test. G2 выдаёт **неинфлированную** сетку; G3/G4 применяют один footprint + margin. Нельзя складывать двойную inflation.
