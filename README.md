@@ -186,12 +186,14 @@ flowchart LR
 
 Нужен компьютер с Ubuntu 22.04 или 24.04 (x86_64) и примерно 20 ГБ свободного места. Всё остальное, включая ROS 2 Jazzy и Webots, работает в Docker, поэтому окружение у всех одинаковое.
 
+**0. Доступ к репозиторию.** Подайте заявку: [форма «Заявка в команду проекта»](https://github.com/capstone-warehouse-2026/autonomous-robotics-masters-capstone-cpp-ru/issues/new?template=join.yml) — выберите свою группу и укажите имя. После одобрения на почту и в уведомления GitHub придёт приглашение в организацию; его нужно принять в течение 7 дней. Нужен аккаунт GitHub с добавленным SSH-ключом.
+
 **1. Один раз: git, клонирование и подготовка компьютера.** Скрипт ставит `make` и Docker Engine (через [get.docker.com](https://get.docker.com)), добавляет вас в группу `docker` и сразу запускает `make setup`. Уже установленное он не трогает.
 
 ```bash
 sudo apt install -y git
-git clone git@github.com:<организация>/<репозиторий>.git
-cd <репозиторий>
+git clone git@github.com:capstone-warehouse-2026/autonomous-robotics-masters-capstone-cpp-ru.git
+cd autonomous-robotics-masters-capstone-cpp-ru
 ./scripts/setup_host.sh
 ```
 
