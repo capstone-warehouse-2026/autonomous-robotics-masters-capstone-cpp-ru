@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>capstone_sim_rgbd</name>
+  <version>0.1.0</version>
+  <description>G2: Webots adapter of the RGB-D camera: /sensors/rgb, /sensors/depth, /sensors/camera_info and camera TF.</description>
+  <maintainer email="g2@example.invalid">G2</maintainer>
+  <license>MIT</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <!-- Dependencies are rosdep keys; `make build` installs them into the dev image. -->
+  <depend>rclcpp</depend>
+  <depend>pluginlib</depend>
+  <depend>webots_ros2_driver</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

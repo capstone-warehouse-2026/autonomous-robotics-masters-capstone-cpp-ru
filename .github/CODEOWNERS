@@ -8,9 +8,12 @@
 /ros2_ws/src/capstone_localization/     @capstone-warehouse-2026/g1
 /ros2_ws/src/capstone_sim/              @capstone-warehouse-2026/g1
 /simulation/                            @capstone-warehouse-2026/g1
+# Robot description holds the G1 drive and the G2 camera plugins.
+/ros2_ws/src/capstone_sim/resource/tiago_base.urdf  @capstone-warehouse-2026/g1 @capstone-warehouse-2026/g2
 /projects/01_localization.md            @capstone-warehouse-2026/g1
 
 /ros2_ws/src/capstone_perception/       @capstone-warehouse-2026/g2
+/ros2_ws/src/capstone_sim_rgbd/         @capstone-warehouse-2026/g2
 /projects/02_perception.md              @capstone-warehouse-2026/g2
 
 /ros2_ws/src/capstone_planning/         @capstone-warehouse-2026/g3

@@ -11,5 +11,21 @@
       <!-- Stop the wheels when no /cmd_vel arrives for this long (steady clock), docs/INTERFACES.md. -->
       <cmdVelTimeout>0.3</cmdVelTimeout>
     </plugin>
+    <!-- G2 RGB-D camera (capstone_sim_rgbd): Orbbec Astra in the bodySlot of warehouse.wbt.
+         mountTranslation/mountRotation (roll pitch yaw, rad) must match the Astra pose there. -->
+    <plugin type="capstone_sim_rgbd::RgbdCamera">
+      <colorCamera>Astra rgb</colorCamera>
+      <depthCamera>Astra depth</depthCamera>
+      <updateRate>10</updateRate>
+      <mountTranslation>0.1 0 0.805</mountTranslation>
+      <mountRotation>0 0.4 0</mountRotation>
+    </plugin>
+    <!-- The camera is published only by the plugin above (rgb8, registered depth), not by the default bgra8 interface. -->
+    <device reference="Astra rgb" type="Camera">
+      <ros><enabled>false</enabled></ros>
+    </device>
+    <device reference="Astra depth" type="RangeFinder">
+      <ros><enabled>false</enabled></ros>
+    </device>
   </webots>
 </robot>

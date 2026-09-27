@@ -30,4 +30,4 @@ ADR (Architecture Decision Record — запись об архитектурно
 ## Что команда закрывает в неделю 2
 
 - Радиус 0.272 м вместо 0.25 м из постановки: зафиксировать footprint, запас и ограничения скорости и ускорения с учётом того, что на предельных командах робот недобирает 10–20% скорости.
-- G1 добавляет 2D LiDAR в `lidarSlot`, RGB-D камеру в `bodySlot`, публикацию IMU и wheel odometry под именами из контракта, ground truth (`/evaluation/ground_truth`) и контакты для evaluator через Supervisor API (Application Programming Interface — программный интерфейс).
+- G1 добавляет 2D LiDAR в `lidarSlot`, публикацию IMU и wheel odometry под именами из контракта, ground truth (`/evaluation/ground_truth`) и контакты для evaluator через Supervisor API (Application Programming Interface — программный интерфейс). RGB-D камера в `bodySlot` поставлена группой G2 — [ADR 0003](0003-g2-rgbd-camera.md).
