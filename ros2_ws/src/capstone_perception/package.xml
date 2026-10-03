@@ -2,12 +2,22 @@
 <package format="3">
   <name>capstone_perception</name>
   <version>0.1.0</version>
-  <description>G2: obstacle perception and local traversability grid (skeleton).</description>
+  <description>G2: obstacle perception and local traversability grid; classical and learned pixel classifiers.</description>
   <maintainer email="g2@example.invalid">G2</maintainer>
   <license>MIT</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <!-- Dependencies are rosdep keys; `make build` installs them into the dev image. -->
   <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>diagnostic_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>message_filters</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_eigen</depend>
+  <depend>eigen</depend>
+  <depend>libopencv-dev</depend>
+  <exec_depend>launch_ros</exec_depend>
   <test_depend>ament_cmake_gtest</test_depend>
   <export><build_type>ament_cmake</build_type></export>
 </package>
