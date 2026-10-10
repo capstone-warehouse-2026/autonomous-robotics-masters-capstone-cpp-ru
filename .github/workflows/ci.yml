@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Check shell scripts
-        run: shellcheck scripts/*.sh scripts/github/*.sh docker/*.sh
+        run: shellcheck scripts/*.sh scripts/github/*.sh docker/*.sh ml/perception/*.sh
   setup:
     # The same first-run path as a team member: both Ubuntu versions used by the team.
     name: make setup (${{ matrix.os }})

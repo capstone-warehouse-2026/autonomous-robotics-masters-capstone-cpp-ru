@@ -19,6 +19,20 @@ FROM common AS dev
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential cmake ccache gdb python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
+# ONNX Runtime for method B of G2 (CnnClassifier); not packaged in Ubuntu 24.04 and not a rosdep key.
+# The version matches onnxruntime in ml/perception/requirements.txt, which exports and checks the model.
+# The exported CMake target expects include/onnxruntime and lib64, the archive has include/ and lib/: symlinks.
+ARG ONNXRUNTIME_VERSION=1.31.0
+ARG ONNXRUNTIME_SHA256=cc5c72baf5ae5c8238a6841f0897227be2d02826b9cf98eaf02fdefaeeb03a57
+RUN curl -fsSL "https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_VERSION}/onnxruntime-linux-x64-${ONNXRUNTIME_VERSION}.tgz" -o /tmp/onnxruntime.tgz \
+    && echo "${ONNXRUNTIME_SHA256}  /tmp/onnxruntime.tgz" | sha256sum -c - \
+    && mkdir -p /opt/onnxruntime \
+    && tar -xzf /tmp/onnxruntime.tgz -C /opt/onnxruntime --strip-components=1 \
+    && rm /tmp/onnxruntime.tgz \
+    && ln -s . /opt/onnxruntime/include/onnxruntime && ln -s lib /opt/onnxruntime/lib64 \
+    && echo /opt/onnxruntime/lib > /etc/ld.so.conf.d/onnxruntime.conf && ldconfig
+# find_package(onnxruntime) searches <name>_ROOT.
+ENV onnxruntime_ROOT=/opt/onnxruntime
 COPY --from=manifests /tmp/manifests /tmp/manifests
 RUN apt-get update \
     && rosdep update --rosdistro "$ROS_DISTRO" \
@@ -93,6 +107,12 @@ COPY docker/start_simulator.sh /opt/capstone/
 COPY --from=simulator-build /opt/capstone/sim_ws/install /opt/capstone/sim_ws/install
 CMD ["bash", "/opt/capstone/start_simulator.sh"]
 
+
+# Offline training of the G2 learned method (`make g2-train`): Python + PyTorch, no ROS. Uses the GPU
+# when the host has nvidia-container-toolkit (compose.gpu.yml), otherwise the CPU.
+FROM python:3.12-slim AS train
+COPY ml/perception/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
 # Submission/CI image: the same environment with the workspace built and tested inside.
 FROM dev AS autonomy

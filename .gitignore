@@ -8,6 +8,8 @@ __pycache__/
 *.db3
 *.mcap
 *.onnx
+# The trained model of G2 method B is part of the package (ml/perception/release_model.py).
+!ros2_ws/src/capstone_perception/models/*.onnx
 *.pt
 *.pth
 *.zip
@@ -15,3 +17,4 @@ results/
 .DS_Store
 .cache/
 simulation/worlds/.*.wbproj
+/data/

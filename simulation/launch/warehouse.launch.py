@@ -4,7 +4,8 @@ Runs with `ros2 launch` or directly with `python3`; the direct form exits non-ze
 Webots or the robot driver stops, or Webots prints an ERROR line (broken world, unknown
 PROTO, missing asset), because Webots keeps simulating a partially loaded scene after such
 errors. SIM_GUI=1 opens the Webots window, otherwise Webots renders without a window.
-SIM_WORLD selects another world file from simulation/worlds (default: warehouse.wbt).
+SIM_WORLD selects another world file from simulation/worlds (default: warehouse.wbt) or an absolute path;
+SIM_MODE is the Webots run mode, realtime (default) or fast.
 """
 
 import os
@@ -52,7 +53,7 @@ def generate_launch_description():
     webots = WebotsLauncher(
         world=os.path.join(WORLDS_DIR, world),
         gui=EnvironmentVariable('SIM_GUI', default_value='0'),
-        mode='realtime',
+        mode=os.environ.get('SIM_MODE', 'realtime'),
         ros2_supervisor=True,
     )
     robot_driver = WebotsController(

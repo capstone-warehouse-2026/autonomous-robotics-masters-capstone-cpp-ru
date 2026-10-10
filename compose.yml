@@ -42,3 +42,20 @@ services:
       - .:/workspace
     working_dir: /workspace/ros2_ws
     init: true
+  # Offline training of the G2 learned method (`make g2-train`); compose.gpu.yml adds the GPU.
+  train:
+    image: capstone-train:local
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: train
+    profiles: ["train"]
+    environment:
+      HOME: /workspace/.cache/home
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    volumes:
+      - .:/workspace
+    working_dir: /workspace/ml/perception
+    # PyTorch DataLoader workers exchange batches through shared memory.
+    shm_size: 2gb
+    init: true

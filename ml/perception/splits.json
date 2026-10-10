@@ -1,0 +1,5 @@
+{
+  "train": {"train_0": 0, "train_1": 1, "train_2": 2},
+  "val": {"val_0": 1000},
+  "test": {"test_0": 2000, "test_1": 2001}
+}
