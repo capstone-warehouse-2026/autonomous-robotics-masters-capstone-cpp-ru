@@ -13,4 +13,5 @@ perception:
       min_free_points: 1
       min_obstacle_points: 1
     learned:
-      model_path: ""             # ONNX model of method B
+      model_path: ""             # ONNX model of method B; "" = models/perception_cnn.onnx of this package
+      threads: 2                 # CPU threads of ONNX Runtime

@@ -20,7 +20,8 @@
 | [`rgbd_frame.hpp`](include/capstone_perception/rgbd_frame.hpp) | общий | `RgbdFrame`: `rgb` (`CV_8UC3`, RGB), `depth` (`CV_32FC1`, м, `NaN` — нет измерения), `camera` (fx, fy, cx, cy), `base_from_camera` (поза `camera_optical_frame` в `base_link`), `stamp` |
 | [`pixel_classifier.hpp`](include/capstone_perception/pixel_classifier.hpp) | общий | интерфейс и `validate_labels()` |
 | [`geometric_classifier.*`](src/geometric_classifier.cpp) | **участник 1, метод A** | сейчас заглушка: все пиксели `kUnknown` |
-| [`cnn_classifier.*`](src/cnn_classifier.cpp) | **участник 2, метод B** | сейчас заглушка: без модели бросает исключение, узел переходит на A |
+| [`cnn_classifier.*`](src/cnn_classifier.cpp) | **участник 2, метод B** | CNN в ONNX Runtime: подготовка входа, сеть, классы пикселей; без модели узел переходит на A |
+| [`models/perception_cnn.onnx`](models/perception_cnn.json) | **участник 2, метод B** | обученная модель и её карточка (данные, метрики, SHA256); кладётся `make g2-model` |
 | [`grid_builder.*`](src/grid_builder.cpp) | общий | проекция классов в окно 10 × 10 м по 0.05 м |
 | [`perception_node.*`](src/perception_node.cpp) | общий | подписки, TF, резервный переход, публикация, `/diagnostics` |
 
@@ -61,7 +62,19 @@ make shell
 ros2 launch capstone_perception perception.launch.py method:=classical target_frame:=base_link
 ```
 
-Проверка: `ros2 topic hz /perception/obstacles`, `ros2 topic echo /diagnostics`, карта — в `make rviz` (дисплей «Obstacles»). Пока метод A — заглушка, вся сетка `−1`; с `method:=learned` без модели в `/diagnostics` видны переходы на классический метод.
+Проверка: `ros2 topic hz /perception/obstacles`, `ros2 topic echo /diagnostics`, карта — в `make rviz` (дисплей «Obstacles»). Пока метод A — заглушка, с `method:=classical` вся сетка `−1`.
+
+## Метод B: CNN
+
+`method:=learned` загружает [models/perception_cnn.onnx](models/perception_cnn.json) из пакета (или файл из `learned.model_path`) и выполняет его на CPU через ONNX Runtime (`learned.threads` потоков; ONNX Runtime 1.31.0 установлен в образе разработки). На кадр 640 × 480:
+
+1. **Вход сети** `network_input()` — тензор 5 × 240 × 320: среднее RGB блока 2 × 2 / 255, глубина / 8 м из левого верхнего пикселя блока, маска наличия глубины. Это буквальная копия [preprocess.py](../../../ml/perception/preprocess.py), на которой сеть обучалась.
+2. **Сеть** `CnnModel::run()` — логиты 3 × 240 × 320 (свободно, препятствие, неизвестно); буферы выделяются один раз при загрузке.
+3. **Классы** `labels_from_logits()` — класс с наибольшим логитом переносится на свой блок 2 × 2; где глубины нет, всегда `kUnknown`. Нечисловые логиты — исключение.
+
+Если модели нет, файл повреждён или вход/выход другой формы, узел не падает: ошибка пишется при запуске, а каждый кадр уходит в резервный классический метод (`fallbacks` в `/diagnostics`). Время кадра — `processing_ms` в `/diagnostics` (≈ 40 мс вместе с проекцией в сетку).
+
+Как модель обучена и проверена — [ml/perception/README.md](../../../ml/perception/README.md); обновить модель в пакете — `make g2-model`.
 
 ## Тесты
 
@@ -70,3 +83,5 @@ make test PKG=capstone_perception
 ```
 
 [test_grid_builder.cpp](test/test_grid_builder.cpp) проверяет проекцию на синтетических кадрах: клетка препятствия, `NaN` и `kUnknown` без голосов, приоритет препятствия, пороги, выравнивание окна, проверку ответа классификатора. Свои тесты метода добавлять в `test/` и в `CMakeLists.txt`.
+
+[test_cnn_classifier.cpp](test/test_cnn_classifier.cpp) сверяет метод B на C++ с Python на эталоне из [test/data](test/data) — кадре тестового склада, который `make g2-model` прогнал через ту же модель в Python: вход сети должен совпасть до бита, логиты — до 10⁻³, классы пикселей — не более чем в 0.1 % пикселей. Ещё проверяется, что отсутствующая или повреждённая модель и кадр другого размера дают исключение (то есть резервный метод), а не падение узла. После замены модели эталон обновляется той же командой `make g2-model`.
