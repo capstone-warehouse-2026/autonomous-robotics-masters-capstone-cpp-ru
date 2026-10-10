@@ -1,0 +1,16 @@
+# Parameters of the G2 perception node (ros2 launch capstone_perception perception.launch.py).
+perception:
+  ros__parameters:
+    method: classical            # classical (method A) | learned (method B); switch only between episodes
+    target_frame: odom           # frame of /perception/obstacles; base_link until G1 publishes odom
+    base_frame: base_link
+    max_input_age: 0.3           # s of sim time without a new grid -> ERROR in /diagnostics
+    tf_timeout: 0.05             # s
+    grid:
+      resolution: 0.05           # m per cell
+      size: 10.0                 # m, square window centred on the robot
+      pixel_stride: 2            # use every 2nd pixel in both directions
+      min_free_points: 1
+      min_obstacle_points: 1
+    learned:
+      model_path: ""             # ONNX model of method B
