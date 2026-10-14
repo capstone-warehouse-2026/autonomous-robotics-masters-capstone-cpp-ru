@@ -1,0 +1,26 @@
+# Parameters of the G4 safety monitor (ros2 launch capstone_safety safety.launch.py).
+# The thresholds are the same for method classical and learned; their justification is in the G4 report.
+safety_monitor:
+  ros__parameters:
+    base_frame: base_link
+    rate_hz: 20.0                # Hz, /cmd_vel is published every tick
+    autostart: true              # configure + activate on start; false: transitions via lifecycle services
+
+    # Command limits, docs/PROJECT.md; outside them the robot stops (no clamping).
+    v_max: 0.6                   # m/s
+    w_max: 1.2                   # rad/s
+    limit_tol: 0.02              # m/s or rad/s
+
+    # Stopping envelope: d = v * t_latency + v^2 / (2 * a_brake).
+    a_brake: 0.5                 # m/s^2; TODO: replace with the braking measured in Webots
+    t_latency: 0.15              # s;     TODO: replace with the measured chain latency
+    robot_radius: 0.25           # m
+    margin: 0.10                 # m
+    path_step: 0.02              # m, sampling step of the stopping path
+    v_eps: 0.001                 # m/s, below it the robot is not translating
+
+    # Freshness, docs/INTERFACES.md, fault table.
+    cmd_timeout_sim: 0.15        # s of sim time without a new command -> STALE_CMD
+    cmd_timeout_steady: 0.30     # s of steady time, catches a stopped /clock
+    sensor_timeout_sim: 0.30     # s of sim time without scan or odom -> STALE_SCAN / STALE_ODOM
+    time_jump_tol: 0.05          # s a stamp may lie in the future before it counts as a time reset
