@@ -6,23 +6,41 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
+find_package(lifecycle_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(diagnostic_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+
+# Pure safety logic without ROS: fast deterministic unit tests (test_safety_core).
+add_library(${PROJECT_NAME}_logic STATIC src/safety_core.cpp)
+set_target_properties(${PROJECT_NAME}_logic PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_include_directories(${PROJECT_NAME}_logic PUBLIC include)
+target_compile_options(${PROJECT_NAME}_logic PRIVATE -Wall -Wextra -Wpedantic)
 
 # Node code lives in a library so that the executable and the tests share it.
 add_library(${PROJECT_NAME}_core STATIC src/safety_monitor_node.cpp)
 set_target_properties(${PROJECT_NAME}_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(${PROJECT_NAME}_core PUBLIC include)
-ament_target_dependencies(${PROJECT_NAME}_core rclcpp)
+ament_target_dependencies(${PROJECT_NAME}_core rclcpp rclcpp_lifecycle lifecycle_msgs geometry_msgs nav_msgs sensor_msgs diagnostic_msgs tf2 tf2_ros)
+target_link_libraries(${PROJECT_NAME}_core ${PROJECT_NAME}_logic)
 target_compile_options(${PROJECT_NAME}_core PRIVATE -Wall -Wextra -Wpedantic)
 
 add_executable(safety_monitor_node src/main.cpp)
 target_link_libraries(safety_monitor_node ${PROJECT_NAME}_core)
 target_compile_options(safety_monitor_node PRIVATE -Wall -Wextra -Wpedantic)
 install(TARGETS safety_monitor_node DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
-  ament_add_gtest(test_safety_monitor_node test/test_safety_monitor_node.cpp)
+  ament_add_gtest(test_safety_monitor_node test/test_safety_monitor_node.cpp TIMEOUT 120)
   target_link_libraries(test_safety_monitor_node ${PROJECT_NAME}_core)
+  ament_add_gtest(test_safety_core test/test_safety_core.cpp)
+  target_link_libraries(test_safety_core ${PROJECT_NAME}_logic)
 endif()
 
 ament_package()
