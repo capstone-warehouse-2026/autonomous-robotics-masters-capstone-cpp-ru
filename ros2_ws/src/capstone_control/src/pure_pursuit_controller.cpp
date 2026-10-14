@@ -41,21 +41,19 @@ std::optional<Command> PurePursuitController::compute(const ControlInput &input)
   }
 
   const Pose2D target = path.point_ahead(params_.lookahead);
-  double tx = 0.0;
-  double ty = 0.0;
-  to_robot_frame(robot, target.x, target.y, tx, ty);
-  const double dist2 = tx * tx + ty * ty;
+  const Point2D t = to_robot_frame(robot, target.x, target.y);
+  const double dist2 = t.x * t.x + t.y * t.y;
   if (dist2 < 1e-6) {
     return Command{0.0, 0.0};
   }
 
   // Target behind or far to the side: turning on the spot is better than a wide arc.
-  const double heading_error = std::atan2(ty, tx);
+  const double heading_error = std::atan2(t.y, t.x);
   if (std::abs(heading_error) > params_.rotate_in_place_angle) {
     return rotate_towards(heading_error);
   }
 
-  const double curvature = 2.0 * ty / dist2;
+  const double curvature = 2.0 * t.y / dist2;
   double v = params_.max_speed / (1.0 + params_.curvature_slowdown * std::abs(curvature));
   const double ramp = params_.max_speed * path.remaining_length() / params_.approach_distance;
   v = std::max(std::min(v, ramp), params_.min_speed);
