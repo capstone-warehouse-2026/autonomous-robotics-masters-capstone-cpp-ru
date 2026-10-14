@@ -17,11 +17,11 @@ BUILD_ARGS := --symlink-install $(if $(PKG),--packages-up-to $(PKG)) \
 TEST_ARGS := $(if $(PKG),--packages-select $(PKG))
 TEST_RESULT_ARGS := $(if $(PKG),--test-result-base build/$(PKG))
 
-.PHONY: help setup doctor images build test shell smoke sim sim-gui rqt-graph rqt rviz down clean dev-image dirs
+.PHONY: help setup doctor images build test shell smoke sim sim-gui rqt-graph rqt rviz g2-dataset g2-labels g2-dataset-splits g2-train g2-eval g2-model down clean dev-image dirs
 
 help: ## Показать эту справку
 	@echo "Команды проекта (PKG=имя_пакета ограничивает build/test одним пакетом):"
-	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "} {printf "  make %-9s %s\n", $$1, $$2}'
+	@grep -E '^[a-z0-9-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "} {printf "  make %-17s %s\n", $$1, $$2}'
 
 setup: ## Первый запуск: проверка компьютера, образы, сборка, тесты и проверка сцены Webots
 	@scripts/setup_host.sh --check
@@ -51,6 +51,7 @@ build: dev-image ## Собрать код (быстро, собирается т
 test: build ## Собрать код и запустить тесты
 	$(DEV_RUN) '$(DEV_ENV) && colcon test $(TEST_ARGS) --event-handlers console_direct+ \
 		&& colcon test-result --verbose $(TEST_RESULT_ARGS)'
+	$(if $(PKG),,$(DEV_RUN) 'python3 -m unittest discover -s /workspace/ml/perception')
 
 shell: dev-image ## Открыть терминал в контейнере разработки (ros2, colcon)
 	$(COMPOSE) run --rm dev bash
@@ -78,6 +79,47 @@ rqt: dev-image ## Инструменты rqt: изображения камер�
 
 rviz: dev-image ## RViz с конфигурацией проекта (rviz/capstone.rviz)
 	@scripts/gui.sh gui rviz2 -d /workspace/rviz/capstone.rviz
+
+# G2, method B: training data (ml/perception/README.md).
+SAMPLES ?= 200
+SEED ?= 0
+LAYOUT ?=
+RUN ?= $(if $(LAYOUT),$(LAYOUT),warehouse_seed$(SEED))
+
+g2-dataset: ## G2: записать кадры RGB-D в data/g2/RUN (SAMPLES=200; LAYOUT=train_0 или SEED=0 для warehouse.wbt)
+	$(COMPOSE) build simulator
+	@mkdir -p data/g2
+	$(COMPOSE) run --rm -u "$(HOST_UID):$(HOST_GID)" -e HOME=/tmp -e RUN="$(RUN)" -e LAYOUT="$(LAYOUT)" \
+		-e GIT_COMMIT="$$(git rev-parse HEAD)" -e GIT_DIRTY="$$(test -z "$$(git status --porcelain)" && echo false || echo true)" \
+		-v "$(CURDIR)/ml/perception:/opt/g2:ro" -v "$(CURDIR)/data/g2:/data" simulator \
+		bash /opt/g2/run_recording.sh --samples $(SAMPLES) --seed $(SEED)
+
+g2-labels: dev-image ## G2: разметить записанные кадры data/g2/RUN по чистой глубине
+	$(DEV_RUN) 'cd /workspace/ml/perception && python3 label_dataset.py /workspace/data/g2/$(RUN)'
+
+TRAIN_ARGS ?=
+EVAL_ARGS ?=
+
+g2-train: dirs ## G2: обучить CNN метода B на data/g2 (видеокарта, если есть nvidia-container-toolkit; TRAIN_ARGS=...)
+	@files="-f compose.yml"; \
+	if docker info --format '{{json .Runtimes}}' 2>/dev/null | grep -q nvidia; then files="$$files -f compose.gpu.yml"; \
+	else echo ">>> nvidia-container-toolkit не найден: обучение на CPU"; fi; \
+	$(COMPOSE) $$files --profile train build train && \
+	$(COMPOSE) $$files --profile train run --rm train python3 train.py $(TRAIN_ARGS)
+
+g2-eval: dirs ## G2: проверить data/g2/models/latest на тестовых складах (EVAL_ARGS=...)
+	$(COMPOSE) --profile train build train
+	$(COMPOSE) --profile train run --rm train python3 evaluate.py $(EVAL_ARGS)
+
+g2-model: dirs ## G2: положить data/g2/models/latest в пакет capstone_perception (модель и эталон теста C++)
+	$(COMPOSE) --profile train build train
+	$(COMPOSE) --profile train run --rm train python3 release_model.py
+
+g2-dataset-splits: ## G2: записать и разметить все планировки из ml/perception/splits.json (SAMPLES на каждую)
+	@for layout in $$(python3 ml/perception/generate_layout.py --list); do \
+		$(MAKE) --no-print-directory g2-dataset LAYOUT=$$layout RUN=$$layout SAMPLES=$(SAMPLES) && \
+		$(MAKE) --no-print-directory g2-labels RUN=$$layout || exit 1; \
+	done
 
 down: ## Остановить все контейнеры проекта
 	$(COMPOSE) --profile dev --profile gui down --remove-orphans

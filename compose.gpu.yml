@@ -1,0 +1,5 @@
+# NVIDIA GPU for the training container; added by `make g2-train` when Docker has the nvidia runtime
+# (nvidia-container-toolkit, see ml/perception/README.md).
+services:
+  train:
+    gpus: all

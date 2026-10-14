@@ -1,0 +1,96 @@
+{
+  "model": "SegNet (compact U-Net), ml/perception/model.py",
+  "input": "float32 1x5x240x320, ml/perception/preprocess.py",
+  "output": "logits 1x3x240x320: free, obstacle, unknown",
+  "parameters": 488323,
+  "train_layouts": [
+    "train_0",
+    "train_1",
+    "train_2"
+  ],
+  "val_layouts": [
+    "val_0"
+  ],
+  "train_frames": 900,
+  "val_frames": 300,
+  "arguments": {
+    "data_root": "../../data/g2",
+    "out": "../../data/g2/models/latest",
+    "train_layouts": null,
+    "val_layouts": null,
+    "epochs": 30,
+    "batch_size": 16,
+    "lr": 0.001,
+    "width": 16,
+    "obstacle_weight": 2.0,
+    "workers": 8,
+    "seed": 0
+  },
+  "device": "cuda",
+  "training_seconds": 4165,
+  "best_epoch": 21,
+  "validation": {
+    "iou_free": 0.9862715052019193,
+    "iou_obstacle": 0.9814411952175739,
+    "iou_unknown": 0.9977937192679989,
+    "miou": 0.9885021398958308,
+    "false_free": 0.0062513969407872886,
+    "accuracy": 0.9926686197916667
+  },
+  "onnx_max_difference_to_pytorch": 7.927417755126953e-06,
+  "git_commit": "unknown",
+  "test_evaluation": {
+    "layouts": [
+      "test_0",
+      "test_1"
+    ],
+    "seed": 0,
+    "results": [
+      {
+        "condition": "clean",
+        "frames": 600,
+        "iou_free": 0.98923324561708,
+        "iou_obstacle": 0.9808691254014686,
+        "iou_unknown": 0.995491694390282,
+        "miou": 0.9885313551362769,
+        "false_free": 0.0051271156178288955,
+        "obstacle_precision": 0.9858555929447397,
+        "obstacle_recall": 0.994869793197836
+      },
+      {
+        "condition": "low_light",
+        "frames": 600,
+        "iou_free": 0.983884111016619,
+        "iou_obstacle": 0.9719383232538173,
+        "iou_unknown": 0.9955623149401476,
+        "miou": 0.9837949164035281,
+        "false_free": 0.012832922967879568,
+        "obstacle_precision": 0.9843801565163146,
+        "obstacle_recall": 0.987162762253986
+      },
+      {
+        "condition": "depth_noise",
+        "frames": 600,
+        "iou_free": 0.9891714200249379,
+        "iou_obstacle": 0.9807707800162633,
+        "iou_unknown": 0.9954938981157565,
+        "miou": 0.9884786993856526,
+        "false_free": 0.005075660278583972,
+        "obstacle_precision": 0.9857055437721783,
+        "obstacle_recall": 0.9949214417361019
+      },
+      {
+        "condition": "depth_holes",
+        "frames": 600,
+        "iou_free": 0.9881207060694838,
+        "iou_obstacle": 0.9790801277438036,
+        "iou_unknown": 0.9970996072948438,
+        "miou": 0.9881001470360437,
+        "false_free": 0.00516901600174567,
+        "obstacle_precision": 0.9840933100092595,
+        "obstacle_recall": 0.9948238699831657
+      }
+    ]
+  },
+  "sha256": "b523cddedb758d54e3482b9ab2889eb30fd47d8981bdf9bd07c6a56ad7c79cab"
+}

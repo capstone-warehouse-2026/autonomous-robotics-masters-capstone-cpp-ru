@@ -1,0 +1,8 @@
+# Training environment of method B (image `train`, `make g2-train`); versions are pinned for reproducibility.
+# PyTorch with CUDA 12.6 runs on NVIDIA drivers >= 525 and on CPU.
+--extra-index-url https://download.pytorch.org/whl/cu126
+torch==2.14.1+cu126
+numpy==2.5.3
+onnx==1.23.2
+onnxscript==0.7.2
+onnxruntime==1.31.0

@@ -7,3 +7,4 @@ results
 *.mcap
 *.db3
 .cache
+data

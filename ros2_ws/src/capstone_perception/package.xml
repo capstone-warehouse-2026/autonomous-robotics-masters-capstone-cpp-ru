@@ -17,6 +17,8 @@
   <depend>tf2_eigen</depend>
   <depend>eigen</depend>
   <depend>libopencv-dev</depend>
+  <depend>ament_index_cpp</depend>
+  <!-- ONNX Runtime (method B) has no rosdep key: it is installed in docker/Dockerfile, stage dev. -->
   <exec_depend>launch_ros</exec_depend>
   <test_depend>ament_cmake_gtest</test_depend>
   <export><build_type>ament_cmake</build_type></export>
