@@ -15,6 +15,12 @@ struct Pose2D {
   double yaw{0.0};
 };
 
+///Need for conversion on robot frame
+struct Point2D {
+  double x{0.0};
+  double y{0.0};
+};
+
 /// Velocity command for a differential-drive robot in `base_link`.
 /// v — forward speed, m/s; w — yaw rate, rad/s (positive = counter-clockwise).
 struct Command {
@@ -44,13 +50,12 @@ inline bool is_finite(const Pose2D &p) {
 inline bool is_finite(const Command &c) { return std::isfinite(c.v) && std::isfinite(c.w); }
 
 /// Expresses a world-frame point in the robot frame (x forward, y left).
-inline void to_robot_frame(const Pose2D &robot, double wx, double wy, double &rx, double &ry) {
+inline Point2D to_robot_frame(const Pose2D &robot, double wx, double wy) {
   const double dx = wx - robot.x;
   const double dy = wy - robot.y;
   const double c = std::cos(robot.yaw);
   const double s = std::sin(robot.yaw);
-  rx = c * dx + s * dy;
-  ry = -s * dx + c * dy;
+  return Point2D{c * dx + s * dy, -s * dx + c * dy};
 }
 
 }  // namespace capstone_control
