@@ -211,26 +211,121 @@ std::optional<Command> MpcController::compute(const ControlInput &input) {
   return std::nullopt;
 }
 
+  namespace {
+
+  // Every number the solver reads from the problem is finite (NaN/Inf would poison the cost).
+  bool problem_is_finite(const LocalProblem &problem) {
+    for (const Point2D &q : problem.path) {
+      if (!std::isfinite(q.x) || !std::isfinite(q.y)) return false;
+    }
+    for (const Point2D &o : problem.obstacles) {
+      if (!std::isfinite(o.x) || !std::isfinite(o.y)) return false;
+    }
+    return std::isfinite(problem.velocity.v) && std::isfinite(problem.velocity.w) &&
+           std::isfinite(problem.goal_yaw);
+  }
+
+  // The plan as one vector of 2N variables: index 2k is v_k, index 2k + 1 is w_k.
+  double &variable(std::vector<MpcControl> &u, std::size_t i) { return i % 2 == 0 ? u[i / 2].v : u[i / 2].w; }
+
+}  // namespace
+
 MpcResult MpcController::solve(const LocalProblem &problem) {
+  using Clock = std::chrono::steady_clock;
+  const Clock::time_point start = Clock::now();
+  const auto elapsed = [&start] { return std::chrono::duration<double>(Clock::now() - start).count(); };
   MpcResult r;
-  // TODO, in this order:
-  //  1. Validity: path.size() >= 2 and every number in the problem finite. Otherwise status INVALID_INPUT,
-  //     no command, clear the warm start, return.
-  //  2. Initial guess u: the warm start if it has `horizon` elements, otherwise v_ref and w = 0 everywhere.
-  //     project(u, problem.velocity); J = cost(u).
-  //  3. Projected gradient with backtracking, at most max_iterations iterations:
-  //       - before every iteration: if the time since the start of solve() >= max_solve_time -> TIMEOUT, stop;
-  //       - gradient by forward differences: g_i = (cost(u + fd_eps e_i) - J) / fd_eps for all 2N variables;
-  //       - line search: u_new = project(u - step * g); accept if cost(u_new) < J, else halve step
-  //         (up to ~20 times); start with step = 0.05 and double it after an accepted step;
-  //       - no decrease found -> converged (OK); decrease <= tol * (1 + J) -> accept it and converged (OK);
-  //       - loop ended by max_iterations -> MAX_ITER.
-  //  4. Result: command = u_0, iterations, cost, predicted = rollout(u).
-  //  5. Infeasible: if any predicted pose is closer than robot_radius to any obstacle -> INFEASIBLE and
-  //     no command (the node publishes zero, ADR 0004).
-  //  6. Warm start for the next cycle: u shifted by one step, the last element repeated.
-  //  7. solve_time = wall time of the call (std::chrono::steady_clock).
-  (void)problem;
+
+  // 1. Validity: no command and no warm start from a broken input.
+  if (problem.path.size() < 2 || !problem_is_finite(problem)) {
+    r.status = MpcStatus::INVALID_INPUT;
+    warm_.clear();
+    r.solve_time = elapsed();
+    return r;
+  }
+
+  // 2. Initial guess: the previous solution shifted by one step, or cruising straight ahead.
+  const std::size_t n = static_cast<std::size_t>(params_.horizon);
+  std::vector<MpcControl> u =
+      warm_.size() == n ? warm_ : std::vector<MpcControl>(n, MpcControl{params_.v_ref, 0.0});
+  project(u, problem.velocity, params_);
+  double J = cost(u, problem, params_);
+
+  // 3. Projected gradient descent with backtracking line search.
+  const std::size_t num_vars = 2 * n;
+  std::vector<double> grad(num_vars, 0.0);
+  std::vector<MpcControl> probe;
+  std::vector<MpcControl> candidate;
+  double step = 0.05;
+  r.status = MpcStatus::MAX_ITER;  // unless the loop ends earlier for another reason
+  while (r.iterations < params_.max_iterations) {
+    if (elapsed() >= params_.max_solve_time) {
+      r.status = MpcStatus::TIMEOUT;
+      break;
+    }
+
+    // Gradient by forward differences: nudge one variable, see how the cost changes.
+    probe = u;
+    for (std::size_t i = 0; i < num_vars; ++i) {
+      double &x = variable(probe, i);
+      const double x0 = x;
+      x = x0 + params_.fd_eps;
+      grad[i] = (cost(probe, problem, params_) - J) / params_.fd_eps;
+      x = x0;
+    }
+
+    // Line search: step against the gradient, back onto the feasible set, halve the step until the cost drops.
+    bool decreased = false;
+    double J_new = J;
+    for (int halving = 0; halving < 20; ++halving) {
+      candidate = u;
+      for (std::size_t i = 0; i < num_vars; ++i) variable(candidate, i) -= step * grad[i];
+      project(candidate, problem.velocity, params_);
+      J_new = cost(candidate, problem, params_);
+      if (J_new < J) {
+        decreased = true;
+        break;
+      }
+      step *= 0.5;
+    }
+    ++r.iterations;
+
+    if (!decreased) {  // no direction lowers the cost: a (local) minimum
+      r.status = MpcStatus::OK;
+      break;
+    }
+    const double decrease = J - J_new;
+    const bool converged = decrease <= params_.tol * (1.0 + J);
+    u.swap(candidate);
+    J = J_new;
+    step *= 2.0;  // the last step worked: try a longer one next time
+    if (converged) {
+      r.status = MpcStatus::OK;
+      break;
+    }
+  }
+
+  // 4. Result: only the first command is sent; the whole prediction is kept for RViz and logs.
+  r.command = Command{u.front().v, u.front().w};
+  r.cost = J;
+  r.predicted = rollout(u, params_);
+
+  // 5. A predicted pose inside an obstacle: no valid command (ADR 0004, the node publishes zero).
+  for (const Pose2D &x : r.predicted) {
+    for (const Point2D &o : problem.obstacles) {
+      if (std::hypot(x.x - o.x, x.y - o.y) < params_.robot_radius) {
+        r.status = MpcStatus::INFEASIBLE;
+        r.command.reset();
+      }
+    }
+  }
+
+  // 6. Warm start for the next cycle (50 ms later): drop u_0, repeat the last control.
+  warm_.assign(u.begin() + 1, u.end());
+  warm_.push_back(u.back());
+
+  // 7. Wall time of the call.
+  r.solve_time = elapsed();
   return r;
 }
 
