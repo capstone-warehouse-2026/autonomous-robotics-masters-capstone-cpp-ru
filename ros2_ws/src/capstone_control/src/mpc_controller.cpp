@@ -56,18 +56,40 @@ void MpcController::reset() {
   last_ = MpcResult{};
 }
 
+
 LocalProblem MpcController::make_problem(const ControlInput &input, const MpcParams &p) {
-  // TODO: the robot-frame view of the input (input.path is non-null and already updated with input.pose).
-  //   - velocity and obstacles: copied (obstacles are already in base_link);
-  //   - goal_yaw = normalize_angle(goal().yaw - pose.yaw);
-  //   - single-pose path (total_length() ~ 0): path = {(0, 0), goal in the robot frame}, ends at goal;
-  //   - otherwise cut = min(lookahead, remaining_length()); path_ends_at_goal = remaining_length() <= lookahead;
-  //     points point_ahead(0), point_ahead(path_step), ... up to point_ahead(cut) (add the end point if the
-  //     last step does not land on it, and always keep >= 2 points), each through to_robot_frame(pose, ...).
-  (void)input;
-  (void)p;
-  return {};
+  const PathTracker &path = *input.path;
+  const Pose2D &pose = input.pose;
+  LocalProblem lp;
+  lp.velocity = input.velocity;
+  lp.obstacles = input.obstacles;  // already in base_link
+  lp.goal_yaw = normalize_angle(path.goal().yaw - pose.yaw);
+
+  // Single-pose path: a straight segment from the robot to the goal.
+  if (path.total_length() < 1e-9) {
+    lp.path = {Point2D{0.0, 0.0}, to_robot_frame(pose, path.goal().x, path.goal().y)};
+    lp.path_ends_at_goal = true;
+    return lp;
+  }
+
+  const double remaining = path.remaining_length();
+  const double cut = std::min(p.lookahead, remaining);
+  lp.path_ends_at_goal = remaining <= p.lookahead;
+
+  // Integer step count: summing 0.1 thirty times does not give exactly 3.0.
+  const int steps = static_cast<int>(std::floor(cut / p.path_step + 1e-9));
+  for (int i = 0; i <= steps; ++i) {
+    const Pose2D q = path.point_ahead(i * p.path_step);
+    lp.path.push_back(to_robot_frame(pose, q.x, q.y));
+  }
+  // The end point if the last step fell short of it, and always at least two points.
+  if (steps * p.path_step < cut - 1e-9 || lp.path.size() < 2) {
+    const Pose2D q = path.point_ahead(cut);
+    lp.path.push_back(to_robot_frame(pose, q.x, q.y));
+  }
+  return lp;
 }
+
 
 std::vector<Pose2D> MpcController::rollout(const std::vector<MpcControl> &u, const MpcParams &p) {
   // TODO: start at (0, 0, 0); for every control return the pose AFTER applying it for dt (u.size() poses).
@@ -206,12 +228,15 @@ void MpcController::project(std::vector<MpcControl> &u, const Command &measured,
 
 std::optional<Command> MpcController::compute(const ControlInput &input) {
   // TODO: no path (input.path null or empty) -> clear last_ and return std::nullopt;
-  // otherwise last_ = solve(make_problem(input, params_)) and return last_.command.
-  (void)input;
-  return std::nullopt;
+  if (input.path == nullptr || input.path->empty()) {
+    last_ = MpcResult{};
+    return std::nullopt;
+  }
+  last_ = solve(make_problem(input, params_));
+  return last_.command;
 }
 
-  namespace {
+namespace {
 
   // Every number the solver reads from the problem is finite (NaN/Inf would poison the cost).
   bool problem_is_finite(const LocalProblem &problem) {
