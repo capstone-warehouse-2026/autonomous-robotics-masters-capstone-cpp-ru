@@ -13,25 +13,47 @@ namespace capstone_control {
 // normalize_angle(), to_robot_frame(), Pose2D (yaw), Point2D, Command.
 
 std::string to_string(MpcStatus s) {
-  // TODO: names equal to the enumerators ("OK", "MAX_ITER", ...); no default case, return "UNKNOWN" after
-  // the switch (same pattern as capstone_safety::to_string).
-  (void)s;
-  return "TODO";
+  switch (s) {
+    case MpcStatus::OK: return "OK";
+    case MpcStatus::MAX_ITER: return "MAX_ITER";
+    case MpcStatus::TIMEOUT: return "TIMEOUT";
+    case MpcStatus::INFEASIBLE: return "INFEASIBLE";
+    case MpcStatus::INVALID_INPUT: return "INVALID_INPUT";
+  }
+  return "UNKNOWN";
 }
 
 MpcController::MpcController(const MpcParams &params) : params_(params) {
-  // TODO: throw std::invalid_argument when
-  //   - any double parameter is not finite;
-  //   - horizon < 1, dt <= 0;
-  //   - not 0 <= v_min < v_max; w_max, accel_max, decel_max, yaw_accel_max <= 0;
-  //   - not 0 < v_ref <= v_max;
-  //   - not 0 < robot_radius <= d_safe; lookahead <= 0, path_step <= 0, goal_zone < 0;
-  //   - any weight < 0;
-  //   - max_iterations < 0, max_solve_time < 0, fd_eps <= 0, tol < 0.
+  const MpcParams &p = params_;
+  const double all_doubles[] = {p.dt, p.v_min, p.v_max, p.w_max, p.accel_max, p.decel_max, p.yaw_accel_max, p.v_ref,
+    p.robot_radius, p.d_safe, p.lookahead, p.path_step, p.goal_zone, p.w_track, p.w_heading, p.w_goal_heading, p.w_speed,
+    p.w_turn, p.w_dv, p.w_dw, p.w_obs, p.max_solve_time, p.fd_eps, p.tol};
+  for (double x : all_doubles) {
+    if (!std::isfinite(x)) throw std::invalid_argument("MpcParams: non-finite parameter");
+  }
+  if (p.horizon < 1) throw std::invalid_argument("MpcParams: horizon parameter error");
+  if (p.dt <= 0) throw std::invalid_argument("MpcParams: time parameter error");
+  if (!(0 <= p.v_min && p.v_min < p.v_max)) throw std::invalid_argument("MpcParams: velocity parameter error");
+  if (p.w_max <= 0) throw std::invalid_argument("MpcParams: omega parameter error");
+  if (p.accel_max <= 0) throw std::invalid_argument("MpcParams: acceleration parameter error");
+  if (p.decel_max <= 0) throw std::invalid_argument("MpcParams: decel parameter error");
+  if (p.yaw_accel_max <= 0) throw std::invalid_argument("MpcParams: yaw_accel parameter error");
+  if (!(0 < p.v_ref && p.v_ref <= p.v_max)) throw std::invalid_argument("MpcParams: v_ref parameter error");
+  if (!(0 < p.robot_radius && p.robot_radius <= p.d_safe)) throw std::invalid_argument("MpcParams: robot_radius parameter error");
+  if (p.lookahead <= 0) throw std::invalid_argument("MpcParams: lookahead parameter error");
+  if (p.path_step <= 0) throw std::invalid_argument("MpcParams: path_step parameter error");
+  if (p.goal_zone < 0) throw std::invalid_argument("MpcParams: goal_zone parameter error");
+  if (p.w_dv < 0 || p.w_dw < 0 || p.w_goal_heading < 0 || p.w_heading < 0 ||  p.w_obs < 0 || p.w_speed < 0
+    || p.w_track < 0 || p.w_turn < 0) throw std::invalid_argument("MpcParams: weight parameter error");
+  if (p.max_iterations < 0) throw std::invalid_argument("MpcParams: max_iterations parameter error");
+  if (p.max_solve_time < 0) throw std::invalid_argument("MpcParams: max_solve_time parameter error");
+  if (p.fd_eps <= 0) throw std::invalid_argument("MpcParams: fd_eps parameter error");
+  if (p.tol < 0) throw std::invalid_argument("MpcParams: tol parameter error");
 }
 
 void MpcController::reset() {
-  // TODO: forget the warm start and the last result.
+  warm_.clear();
+  last_ = MpcResult{};
 }
 
 LocalProblem MpcController::make_problem(const ControlInput &input, const MpcParams &p) {
@@ -49,13 +71,23 @@ LocalProblem MpcController::make_problem(const ControlInput &input, const MpcPar
 
 std::vector<Pose2D> MpcController::rollout(const std::vector<MpcControl> &u, const MpcParams &p) {
   // TODO: start at (0, 0, 0); for every control return the pose AFTER applying it for dt (u.size() poses).
-  // Exact integration with constant v, w over dt, yaw1 = yaw + w * dt:
-  //   |w| < 1e-9:  x += v * dt * cos(yaw),                  y += v * dt * sin(yaw)
-  //   otherwise:   x += v / w * (sin(yaw1) - sin(yaw)),     y -= v / w * (cos(yaw1) - cos(yaw))
-  // Keep yaw normalized.
-  (void)u;
-  (void)p;
-  return {};
+  std::vector<Pose2D> poses;
+  poses.reserve(u.size());
+  Pose2D pose;
+  for (const MpcControl &c : u) {
+    const double yaw1 = pose.yaw + c.w * p.dt;
+    if (std::abs(c.w) <= 1e-9) {
+      pose.x += c.v * p.dt * std::cos(pose.yaw);
+      pose.y += c.v * p.dt * std::sin(pose.yaw);
+    }
+    else {
+      pose.x += (c.v/c.w)*(std::sin(yaw1) - std::sin(pose.yaw));
+      pose.y -= (c.v/c.w)*(std::cos(yaw1) - std::cos(pose.yaw));
+    }
+    pose.yaw = normalize_angle(yaw1);
+    poses.push_back(pose);
+  }
+  return poses;
 }
 
 PathProjection MpcController::project_on_path(const std::vector<Point2D> &path, double x, double y) {
