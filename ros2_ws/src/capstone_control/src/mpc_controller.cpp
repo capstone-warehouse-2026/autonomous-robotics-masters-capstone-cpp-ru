@@ -151,13 +151,29 @@ double MpcController::cost(const std::vector<MpcControl> &u, const LocalProblem 
 
 void MpcController::project(std::vector<MpcControl> &u, const Command &measured, const MpcParams &p) {
   // TODO: make u feasible in place, step by step, with (v_prev, w_prev) = measured for k = 0:
-  //   lo = max(v_min, v_prev - decel_max dt), hi = min(v_max, v_prev + accel_max dt)
-  //   if lo <= hi: v_k = clamp(v_k, lo, hi)
-  //   else (measured speed already outside the box): v_k = v_prev > v_max ? v_max : v_min
-  //   the same for w with yaw_accel_max and [-w_max, w_max]; then (v_prev, w_prev) = u_k.
-  (void)u;
-  (void)measured;
-  (void)p;
+  if (u.empty()) return;
+  const std::size_t n = u.size();
+  const double lo0 = std::max(p.v_min, measured.v - p.decel_max * p.dt);
+  const double hi0 = std::min(p.v_max, measured.v + p.accel_max * p.dt);
+  if (lo0 <= hi0) u[0].v = std::clamp(u[0].v, lo0, hi0);
+  else u[0].v = (measured.v > p.v_max) ? p.v_max : p.v_min;
+  for (std::size_t i = 1; i < n; ++i) {
+    double lo = std::max(p.v_min, u[i-1].v - p.decel_max * p.dt);
+    double hi = std::min(p.v_max, u[i-1].v + p.accel_max * p.dt);
+    if (lo <= hi) u[i].v = std::clamp(u[i].v, lo, hi);
+    else u[i].v = (u[i-1].v > p.v_max) ? p.v_max : p.v_min;
+  }
+
+  const double lo0w = std::max(-p.w_max, measured.w - p.yaw_accel_max * p.dt);
+  const double hi0w = std::min(p.w_max, measured.w + p.yaw_accel_max * p.dt);
+  if (lo0w <= hi0w) u[0].w = std::clamp(u[0].w, lo0w, hi0w);
+  else u[0].w = (measured.w > p.w_max) ? p.w_max : -p.w_max;
+  for (std::size_t i = 1; i < n; ++i) {
+    double lo = std::max(-p.w_max, u[i-1].w - p.yaw_accel_max * p.dt);
+    double hi = std::min(p.w_max, u[i-1].w + p.yaw_accel_max * p.dt);
+    if (lo <= hi) u[i].w = std::clamp(u[i].w, lo, hi);
+    else u[i].w = (u[i-1].w > p.w_max) ? p.w_max : -p.w_max;
+  }
 }
 
 std::optional<Command> MpcController::compute(const ControlInput &input) {
