@@ -92,19 +92,42 @@ std::vector<Pose2D> MpcController::rollout(const std::vector<MpcControl> &u, con
 
 PathProjection MpcController::project_on_path(const std::vector<Point2D> &path, double x, double y) {
   // TODO: nearest point of the polyline to (x, y).
-  //   For each segment i (path[i] -> path[i+1]) with non-zero length:
-  //     t = dot(q - a, b - a) / |b - a|^2 clamped to [0, 1], nearest point a + t (b - a), distance to it.
-  //   Keep the segment with the smallest distance and return
-  //     distance:  that smallest distance,
-  //     heading:   atan2 of that segment,
-  //     remaining: (1 - t) * |b - a| + lengths of all later segments.
-  //   No segment of non-zero length (the path collapsed to the goal): distance to the last point, heading 0,
-  //   remaining 0.
-  //   Hint: precompute the tail lengths from the end once, then one pass over the segments.
-  (void)path;
-  (void)x;
-  (void)y;
-  return {};
+  const std::size_t n = path.size();
+  if (!n) throw std::invalid_argument("empty path error");
+  std::vector<double> tail(n, 0.0);
+  for (std::size_t i = n-1; i-- > 0;) {
+    tail[i] = tail[i+1] + std::hypot(path[i+1].x - path[i].x, path[i+1].y - path[i].y);
+  }
+
+  PathProjection best;
+  double best_distance = std::numeric_limits<double>::infinity();
+  bool found = false;
+
+  for (std::size_t i = 0; i + 1 < n; ++i) {
+    const Point2D &a = path[i];
+    const Point2D &b = path[i+1];
+    const double dx = b.x - a.x;
+    const double dy = b.y - a.y;
+    const double len2 = dx * dx + dy * dy;
+    if (len2 < 1e-12) continue;
+    const double t = std::clamp(((x - a.x)*dx + (y - a.y)*dy) / len2, 0.0, 1.0);
+    const double px = a.x + t * dx;
+    const double py = a.y + t * dy;
+    const double d = std::hypot(px - x, py - y);
+    if (d < best_distance) {
+      best_distance = d;
+      best.distance = d;
+      best.heading = std::atan2(dy, dx);
+      best.remaining = (1-t) * std::sqrt(len2) + tail[i+1];
+      found = true;
+    }
+  }
+  if (!found) {
+    best.distance = std::hypot(x - path[n-1].x, y - path[n-1].y);
+    best.heading = 0;
+    best.remaining = 0;
+  }
+  return best;
 }
 
 double MpcController::cost(const std::vector<MpcControl> &u, const LocalProblem &problem, const MpcParams &p) {
