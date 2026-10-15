@@ -132,21 +132,49 @@ PathProjection MpcController::project_on_path(const std::vector<Point2D> &path, 
 
 double MpcController::cost(const std::vector<MpcControl> &u, const LocalProblem &problem, const MpcParams &p) {
   // TODO: J(u) from mpc_controller.hpp.
-  //   poses = rollout(u, p). For k = 0..N-1:
-  //     - pose before u_k: the origin for k = 0, otherwise poses[k-1]; its projection gives remaining_k;
-  //       vref_k = path_ends_at_goal ? min(v_ref, sqrt(2 decel_max remaining_k)) : v_ref
-  //     - speed and effort:  w_speed (v_k - vref_k)^2 + w_turn w_k^2
-  //     - smoothness:        w_dv (v_k - v_{k-1})^2 + w_dw (w_k - w_{k-1})^2, u_{-1} = problem.velocity
-  //     - pose after u_k = poses[k], its projection pr:
-  //         w_track pr.distance^2
-  //         + (path_ends_at_goal && pr.remaining < goal_zone ? w_goal_heading * err(yaw, goal_yaw)^2
-  //                                                          : w_heading * err(yaw, pr.heading)^2)
-  //       err = normalize_angle(difference)
-  //     - obstacles: for each obstacle at distance d < d_safe from poses[k]: w_obs (d_safe - d)^2
-  (void)u;
-  (void)problem;
-  (void)p;
-  return 0.0;
+  const std::vector<Pose2D> poses = rollout(u, p);
+  double J = 0.0;
+  double v_prev = problem.velocity.v;
+  double w_prev = problem.velocity.w;
+
+  for (std::size_t k = 0; k < u.size(); ++k) {
+    const Pose2D before = (k == 0) ? Pose2D{} : poses[k-1];
+    const Pose2D &after = poses[k];
+    // Слежение за путем
+    const PathProjection pr = project_on_path(problem.path, after.x, after.y);
+    J += p.w_track * pr.distance * pr.distance;
+    if (problem.path_ends_at_goal && pr.remaining < p.goal_zone) {
+      const double heading_err = normalize_angle(after.yaw - problem.goal_yaw);
+      J += p.w_goal_heading * heading_err * heading_err;
+    } else {
+      const double heading_err = normalize_angle(after.yaw - pr.heading);
+      J += p.w_heading * heading_err * heading_err;
+    }
+    // Препятствия
+    for (const Point2D &o : problem.obstacles) {
+      const double d = std::hypot(after.x - o.x, after.y - o.y);
+      if (d < p.d_safe) {
+        const double gap = p.d_safe - d;
+        J += p.w_obs * gap * gap;
+      }
+    }
+    // Скорость и поворот
+    double vref = p.v_ref;
+    if (problem.path_ends_at_goal) {
+      const double remaining = project_on_path(problem.path, before.x, before.y).remaining;
+      vref = std::min(p.v_ref, std::sqrt(2.0 * p.decel_max * remaining));
+    }
+    J += p.w_speed * (u[k].v - vref) * (u[k].v - vref);
+    J += p.w_turn * u[k].w * u[k].w;
+    //Плавность
+    J += p.w_dv * (u[k].v - v_prev) * (u[k].v - v_prev);
+    J += p.w_dw * (u[k].w - w_prev) * (u[k].w - w_prev);
+
+
+    v_prev = u[k].v;
+    w_prev = u[k].w;
+  }
+  return J;
 }
 
 void MpcController::project(std::vector<MpcControl> &u, const Command &measured, const MpcParams &p) {
