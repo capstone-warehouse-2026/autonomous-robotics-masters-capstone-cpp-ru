@@ -112,58 +112,68 @@ std::vector<Pose2D> MpcController::rollout(const std::vector<MpcControl> &u, con
   return poses;
 }
 
-PathProjection MpcController::project_on_path(const std::vector<Point2D> &path, double x, double y) {
-  // TODO: nearest point of the polyline to (x, y).
-  const std::size_t n = path.size();
-  if (!n) throw std::invalid_argument("empty path error");
-  std::vector<double> tail(n, 0.0);
-  for (std::size_t i = n-1; i-- > 0;) {
-    tail[i] = tail[i+1] + std::hypot(path[i+1].x - path[i].x, path[i+1].y - path[i].y);
+namespace {
+
+// Path length from every point to the end; computed once per cost() instead of once per projection.
+std::vector<double> tail_lengths(const std::vector<Point2D> &path) {
+  std::vector<double> tail(path.size(), 0.0);
+  for (std::size_t i = path.size() - 1; i-- > 0;) {
+    tail[i] = tail[i + 1] + std::hypot(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y);
   }
+  return tail;
+}
 
+PathProjection project_with_tail(const std::vector<Point2D> &path, const std::vector<double> &tail, double x,
+                                 double y) {
+  const std::size_t n = path.size();
   PathProjection best;
-  double best_distance = std::numeric_limits<double>::infinity();
+  best.distance = std::numeric_limits<double>::infinity();
   bool found = false;
-
   for (std::size_t i = 0; i + 1 < n; ++i) {
     const Point2D &a = path[i];
-    const Point2D &b = path[i+1];
+    const Point2D &b = path[i + 1];
     const double dx = b.x - a.x;
     const double dy = b.y - a.y;
     const double len2 = dx * dx + dy * dy;
     if (len2 < 1e-12) continue;
-    const double t = std::clamp(((x - a.x)*dx + (y - a.y)*dy) / len2, 0.0, 1.0);
-    const double px = a.x + t * dx;
-    const double py = a.y + t * dy;
-    const double d = std::hypot(px - x, py - y);
-    if (d < best_distance) {
-      best_distance = d;
-      best.distance = d;
+    const double t = std::clamp(((x - a.x) * dx + (y - a.y) * dy) / len2, 0.0, 1.0);
+    const double ex = a.x + t * dx - x;
+    const double ey = a.y + t * dy - y;
+    const double d2 = ex * ex + ey * ey;  
+    if (d2 < best.distance) {
+      best.distance = d2;
       best.heading = std::atan2(dy, dx);
-      best.remaining = (1-t) * std::sqrt(len2) + tail[i+1];
+      best.remaining = (1 - t) * std::sqrt(len2) + tail[i + 1];
       found = true;
     }
   }
   if (!found) {
-    best.distance = std::hypot(x - path[n-1].x, y - path[n-1].y);
-    best.heading = 0;
-    best.remaining = 0;
+    best.distance = std::hypot(x - path.back().x, y - path.back().y);
+    best.heading = 0.0;
+    best.remaining = 0.0;
+  } else {
+    best.distance = std::sqrt(best.distance);
   }
   return best;
 }
 
+}  // namespace
+
+PathProjection MpcController::project_on_path(const std::vector<Point2D> &path, double x, double y) {
+  if (path.empty()) throw std::invalid_argument("project_on_path: empty path");
+  return project_with_tail(path, tail_lengths(path), x, y);
+}
+
 double MpcController::cost(const std::vector<MpcControl> &u, const LocalProblem &problem, const MpcParams &p) {
-  // TODO: J(u) from mpc_controller.hpp.
   const std::vector<Pose2D> poses = rollout(u, p);
   double J = 0.0;
   double v_prev = problem.velocity.v;
   double w_prev = problem.velocity.w;
-
+  const std::vector<double> tail = tail_lengths(problem.path);
+  PathProjection pr_before = project_with_tail(problem.path, tail, 0.0, 0.0);  // the robot itself
   for (std::size_t k = 0; k < u.size(); ++k) {
-    const Pose2D before = (k == 0) ? Pose2D{} : poses[k-1];
     const Pose2D &after = poses[k];
-    // Слежение за путем
-    const PathProjection pr = project_on_path(problem.path, after.x, after.y);
+    const PathProjection pr = project_with_tail(problem.path, tail, after.x, after.y);
     J += p.w_track * pr.distance * pr.distance;
     if (problem.path_ends_at_goal && pr.remaining < p.goal_zone) {
       const double heading_err = normalize_angle(after.yaw - problem.goal_yaw);
@@ -172,7 +182,6 @@ double MpcController::cost(const std::vector<MpcControl> &u, const LocalProblem 
       const double heading_err = normalize_angle(after.yaw - pr.heading);
       J += p.w_heading * heading_err * heading_err;
     }
-    // Препятствия
     for (const Point2D &o : problem.obstacles) {
       const double d = std::hypot(after.x - o.x, after.y - o.y);
       if (d < p.d_safe) {
@@ -180,21 +189,18 @@ double MpcController::cost(const std::vector<MpcControl> &u, const LocalProblem 
         J += p.w_obs * gap * gap;
       }
     }
-    // Скорость и поворот
     double vref = p.v_ref;
     if (problem.path_ends_at_goal) {
-      const double remaining = project_on_path(problem.path, before.x, before.y).remaining;
+      const double remaining = pr_before.remaining;
       vref = std::min(p.v_ref, std::sqrt(2.0 * p.decel_max * remaining));
     }
     J += p.w_speed * (u[k].v - vref) * (u[k].v - vref);
     J += p.w_turn * u[k].w * u[k].w;
-    //Плавность
     J += p.w_dv * (u[k].v - v_prev) * (u[k].v - v_prev);
     J += p.w_dw * (u[k].w - w_prev) * (u[k].w - w_prev);
-
-
     v_prev = u[k].v;
     w_prev = u[k].w;
+    pr_before = pr;
   }
   return J;
 }
