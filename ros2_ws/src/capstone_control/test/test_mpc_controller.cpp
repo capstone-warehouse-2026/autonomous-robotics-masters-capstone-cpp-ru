@@ -8,6 +8,7 @@
 #include <limits>
 #include <stdexcept>
 #include <vector>
+#include <cstdio>
 
 #include <gtest/gtest.h>
 #include "capstone_control/checkers.hpp"
@@ -504,6 +505,77 @@ TEST(MpcClosedLoop, PassesObstacleNextToPath) {
   EXPECT_TRUE(r.reached);
   EXPECT_FALSE(r.collided);
   EXPECT_GT(r.min_clearance, 0.35);  // outside the safety monitor envelope
+}
+struct TimingStats {
+  std::vector<double> ms;  // solve_time of every cycle, milliseconds
+  int timeouts{0};
+  int cycles{0};
+};
+
+// Closed loop like run(), but with the default MpcParams and solve_time recorded every cycle.
+TimingStats time_closed_loop(const Path &path, Pose2D pose, double timeout,
+                             const std::vector<Point2D> &world_obstacles = {}) {
+  const double dt = 0.05;
+  MpcController controller;  // default parameters: the real time budget
+  CommandLimiter limiter;
+  GoalChecker goal_checker;
+  PathTracker tracker(path, 1.5);
+  Command last{}, measured{};
+  TimingStats s;
+  for (double t = 0.0; t < timeout; t += dt) {
+    tracker.update(pose);
+    if (goal_checker.reached(pose, tracker.goal(), measured)) break;
+    ControlInput in;
+    in.pose = pose;
+    in.velocity = measured;
+    in.path = &tracker;
+    in.dt = dt;
+    for (const auto &o : world_obstacles) in.obstacles.push_back(to_robot_frame(pose, o.x, o.y));
+    const auto desired = controller.compute(in);
+    const MpcResult &r = controller.last_result();
+    s.ms.push_back(r.solve_time * 1000.0);
+    if (r.status == MpcStatus::TIMEOUT) ++s.timeouts;
+    ++s.cycles;
+    last = limiter.limit(desired.value_or(Command{}), last, dt);
+    measured = last;
+    pose.x += measured.v * std::cos(pose.yaw) * dt;
+    pose.y += measured.v * std::sin(pose.yaw) * dt;
+    pose.yaw = normalize_angle(pose.yaw + measured.w * dt);
+  }
+  return s;
+}
+
+double percentile(std::vector<double> v, double q) {
+  std::sort(v.begin(), v.end());
+  const auto idx = static_cast<std::size_t>(std::ceil(q * static_cast<double>(v.size()))) - 1;
+  return v[std::min(idx, v.size() - 1)];
+}
+
+TEST(MpcTiming, MeetsTheDeadlineInClosedLoop) {
+  std::vector<Point2D> box;
+  for (double x = 1.8; x <= 2.4 + 1e-9; x += 0.05) box.push_back({x, 0.3});
+
+  struct Case {
+    const char *name;
+    TimingStats stats;
+  };
+  std::vector<Case> cases;
+  cases.push_back({"straight", time_closed_loop(straight_map(0.0, 4.0), {0.0, 0.0, 0.0}, 40.0)});
+  cases.push_back({"quarter circle", time_closed_loop(quarter_circle(2.0), {0.0, 0.0, 0.0}, 40.0)});
+  cases.push_back({"obstacle", time_closed_loop(straight_map(0.0, 4.0), {0.0, 0.0, 0.0}, 60.0, box)});
+
+  const double budget_ms = MpcParams{}.max_solve_time * 1000.0;
+  std::printf("MPC solve time, ms (budget %.0f ms)\n", budget_ms);
+  std::printf("  %-15s %7s %7s %7s %7s %7s %9s\n", "case", "cycles", "median", "p95", "p99", "max", "timeouts");
+  for (const Case &c : cases) {
+    ASSERT_FALSE(c.stats.ms.empty()) << c.name;
+    const double mx = *std::max_element(c.stats.ms.begin(), c.stats.ms.end());
+    std::printf("  %-15s %7d %7.2f %7.2f %7.2f %7.2f %9d\n", c.name, c.stats.cycles,
+                percentile(c.stats.ms, 0.50), percentile(c.stats.ms, 0.95), percentile(c.stats.ms, 0.99), mx,
+                c.stats.timeouts);
+    EXPECT_LT(mx, 50.0) << c.name << ": a solve took the whole 50 ms control period";
+    EXPECT_LE(c.stats.timeouts, c.stats.cycles / 20) << c.name << ": TIMEOUT in more than 5% of the cycles";
+  }
 }
 
 }  // namespace
