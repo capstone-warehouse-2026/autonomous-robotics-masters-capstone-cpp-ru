@@ -18,6 +18,13 @@ set_target_properties(${PROJECT_NAME}_algorithms PROPERTIES POSITION_INDEPENDENT
 target_include_directories(${PROJECT_NAME}_algorithms PUBLIC include)
 target_compile_options(${PROJECT_NAME}_algorithms PRIVATE -Wall -Wextra -Wpedantic)
 
+# Method A (MPC): the same Controller interface, no ROS (test_mpc_controller).
+add_library(${PROJECT_NAME}_mpc STATIC src/mpc_controller.cpp)
+set_target_properties(${PROJECT_NAME}_mpc PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_include_directories(${PROJECT_NAME}_mpc PUBLIC include)
+target_link_libraries(${PROJECT_NAME}_mpc ${PROJECT_NAME}_algorithms)
+target_compile_options(${PROJECT_NAME}_mpc PRIVATE -Wall -Wextra -Wpedantic)
+
 # Node code lives in a library so that the executable and the tests share it.
 add_library(${PROJECT_NAME}_core STATIC src/control_node.cpp)
 set_target_properties(${PROJECT_NAME}_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -35,6 +42,10 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   ament_add_gtest(test_control_node test/test_control_node.cpp)
   target_link_libraries(test_control_node ${PROJECT_NAME}_core)
+
+  # Closed-loop cases solve one MPC per period: a few seconds in Release, longer under sanitizers.
+  ament_add_gtest(test_mpc_controller test/test_mpc_controller.cpp TIMEOUT 120)
+  target_link_libraries(test_mpc_controller ${PROJECT_NAME}_mpc)
 
   # Pure C++ tests of the algorithms; no ROS context needed.
   ament_add_gtest(test_control_algorithms

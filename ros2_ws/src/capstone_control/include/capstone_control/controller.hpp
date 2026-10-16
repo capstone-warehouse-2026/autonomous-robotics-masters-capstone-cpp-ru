@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <vector>
 
 #include "capstone_control/geometry.hpp"
 #include "capstone_control/path_tracker.hpp"
@@ -15,7 +16,9 @@ struct ControlInput {
   Command velocity;          // measured velocity from odometry
   const PathTracker *path{nullptr};  // already updated with `pose`
   double dt{0.05};           // control period, s
-  // TODO(G4): local obstacle grid / scan ranges for MPC and PPO.
+  // Occupied cells of /perception/obstacles near the robot, already transformed into base_link
+  // (x forward, y left) by the node; not inflated (docs/INTERFACES.md). Empty if none are known.
+  std::vector<Point2D> obstacles;
 };
 
 /// Common interface of all local controllers. Selected by the `method` parameter.
