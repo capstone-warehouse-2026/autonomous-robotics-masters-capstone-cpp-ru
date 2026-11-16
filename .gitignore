@@ -10,6 +10,8 @@ __pycache__/
 *.onnx
 # The trained model of G2 method B is part of the package (ml/perception/release_model.py).
 !ros2_ws/src/capstone_perception/models/*.onnx
+# The trained policy of G4 method B (ml/control/export_onnx.py).
+!ros2_ws/src/capstone_control/models/*.onnx
 *.pt
 *.pth
 *.zip

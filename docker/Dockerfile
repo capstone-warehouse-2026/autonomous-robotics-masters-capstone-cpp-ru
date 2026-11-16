@@ -114,6 +114,11 @@ FROM python:3.12-slim AS train
 COPY ml/perception/requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
+# Offline training of the G4 learned controller (`make g4-train`): PPO on CPU, no ROS, no GPU.
+FROM python:3.12-slim AS train-control
+COPY ml/control/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && rm /tmp/requirements.txt
+
 # Submission/CI image: the same environment with the workspace built and tested inside.
 FROM dev AS autonomy
 WORKDIR /ws

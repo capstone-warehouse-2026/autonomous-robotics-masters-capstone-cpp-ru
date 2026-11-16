@@ -17,7 +17,7 @@ BUILD_ARGS := --symlink-install $(if $(PKG),--packages-up-to $(PKG)) \
 TEST_ARGS := $(if $(PKG),--packages-select $(PKG))
 TEST_RESULT_ARGS := $(if $(PKG),--test-result-base build/$(PKG))
 
-.PHONY: help setup doctor images build test shell smoke sim sim-gui rqt-graph rqt rviz g2-dataset g2-labels g2-dataset-splits g2-train g2-eval g2-model down clean dev-image dirs
+.PHONY: help setup doctor images build test shell smoke sim sim-gui rqt-graph rqt rviz g2-dataset g2-labels g2-dataset-splits g2-train g2-eval g2-model g4-ml-test g4-train g4-eval g4-model down clean dev-image dirs
 
 help: ## Показать эту справку
 	@echo "Команды проекта (PKG=имя_пакета ограничивает build/test одним пакетом):"
@@ -123,6 +123,30 @@ g2-dataset-splits: ## G2: записать и разметить все план
 
 down: ## Остановить все контейнеры проекта
 	$(COMPOSE) --profile dev --profile gui down --remove-orphans
+
+# G4, method B: PPO training of the local controller (ml/control/README.md).
+# git is not in the training image: the commit for manifest.json comes from the host, as for g2-dataset.
+G4_RUN = $(COMPOSE) --profile train run --rm \
+	-e GIT_COMMIT="$$(git rev-parse HEAD)" -e GIT_DIRTY="$$(test -z "$$(git status --porcelain)" && echo false || echo true)" \
+	train-control
+G4_SEEDS ?= 0 1 2
+
+g4-ml-test: dirs ## G4: pytest среды и контракта наблюдения PPO (ml/control)
+	$(COMPOSE) --profile train build train-control
+	$(G4_RUN) python3 -m pytest -q
+
+g4-train: dirs ## G4: обучить PPO на сидах G4_SEEDS="0 1 2" (TRAIN_ARGS=--no-randomization для ablation)
+	$(COMPOSE) --profile train build train-control
+	@for s in $(G4_SEEDS); do $(G4_RUN) python3 train.py --seed $$s $(TRAIN_ARGS) || exit 1; done
+
+g4-eval: dirs ## G4: оценить обученные политики на test/ood (EVAL_ARGS=--split ood ...)
+	$(COMPOSE) --profile train build train-control
+	$(G4_RUN) bash -c 'python3 evaluate.py ../../data/g4/models/*/best_model.zip $(EVAL_ARGS)'
+
+g4-model: dirs ## G4: положить выбранную по val политику в capstone_control (CHECKPOINT=data/g4/models/seed_N/best_model.zip)
+	@test -n "$(CHECKPOINT)" || { echo "укажите CHECKPOINT=data/g4/models/seed_N/best_model.zip"; exit 1; }
+	$(COMPOSE) --profile train build train-control
+	$(G4_RUN) python3 export_onnx.py /workspace/$(CHECKPOINT)
 
 clean: ## Удалить результаты сборки (ros2_ws/build, install, log)
 	rm -rf ros2_ws/build ros2_ws/install ros2_ws/log

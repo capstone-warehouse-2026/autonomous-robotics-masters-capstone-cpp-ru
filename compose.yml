@@ -59,3 +59,20 @@ services:
     # PyTorch DataLoader workers exchange batches through shared memory.
     shm_size: 2gb
     init: true
+  # Offline training of the G4 learned controller (`make g4-train`), CPU only.
+  train-control:
+    image: capstone-train-control:local
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: train-control
+    profiles: ["train"]
+    environment:
+      HOME: /workspace/.cache/home
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    volumes:
+      - .:/workspace
+    working_dir: /workspace/ml/control
+    # SubprocVecEnv workers exchange observations through shared memory.
+    shm_size: 1gb
+    init: true
