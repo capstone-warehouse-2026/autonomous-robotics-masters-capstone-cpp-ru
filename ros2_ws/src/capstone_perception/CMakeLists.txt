@@ -37,7 +37,10 @@ target_compile_options(${PROJECT_NAME}_core PRIVATE -Wall -Wextra -Wpedantic)
 add_executable(perception_node src/main.cpp)
 target_link_libraries(perception_node ${PROJECT_NAME}_core)
 target_compile_options(perception_node PRIVATE -Wall -Wextra -Wpedantic)
-install(TARGETS perception_node DESTINATION lib/${PROJECT_NAME})
+add_executable(grid_replay src/grid_replay.cpp)
+target_link_libraries(grid_replay ${PROJECT_NAME}_core opencv_core)
+target_compile_options(grid_replay PRIVATE -Wall -Wextra -Wpedantic)
+install(TARGETS perception_node grid_replay DESTINATION lib/${PROJECT_NAME})
 # models/perception_cnn.onnx: the trained model of method B, the default of learned.model_path.
 install(DIRECTORY launch config models DESTINATION share/${PROJECT_NAME})
 

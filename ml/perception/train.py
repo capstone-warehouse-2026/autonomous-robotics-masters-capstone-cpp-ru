@@ -66,10 +66,11 @@ def augment(rgb, depth, labels, rng):
 
 
 class Frames(Dataset):
-    def __init__(self, paths, train, seed):
+    def __init__(self, paths, train, seed, without_rgb=False):
         self.paths = paths
         self.train = train
         self.seed = seed
+        self.without_rgb = without_rgb
         self.epoch = 0
 
     def __len__(self):
@@ -83,6 +84,8 @@ class Frames(Dataset):
         if self.train:
             rng = np.random.default_rng([self.seed, self.epoch, index])
             rgb, depth, labels = augment(rgb, depth, labels, rng)
+        if self.without_rgb:
+            rgb = np.zeros_like(rgb)
         return torch.from_numpy(network_input(rgb, depth)), torch.from_numpy(network_target(labels))
 
 
@@ -160,7 +163,10 @@ def main():
     parser.add_argument('--obstacle-weight', type=float, default=2.0, help='loss weight of the obstacle class')
     parser.add_argument('--workers', type=int, default=4)
     parser.add_argument('--seed', type=int, default=0, help='training seed')
+    parser.add_argument('--without-rgb', action='store_true', help='zero RGB channels for train and validation')
     args = parser.parse_args()
+    if args.without_rgb and parser.get_default('out') == args.out:
+        parser.error('--without-rgb requires a separate --out directory')
 
     splits = load_splits()
     train_layouts = args.train_layouts or list(splits['train'])
@@ -171,8 +177,8 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     os.makedirs(args.out, exist_ok=True)
 
-    train_set = Frames(frame_paths(args.data_root, train_layouts), train=True, seed=args.seed)
-    val_set = Frames(frame_paths(args.data_root, val_layouts), train=False, seed=args.seed)
+    train_set = Frames(frame_paths(args.data_root, train_layouts), train=True, seed=args.seed, without_rgb=args.without_rgb)
+    val_set = Frames(frame_paths(args.data_root, val_layouts), train=False, seed=args.seed, without_rgb=args.without_rgb)
     loader = dict(batch_size=args.batch_size, num_workers=args.workers, pin_memory=device.type == 'cuda')
     train_loader = DataLoader(train_set, shuffle=True, drop_last=len(train_set) > args.batch_size,
                               generator=torch.Generator().manual_seed(args.seed), **loader)

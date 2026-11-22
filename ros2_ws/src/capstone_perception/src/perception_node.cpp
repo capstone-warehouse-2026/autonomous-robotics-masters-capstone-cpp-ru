@@ -63,6 +63,16 @@ void PerceptionNode::on_frame(const Image::ConstSharedPtr &rgb, const Image::Con
                               const CameraInfo::ConstSharedPtr &info) {
   const auto started = std::chrono::steady_clock::now();
   const rclcpp::Time stamp(depth->header.stamp, RCL_ROS_TIME);
+  const auto age = (now() - stamp).seconds();
+  if (stamp.nanoseconds() == 0 || age < 0.0 || age > max_input_age_) {
+    fail("invalid or stale RGB-D timestamp");
+    return;
+  }
+  if (depth->header.frame_id.empty() || rgb->header.frame_id != depth->header.frame_id ||
+      info->header.frame_id != depth->header.frame_id) {
+    fail("RGB-D optical frames do not match");
+    return;
+  }
   if (depth->encoding != sensor_msgs::image_encodings::TYPE_32FC1) {
     fail("/sensors/depth must be 32FC1, got " + depth->encoding);
     return;
@@ -184,6 +194,8 @@ void PerceptionNode::publish_diagnostics() {
                    value("frames", std::to_string(frames_)),
                    value("fallbacks", std::to_string(fallbacks_)),
                    value("dropped_frames", std::to_string(failures_)),
+                   value("grid_age_s", last_frame_stamp_ ? std::to_string((now() - *last_frame_stamp_).seconds())
+                                                          : "unavailable"),
                    value("processing_ms", std::to_string(last_processing_ms_)),
                    value("last_error", last_error_)};
   diagnostic_msgs::msg::DiagnosticArray array;
