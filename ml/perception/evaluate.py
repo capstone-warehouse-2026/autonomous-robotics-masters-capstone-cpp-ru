@@ -14,11 +14,10 @@ import json
 import os
 
 import numpy as np
-import onnxruntime
 
 from generate_layout import load_splits
 from preprocess import CLASSES, network_input, network_target
-from train import CLASS_NAMES
+CLASS_NAMES = ('free', 'obstacle', 'unknown')
 
 CONDITIONS = ('clean', 'low_light', 'depth_noise', 'depth_holes')
 
@@ -51,6 +50,8 @@ def metrics(matrix):
 
 
 def main():
+    import onnxruntime
+
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--model', default='../../data/g2/models/latest')
     parser.add_argument('--data-root', default='../../data/g2')
