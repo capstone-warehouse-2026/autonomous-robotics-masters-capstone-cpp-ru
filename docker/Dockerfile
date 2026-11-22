@@ -22,10 +22,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # ONNX Runtime for method B of G2 (CnnClassifier); not packaged in Ubuntu 24.04 and not a rosdep key.
 # The version matches onnxruntime in ml/perception/requirements.txt, which exports and checks the model.
 # The exported CMake target expects include/onnxruntime and lib64, the archive has include/ and lib/: symlinks.
-ARG ONNXRUNTIME_VERSION=1.31.0
-ARG ONNXRUNTIME_SHA256=cc5c72baf5ae5c8238a6841f0897227be2d02826b9cf98eaf02fdefaeeb03a57
-RUN curl -fsSL "https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_VERSION}/onnxruntime-linux-x64-${ONNXRUNTIME_VERSION}.tgz" -o /tmp/onnxruntime.tgz \
-    && echo "${ONNXRUNTIME_SHA256}  /tmp/onnxruntime.tgz" | sha256sum -c - \
+# The GitHub release is unavailable. Use the checked local archive (see docker/vendor/README.md).
+COPY docker/vendor/onnxruntime-linux-x64-1.31.0.tar.gz /tmp/onnxruntime.tgz
+RUN echo "2bd39b28a2708bb7e37f5cc83ecd7089dcb0a90f9a030c9fa0ece0fe8be26ea1  /tmp/onnxruntime.tgz" | sha256sum -c - \
     && mkdir -p /opt/onnxruntime \
     && tar -xzf /tmp/onnxruntime.tgz -C /opt/onnxruntime --strip-components=1 \
     && rm /tmp/onnxruntime.tgz \
