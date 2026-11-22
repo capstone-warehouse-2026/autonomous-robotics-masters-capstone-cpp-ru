@@ -1,0 +1,363 @@
+#include "capstone_control/mpc_controller.hpp"
+
+#include <algorithm>
+#include <chrono>
+#include <cmath>
+#include <limits>
+#include <stdexcept>
+
+namespace capstone_control {
+
+// TODO(G4): the whole file is a template. Each function lists what it must do; the formulation is in
+// mpc_controller.hpp and the expected behaviour in test/test_mpc_controller.cpp. Reuse geometry.hpp:
+// normalize_angle(), to_robot_frame(), Pose2D (yaw), Point2D, Command.
+
+std::string to_string(MpcStatus s) {
+  switch (s) {
+    case MpcStatus::OK: return "OK";
+    case MpcStatus::MAX_ITER: return "MAX_ITER";
+    case MpcStatus::TIMEOUT: return "TIMEOUT";
+    case MpcStatus::INFEASIBLE: return "INFEASIBLE";
+    case MpcStatus::INVALID_INPUT: return "INVALID_INPUT";
+  }
+  return "UNKNOWN";
+}
+
+MpcController::MpcController(const MpcParams &params) : params_(params) {
+  const MpcParams &p = params_;
+  const double all_doubles[] = {p.dt, p.v_min, p.v_max, p.w_max, p.accel_max, p.decel_max, p.yaw_accel_max, p.v_ref,
+    p.robot_radius, p.d_safe, p.lookahead, p.path_step, p.goal_zone, p.w_track, p.w_heading, p.w_goal_heading, p.w_speed,
+    p.w_turn, p.w_dv, p.w_dw, p.w_obs, p.max_solve_time, p.fd_eps, p.tol};
+  for (double x : all_doubles) {
+    if (!std::isfinite(x)) throw std::invalid_argument("MpcParams: non-finite parameter");
+  }
+  if (p.horizon < 1) throw std::invalid_argument("MpcParams: horizon parameter error");
+  if (p.dt <= 0) throw std::invalid_argument("MpcParams: time parameter error");
+  if (!(0 <= p.v_min && p.v_min < p.v_max)) throw std::invalid_argument("MpcParams: velocity parameter error");
+  if (p.w_max <= 0) throw std::invalid_argument("MpcParams: omega parameter error");
+  if (p.accel_max <= 0) throw std::invalid_argument("MpcParams: acceleration parameter error");
+  if (p.decel_max <= 0) throw std::invalid_argument("MpcParams: decel parameter error");
+  if (p.yaw_accel_max <= 0) throw std::invalid_argument("MpcParams: yaw_accel parameter error");
+  if (!(0 < p.v_ref && p.v_ref <= p.v_max)) throw std::invalid_argument("MpcParams: v_ref parameter error");
+  if (!(0 < p.robot_radius && p.robot_radius <= p.d_safe)) throw std::invalid_argument("MpcParams: robot_radius parameter error");
+  if (p.lookahead <= 0) throw std::invalid_argument("MpcParams: lookahead parameter error");
+  if (p.path_step <= 0) throw std::invalid_argument("MpcParams: path_step parameter error");
+  if (p.goal_zone < 0) throw std::invalid_argument("MpcParams: goal_zone parameter error");
+  if (p.w_dv < 0 || p.w_dw < 0 || p.w_goal_heading < 0 || p.w_heading < 0 ||  p.w_obs < 0 || p.w_speed < 0
+    || p.w_track < 0 || p.w_turn < 0) throw std::invalid_argument("MpcParams: weight parameter error");
+  if (p.max_iterations < 0) throw std::invalid_argument("MpcParams: max_iterations parameter error");
+  if (p.max_solve_time < 0) throw std::invalid_argument("MpcParams: max_solve_time parameter error");
+  if (p.fd_eps <= 0) throw std::invalid_argument("MpcParams: fd_eps parameter error");
+  if (p.tol < 0) throw std::invalid_argument("MpcParams: tol parameter error");
+}
+
+void MpcController::reset() {
+  warm_.clear();
+  last_ = MpcResult{};
+}
+
+
+LocalProblem MpcController::make_problem(const ControlInput &input, const MpcParams &p) {
+  const PathTracker &path = *input.path;
+  const Pose2D &pose = input.pose;
+  LocalProblem lp;
+  lp.velocity = input.velocity;
+  lp.obstacles = input.obstacles;  // already in base_link
+  lp.goal_yaw = normalize_angle(path.goal().yaw - pose.yaw);
+
+  // Single-pose path: a straight segment from the robot to the goal.
+  if (path.total_length() < 1e-9) {
+    lp.path = {Point2D{0.0, 0.0}, to_robot_frame(pose, path.goal().x, path.goal().y)};
+    lp.path_ends_at_goal = true;
+    return lp;
+  }
+
+  const double remaining = path.remaining_length();
+  const double cut = std::min(p.lookahead, remaining);
+  lp.path_ends_at_goal = remaining <= p.lookahead;
+
+  // Integer step count: summing 0.1 thirty times does not give exactly 3.0.
+  const int steps = static_cast<int>(std::floor(cut / p.path_step + 1e-9));
+  for (int i = 0; i <= steps; ++i) {
+    const Pose2D q = path.point_ahead(i * p.path_step);
+    lp.path.push_back(to_robot_frame(pose, q.x, q.y));
+  }
+  // The end point if the last step fell short of it, and always at least two points.
+  if (steps * p.path_step < cut - 1e-9 || lp.path.size() < 2) {
+    const Pose2D q = path.point_ahead(cut);
+    lp.path.push_back(to_robot_frame(pose, q.x, q.y));
+  }
+  return lp;
+}
+
+
+std::vector<Pose2D> MpcController::rollout(const std::vector<MpcControl> &u, const MpcParams &p) {
+  // TODO: start at (0, 0, 0); for every control return the pose AFTER applying it for dt (u.size() poses).
+  std::vector<Pose2D> poses;
+  poses.reserve(u.size());
+  Pose2D pose;
+  for (const MpcControl &c : u) {
+    const double yaw1 = pose.yaw + c.w * p.dt;
+    if (std::abs(c.w) <= 1e-9) {
+      pose.x += c.v * p.dt * std::cos(pose.yaw);
+      pose.y += c.v * p.dt * std::sin(pose.yaw);
+    }
+    else {
+      pose.x += (c.v/c.w)*(std::sin(yaw1) - std::sin(pose.yaw));
+      pose.y -= (c.v/c.w)*(std::cos(yaw1) - std::cos(pose.yaw));
+    }
+    pose.yaw = normalize_angle(yaw1);
+    poses.push_back(pose);
+  }
+  return poses;
+}
+
+namespace {
+
+// Path length from every point to the end; computed once per cost() instead of once per projection.
+std::vector<double> tail_lengths(const std::vector<Point2D> &path) {
+  std::vector<double> tail(path.size(), 0.0);
+  for (std::size_t i = path.size() - 1; i-- > 0;) {
+    tail[i] = tail[i + 1] + std::hypot(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y);
+  }
+  return tail;
+}
+
+PathProjection project_with_tail(const std::vector<Point2D> &path, const std::vector<double> &tail, double x,
+                                 double y) {
+  const std::size_t n = path.size();
+  PathProjection best;
+  best.distance = std::numeric_limits<double>::infinity();
+  bool found = false;
+  for (std::size_t i = 0; i + 1 < n; ++i) {
+    const Point2D &a = path[i];
+    const Point2D &b = path[i + 1];
+    const double dx = b.x - a.x;
+    const double dy = b.y - a.y;
+    const double len2 = dx * dx + dy * dy;
+    if (len2 < 1e-12) continue;
+    const double t = std::clamp(((x - a.x) * dx + (y - a.y) * dy) / len2, 0.0, 1.0);
+    const double ex = a.x + t * dx - x;
+    const double ey = a.y + t * dy - y;
+    const double d2 = ex * ex + ey * ey;  
+    if (d2 < best.distance) {
+      best.distance = d2;
+      best.heading = std::atan2(dy, dx);
+      best.remaining = (1 - t) * std::sqrt(len2) + tail[i + 1];
+      found = true;
+    }
+  }
+  if (!found) {
+    best.distance = std::hypot(x - path.back().x, y - path.back().y);
+    best.heading = 0.0;
+    best.remaining = 0.0;
+  } else {
+    best.distance = std::sqrt(best.distance);
+  }
+  return best;
+}
+
+}  // namespace
+
+PathProjection MpcController::project_on_path(const std::vector<Point2D> &path, double x, double y) {
+  if (path.empty()) throw std::invalid_argument("project_on_path: empty path");
+  return project_with_tail(path, tail_lengths(path), x, y);
+}
+
+double MpcController::cost(const std::vector<MpcControl> &u, const LocalProblem &problem, const MpcParams &p) {
+  const std::vector<Pose2D> poses = rollout(u, p);
+  double J = 0.0;
+  double v_prev = problem.velocity.v;
+  double w_prev = problem.velocity.w;
+  const std::vector<double> tail = tail_lengths(problem.path);
+  PathProjection pr_before = project_with_tail(problem.path, tail, 0.0, 0.0);  // the robot itself
+  for (std::size_t k = 0; k < u.size(); ++k) {
+    const Pose2D &after = poses[k];
+    const PathProjection pr = project_with_tail(problem.path, tail, after.x, after.y);
+    J += p.w_track * pr.distance * pr.distance;
+    if (problem.path_ends_at_goal && pr.remaining < p.goal_zone) {
+      const double heading_err = normalize_angle(after.yaw - problem.goal_yaw);
+      J += p.w_goal_heading * heading_err * heading_err;
+    } else {
+      const double heading_err = normalize_angle(after.yaw - pr.heading);
+      J += p.w_heading * heading_err * heading_err;
+    }
+    for (const Point2D &o : problem.obstacles) {
+      const double d = std::hypot(after.x - o.x, after.y - o.y);
+      if (d < p.d_safe) {
+        const double gap = p.d_safe - d;
+        J += p.w_obs * gap * gap;
+      }
+    }
+    double vref = p.v_ref;
+    if (problem.path_ends_at_goal) {
+      const double remaining = pr_before.remaining;
+      vref = std::min(p.v_ref, std::sqrt(2.0 * p.decel_max * remaining));
+    }
+    J += p.w_speed * (u[k].v - vref) * (u[k].v - vref);
+    J += p.w_turn * u[k].w * u[k].w;
+    J += p.w_dv * (u[k].v - v_prev) * (u[k].v - v_prev);
+    J += p.w_dw * (u[k].w - w_prev) * (u[k].w - w_prev);
+    v_prev = u[k].v;
+    w_prev = u[k].w;
+    pr_before = pr;
+  }
+  return J;
+}
+
+void MpcController::project(std::vector<MpcControl> &u, const Command &measured, const MpcParams &p) {
+  // TODO: make u feasible in place, step by step, with (v_prev, w_prev) = measured for k = 0:
+  if (u.empty()) return;
+  const std::size_t n = u.size();
+  const double lo0 = std::max(p.v_min, measured.v - p.decel_max * p.dt);
+  const double hi0 = std::min(p.v_max, measured.v + p.accel_max * p.dt);
+  if (lo0 <= hi0) u[0].v = std::clamp(u[0].v, lo0, hi0);
+  else u[0].v = (measured.v > p.v_max) ? p.v_max : p.v_min;
+  for (std::size_t i = 1; i < n; ++i) {
+    double lo = std::max(p.v_min, u[i-1].v - p.decel_max * p.dt);
+    double hi = std::min(p.v_max, u[i-1].v + p.accel_max * p.dt);
+    if (lo <= hi) u[i].v = std::clamp(u[i].v, lo, hi);
+    else u[i].v = (u[i-1].v > p.v_max) ? p.v_max : p.v_min;
+  }
+
+  const double lo0w = std::max(-p.w_max, measured.w - p.yaw_accel_max * p.dt);
+  const double hi0w = std::min(p.w_max, measured.w + p.yaw_accel_max * p.dt);
+  if (lo0w <= hi0w) u[0].w = std::clamp(u[0].w, lo0w, hi0w);
+  else u[0].w = (measured.w > p.w_max) ? p.w_max : -p.w_max;
+  for (std::size_t i = 1; i < n; ++i) {
+    double lo = std::max(-p.w_max, u[i-1].w - p.yaw_accel_max * p.dt);
+    double hi = std::min(p.w_max, u[i-1].w + p.yaw_accel_max * p.dt);
+    if (lo <= hi) u[i].w = std::clamp(u[i].w, lo, hi);
+    else u[i].w = (u[i-1].w > p.w_max) ? p.w_max : -p.w_max;
+  }
+}
+
+std::optional<Command> MpcController::compute(const ControlInput &input) {
+  // TODO: no path (input.path null or empty) -> clear last_ and return std::nullopt;
+  if (input.path == nullptr || input.path->empty()) {
+    last_ = MpcResult{};
+    return std::nullopt;
+  }
+  last_ = solve(make_problem(input, params_));
+  return last_.command;
+}
+
+namespace {
+
+  // Every number the solver reads from the problem is finite (NaN/Inf would poison the cost).
+  bool problem_is_finite(const LocalProblem &problem) {
+    for (const Point2D &q : problem.path) {
+      if (!std::isfinite(q.x) || !std::isfinite(q.y)) return false;
+    }
+    for (const Point2D &o : problem.obstacles) {
+      if (!std::isfinite(o.x) || !std::isfinite(o.y)) return false;
+    }
+    return std::isfinite(problem.velocity.v) && std::isfinite(problem.velocity.w) &&
+           std::isfinite(problem.goal_yaw);
+  }
+
+  // The plan as one vector of 2N variables: index 2k is v_k, index 2k + 1 is w_k.
+  double &variable(std::vector<MpcControl> &u, std::size_t i) { return i % 2 == 0 ? u[i / 2].v : u[i / 2].w; }
+
+}  // namespace
+
+MpcResult MpcController::solve(const LocalProblem &problem) {
+  using Clock = std::chrono::steady_clock;
+  const Clock::time_point start = Clock::now();
+  const auto elapsed = [&start] { return std::chrono::duration<double>(Clock::now() - start).count(); };
+  MpcResult r;
+
+  // 1. Validity: no command and no warm start from a broken input.
+  if (problem.path.size() < 2 || !problem_is_finite(problem)) {
+    r.status = MpcStatus::INVALID_INPUT;
+    warm_.clear();
+    r.solve_time = elapsed();
+    return r;
+  }
+
+  // 2. Initial guess: the previous solution shifted by one step, or cruising straight ahead.
+  const std::size_t n = static_cast<std::size_t>(params_.horizon);
+  std::vector<MpcControl> u =
+      warm_.size() == n ? warm_ : std::vector<MpcControl>(n, MpcControl{params_.v_ref, 0.0});
+  project(u, problem.velocity, params_);
+  double J = cost(u, problem, params_);
+
+  // 3. Projected gradient descent with backtracking line search.
+  const std::size_t num_vars = 2 * n;
+  std::vector<double> grad(num_vars, 0.0);
+  std::vector<MpcControl> probe;
+  std::vector<MpcControl> candidate;
+  double step = 0.05;
+  r.status = MpcStatus::MAX_ITER;  // unless the loop ends earlier for another reason
+  while (r.iterations < params_.max_iterations) {
+    if (elapsed() >= params_.max_solve_time) {
+      r.status = MpcStatus::TIMEOUT;
+      break;
+    }
+
+    // Gradient by forward differences: nudge one variable, see how the cost changes.
+    probe = u;
+    for (std::size_t i = 0; i < num_vars; ++i) {
+      double &x = variable(probe, i);
+      const double x0 = x;
+      x = x0 + params_.fd_eps;
+      grad[i] = (cost(probe, problem, params_) - J) / params_.fd_eps;
+      x = x0;
+    }
+
+    // Line search: step against the gradient, back onto the feasible set, halve the step until the cost drops.
+    bool decreased = false;
+    double J_new = J;
+    for (int halving = 0; halving < 20; ++halving) {
+      candidate = u;
+      for (std::size_t i = 0; i < num_vars; ++i) variable(candidate, i) -= step * grad[i];
+      project(candidate, problem.velocity, params_);
+      J_new = cost(candidate, problem, params_);
+      if (J_new < J) {
+        decreased = true;
+        break;
+      }
+      step *= 0.5;
+    }
+    ++r.iterations;
+
+    if (!decreased) {  // no direction lowers the cost: a (local) minimum
+      r.status = MpcStatus::OK;
+      break;
+    }
+    const double decrease = J - J_new;
+    const bool converged = decrease <= params_.tol * (1.0 + J);
+    u.swap(candidate);
+    J = J_new;
+    step *= 2.0;  // the last step worked: try a longer one next time
+    if (converged) {
+      r.status = MpcStatus::OK;
+      break;
+    }
+  }
+
+  // 4. Result: only the first command is sent; the whole prediction is kept for RViz and logs.
+  r.command = Command{u.front().v, u.front().w};
+  r.cost = J;
+  r.predicted = rollout(u, params_);
+
+  // 5. A predicted pose inside an obstacle: no valid command (ADR 0004, the node publishes zero).
+  for (const Pose2D &x : r.predicted) {
+    for (const Point2D &o : problem.obstacles) {
+      if (std::hypot(x.x - o.x, x.y - o.y) < params_.robot_radius) {
+        r.status = MpcStatus::INFEASIBLE;
+        r.command.reset();
+      }
+    }
+  }
+
+  // 6. Warm start for the next cycle (50 ms later): drop u_0, repeat the last control.
+  warm_.assign(u.begin() + 1, u.end());
+  warm_.push_back(u.back());
+
+  // 7. Wall time of the call.
+  r.solve_time = elapsed();
+  return r;
+}
+
+}  // namespace capstone_control
