@@ -42,8 +42,10 @@ def run_episode(model, environment, seed, options=None, mismatch=None):
         environment.randomization.gain_w = float(mismatch)
 
     lim = environment.limits
-    max_dv = lim.max_accel * spec.DT
     max_dw = lim.max_yaw_accel * spec.DT
+    dv_accel = lim.max_accel * spec.DT
+    dv_decel = lim.max_decel * spec.DT
+    v_reverse = lim.max_reverse_speed
 
     last_xy = environment.pose[:2].copy()
     prev_cmd = np.zeros(2)
@@ -63,10 +65,14 @@ def run_episode(model, environment, seed, options=None, mismatch=None):
 
         cmd = environment.command.copy()
         commands.append(cmd)
-        # ADR 0004 boxes: |v| <= V_MAX, |w| <= W_MAX, |dv| <= max_accel * DT, |dw| <= max_yaw_accel * DT.
+        # ADR 0004 boxes: |v| <= V_MAX, |w| <= W_MAX, |dw| <= max_yaw_accel * DT,
+        # |dv| bounded by max_accel when speeding up and max_decel when slowing down,
+        # and reverse is bounded by max_reverse_speed.
         if abs(cmd[0]) > spec.V_MAX + TOL: violations += 1
+        if cmd[0] < -v_reverse - TOL: violations += 1
         if abs(cmd[1]) > spec.W_MAX + TOL: violations += 1
-        if abs(cmd[0] - prev_cmd[0]) > max_dv + TOL: violations += 1
+        dv = cmd[0] - prev_cmd[0]
+        if abs(dv) > (dv_accel if dv >= 0 else dv_decel) + TOL: violations += 1
         if abs(cmd[1] - prev_cmd[1]) > max_dw + TOL: violations += 1
         prev_cmd = cmd
 
