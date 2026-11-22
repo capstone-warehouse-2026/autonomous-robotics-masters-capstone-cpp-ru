@@ -1,0 +1,486 @@
+{
+  "input": {
+    "dtype": "float32",
+    "name": "observation",
+    "shape": [
+      1,
+      61
+    ]
+  },
+  "model_sha256": "9d52e67962cfa0907a865dca3be811ae6c478af3cc7d6d5e73a0525ad06afc5b",
+  "onnx_vs_torch_max_abs_diff": 2.384185791015625e-07,
+  "output": {
+    "dtype": "float32",
+    "name": "action",
+    "shape": [
+      1,
+      2
+    ]
+  },
+  "spec_sha256": "819d3c3fa231de82152327d782fd3538d5a532b1e4d8a4014fb58e80753a8784",
+  "training_manifest": {
+    "arguments": {
+      "envs": 8,
+      "no_randomization": false,
+      "out": "../../data/g4/models",
+      "seed": 2,
+      "timesteps": 3000000
+    },
+    "best": {
+      "collision_rate": 0.17,
+      "cross_track_rmse": 0.11438069096646115,
+      "episodes": 100,
+      "lost_rate": 0.0,
+      "mean_return": 75.46808449776404,
+      "min_clearance": 0.4716191618083191,
+      "seconds": 1135.2,
+      "success_rate": 0.82,
+      "timeout_rate": 0.01,
+      "timesteps": 1703936
+    },
+    "env": {
+      "D_SAFE": 0.45,
+      "GOAL_SPEED": 0.05,
+      "GOAL_XY": 0.25,
+      "GOAL_YAW": 0.2,
+      "GOAL_YAW_RATE": 0.1,
+      "GOAL_ZONE": 0.5,
+      "MAX_CROSS_TRACK": 1.0,
+      "R_COLLISION": -50.0,
+      "R_GOAL": 50.0,
+      "R_LOST": -50.0,
+      "TIME_LIMIT_EXTRA": 10.0,
+      "TIME_LIMIT_SPEED": 0.15,
+      "TRACKER_WINDOW": 1.5,
+      "W_GOAL_DISTANCE": 10.0,
+      "W_GOAL_HEADING": 5.0,
+      "W_PROGRESS": 10.0,
+      "W_PROXIMITY": 20.0,
+      "W_SMOOTH": 0.01,
+      "W_TIME": 0.01,
+      "W_TRACK": 2.0
+    },
+    "eval_every": 100000,
+    "evaluations": [
+      {
+        "collision_rate": 0.08,
+        "cross_track_rmse": 0.26984057628060243,
+        "episodes": 100,
+        "lost_rate": 0.92,
+        "mean_return": -96.86535182805282,
+        "min_clearance": 0.49785708929785144,
+        "seconds": 81.2,
+        "success_rate": 0.0,
+        "timeout_rate": 0.0,
+        "timesteps": 106496
+      },
+      {
+        "collision_rate": 0.2,
+        "cross_track_rmse": 0.3712618675041199,
+        "episodes": 100,
+        "lost_rate": 0.16,
+        "mean_return": -281.3411561965739,
+        "min_clearance": 0.4898971200257638,
+        "seconds": 172.6,
+        "success_rate": 0.04,
+        "timeout_rate": 0.6,
+        "timesteps": 212992
+      },
+      {
+        "collision_rate": 0.24,
+        "cross_track_rmse": 0.13096759198021726,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 26.724453786938305,
+        "min_clearance": 0.47460311294013396,
+        "seconds": 250.3,
+        "success_rate": 0.44,
+        "timeout_rate": 0.32,
+        "timesteps": 319488
+      },
+      {
+        "collision_rate": 0.26,
+        "cross_track_rmse": 0.10602856137981241,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 51.77836005294573,
+        "min_clearance": 0.45799636116588943,
+        "seconds": 320.3,
+        "success_rate": 0.58,
+        "timeout_rate": 0.16,
+        "timesteps": 425984
+      },
+      {
+        "collision_rate": 0.24,
+        "cross_track_rmse": 0.11289958303938409,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 55.54540744598696,
+        "min_clearance": 0.4535142581718344,
+        "seconds": 388.9,
+        "success_rate": 0.64,
+        "timeout_rate": 0.12,
+        "timesteps": 532480
+      },
+      {
+        "collision_rate": 0.18,
+        "cross_track_rmse": 0.10708404240943008,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 64.26046499201847,
+        "min_clearance": 0.4725757718839394,
+        "seconds": 457.6,
+        "success_rate": 0.69,
+        "timeout_rate": 0.13,
+        "timesteps": 638976
+      },
+      {
+        "collision_rate": 0.17,
+        "cross_track_rmse": 0.09684640244280032,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 66.85308162258929,
+        "min_clearance": 0.4774086981687066,
+        "seconds": 527.2,
+        "success_rate": 0.66,
+        "timeout_rate": 0.17,
+        "timesteps": 745472
+      },
+      {
+        "collision_rate": 0.19,
+        "cross_track_rmse": 0.10772458210447057,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 53.08354395828873,
+        "min_clearance": 0.4665380456262502,
+        "seconds": 599.6,
+        "success_rate": 0.55,
+        "timeout_rate": 0.26,
+        "timesteps": 851968
+      },
+      {
+        "collision_rate": 0.2,
+        "cross_track_rmse": 0.10886192001331278,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 64.81617263964817,
+        "min_clearance": 0.4870656365082949,
+        "seconds": 666.7,
+        "success_rate": 0.7,
+        "timeout_rate": 0.1,
+        "timesteps": 958464
+      },
+      {
+        "collision_rate": 0.16,
+        "cross_track_rmse": 0.10524549779144834,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 68.01921830608221,
+        "min_clearance": 0.49220000490185906,
+        "seconds": 736.3,
+        "success_rate": 0.69,
+        "timeout_rate": 0.15,
+        "timesteps": 1064960
+      },
+      {
+        "collision_rate": 0.19,
+        "cross_track_rmse": 0.09929677579067399,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 59.218683234474966,
+        "min_clearance": 0.48475776661513575,
+        "seconds": 807.4,
+        "success_rate": 0.6,
+        "timeout_rate": 0.21,
+        "timesteps": 1171456
+      },
+      {
+        "collision_rate": 0.2,
+        "cross_track_rmse": 0.11036318512469796,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 64.97358078136554,
+        "min_clearance": 0.4849569885846391,
+        "seconds": 875.1,
+        "success_rate": 0.7,
+        "timeout_rate": 0.1,
+        "timesteps": 1277952
+      },
+      {
+        "collision_rate": 0.18,
+        "cross_track_rmse": 0.09527422977674649,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 76.15844823215387,
+        "min_clearance": 0.48435223562191526,
+        "seconds": 940.3,
+        "success_rate": 0.8,
+        "timeout_rate": 0.02,
+        "timesteps": 1384448
+      },
+      {
+        "collision_rate": 0.18,
+        "cross_track_rmse": 0.0950992867682375,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 75.72247293619533,
+        "min_clearance": 0.487765777280609,
+        "seconds": 1005.4,
+        "success_rate": 0.79,
+        "timeout_rate": 0.03,
+        "timesteps": 1490944
+      },
+      {
+        "collision_rate": 0.21,
+        "cross_track_rmse": 0.09712888096784444,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 73.62781664992828,
+        "min_clearance": 0.47863638473093134,
+        "seconds": 1070.1,
+        "success_rate": 0.78,
+        "timeout_rate": 0.01,
+        "timesteps": 1597440
+      },
+      {
+        "collision_rate": 0.17,
+        "cross_track_rmse": 0.11438069096646115,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 75.46808449776404,
+        "min_clearance": 0.4716191618083191,
+        "seconds": 1135.2,
+        "success_rate": 0.82,
+        "timeout_rate": 0.01,
+        "timesteps": 1703936
+      },
+      {
+        "collision_rate": 0.19,
+        "cross_track_rmse": 0.09116324423944447,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 67.27346294924975,
+        "min_clearance": 0.48577580423645883,
+        "seconds": 1204.1,
+        "success_rate": 0.68,
+        "timeout_rate": 0.13,
+        "timesteps": 1810432
+      },
+      {
+        "collision_rate": 0.2,
+        "cross_track_rmse": 0.09594415219847312,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 73.49926894194084,
+        "min_clearance": 0.4736411863822196,
+        "seconds": 1268.5,
+        "success_rate": 0.78,
+        "timeout_rate": 0.02,
+        "timesteps": 1916928
+      },
+      {
+        "collision_rate": 0.21,
+        "cross_track_rmse": 0.10023028687819592,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 63.212384468117264,
+        "min_clearance": 0.48282494009356147,
+        "seconds": 1337.1,
+        "success_rate": 0.66,
+        "timeout_rate": 0.13,
+        "timesteps": 2023424
+      },
+      {
+        "collision_rate": 0.21,
+        "cross_track_rmse": 0.09758207236852101,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 65.61224915431907,
+        "min_clearance": 0.476273315963583,
+        "seconds": 1405.3,
+        "success_rate": 0.68,
+        "timeout_rate": 0.11,
+        "timesteps": 2129920
+      },
+      {
+        "collision_rate": 0.2,
+        "cross_track_rmse": 0.10271093482193454,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 57.64596928524939,
+        "min_clearance": 0.47755117746240283,
+        "seconds": 1475.9,
+        "success_rate": 0.62,
+        "timeout_rate": 0.18,
+        "timesteps": 2236416
+      },
+      {
+        "collision_rate": 0.22,
+        "cross_track_rmse": 0.10339165147073343,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 60.27812713902565,
+        "min_clearance": 0.4883245673450375,
+        "seconds": 1544.9,
+        "success_rate": 0.62,
+        "timeout_rate": 0.16,
+        "timesteps": 2342912
+      },
+      {
+        "collision_rate": 0.18,
+        "cross_track_rmse": 0.1025236110108368,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 64.75497683797798,
+        "min_clearance": 0.4786358501513018,
+        "seconds": 1614.3,
+        "success_rate": 0.65,
+        "timeout_rate": 0.17,
+        "timesteps": 2449408
+      },
+      {
+        "collision_rate": 0.17,
+        "cross_track_rmse": 0.09347351035323008,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 48.98956558429095,
+        "min_clearance": 0.4764766346691173,
+        "seconds": 1694.5,
+        "success_rate": 0.39,
+        "timeout_rate": 0.44,
+        "timesteps": 2555904
+      },
+      {
+        "collision_rate": 0.17,
+        "cross_track_rmse": 0.09802960719573671,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 51.096821551023716,
+        "min_clearance": 0.4820947783814761,
+        "seconds": 1771.9,
+        "success_rate": 0.44,
+        "timeout_rate": 0.39,
+        "timesteps": 2662400
+      },
+      {
+        "collision_rate": 0.18,
+        "cross_track_rmse": 0.10324304482813979,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 62.131654870088795,
+        "min_clearance": 0.47764878169297637,
+        "seconds": 1842.6,
+        "success_rate": 0.61,
+        "timeout_rate": 0.21,
+        "timesteps": 2768896
+      },
+      {
+        "collision_rate": 0.17,
+        "cross_track_rmse": 0.11269293040538964,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 67.44314898502752,
+        "min_clearance": 0.47301591476963695,
+        "seconds": 1910.3,
+        "success_rate": 0.7,
+        "timeout_rate": 0.13,
+        "timesteps": 2875392
+      },
+      {
+        "collision_rate": 0.19,
+        "cross_track_rmse": 0.10328569805515364,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 73.85567949531476,
+        "min_clearance": 0.4752524282885534,
+        "seconds": 1975.1,
+        "success_rate": 0.78,
+        "timeout_rate": 0.03,
+        "timesteps": 2981888
+      },
+      {
+        "collision_rate": 0.19,
+        "cross_track_rmse": 0.10339065324163838,
+        "episodes": 100,
+        "lost_rate": 0.0,
+        "mean_return": 71.09992343615093,
+        "min_clearance": 0.4728695784351714,
+        "seconds": 2002.3,
+        "success_rate": 0.75,
+        "timeout_rate": 0.06,
+        "timesteps": 3006464
+      }
+    ],
+    "git_commit": "4d4daa4c87b7c0dcb0398e84f34dfd78955dc4e6",
+    "git_dirty": false,
+    "name": "seed_2",
+    "ppo": {
+      "batch_size": 512,
+      "clip_range": 0.2,
+      "ent_coef": 0.0,
+      "gae_lambda": 0.95,
+      "gamma": 0.99,
+      "learning_rate": 0.0003,
+      "n_epochs": 10,
+      "n_steps": 1024,
+      "policy_kwargs": {
+        "log_std_init": -0.5,
+        "net_arch": {
+          "pi": [
+            128,
+            128
+          ],
+          "vf": [
+            128,
+            128
+          ]
+        }
+      }
+    },
+    "selection": "val success rate, then lower collision rate, then mean return; deterministic policy, nominal robot",
+    "spec": {
+      "ACTION_SIZE": 2,
+      "DT": 0.05,
+      "OBS_SIZE": 61,
+      "PATH_POINTS": 10,
+      "PATH_SCALE": 2.0,
+      "PATH_SPACING": 0.2,
+      "RANGE_MAX": 3.0,
+      "REMAINING_MAX": 5.0,
+      "ROBOT_RADIUS": 0.25,
+      "SECTORS": 36,
+      "V_MAX": 0.5,
+      "W_MAX": 1.0
+    },
+    "splits": {
+      "ood": [
+        3000,
+        3020
+      ],
+      "test": [
+        2000,
+        2020
+      ],
+      "train": [
+        0,
+        1000
+      ],
+      "val": [
+        1000,
+        1100
+      ]
+    },
+    "training_seconds": 2002.3,
+    "versions": {
+      "gymnasium": "1.4.0",
+      "numpy": "2.5.3",
+      "stable-baselines3": "2.9.0",
+      "torch": "2.14.1+cpu"
+    }
+  },
+  "versions": {
+    "onnx": "1.23.2",
+    "onnxruntime": "1.23.2",
+    "torch": "2.8.0+cu128"
+  }
+}
