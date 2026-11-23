@@ -1,0 +1,52 @@
+# Parameters of the integration skeleton (ros2 launch capstone_integration system.launch.py).
+# Node names here must match the `name=` of the nodes in launch/system.launch.py.
+world_stub:
+  ros__parameters:
+    map_frame: map
+    odom_frame: odom
+    base_frame: base_link
+    start_x: -8.0            # robot start pose in the warehouse world (simulation/worlds/warehouse.wbt)
+    start_y: 0.0
+    start_yaw: 0.0
+    odom_rate_hz: 50.0
+    scan_rate_hz: 10.0
+    map_resolution: 0.1      # m per cell
+    map_width_m: 20.0
+    map_height_m: 20.0
+    map_origin_x: -10.0
+    map_origin_y: -10.0
+
+path_stub:
+  ros__parameters:
+    map_frame: map
+    step_m: 0.1              # path sampling step
+    map_half_extent_m: 10.0  # goals outside +-10 m are rejected
+
+drive_stub:
+  ros__parameters:
+    base_frame: base_link
+    odom_frame: odom
+    map_frame: map
+    lookahead_m: 0.8
+    max_v: 0.5               # m/s, below the safety limit 0.6
+    max_w: 1.0               # rad/s, below the safety limit 1.2
+    heading_gain: 1.5
+    turn_in_place_angle_rad: 0.6
+    arrive_radius_m: 0.15
+    goal_position_tolerance_m: 0.25   # docs/INTERFACES.md: pose tolerance 0.25 m
+    goal_yaw_tolerance_rad: 0.2       # docs/INTERFACES.md: yaw tolerance 0.2 rad
+    timeout_s: 180.0
+
+mission_stub:
+  ros__parameters:
+    map_frame: map
+    goal_x: -8.8             # STATION_1 of warehouse.wbt
+    goal_y: 7.5
+    goal_yaw: 1.5708
+    service_time_s: 2.0      # load/unload is a 2 s stop at the station
+    mission_timeout_s: 300.0 # episode limit, docs/EXPERIMENTS.md
+    results_dir: /workspace/results
+    episode_id: stub-001
+    config_id: SKELETON
+    scenario_id: S1
+    auto_start: true
