@@ -1,0 +1,40 @@
+schema_version: 1
+evaluation: isolated_dispatch_tables
+code_commit: cf882fe96de686dbf73cda645f2aa4e93178be52
+analysis_seed: 2026
+compiler: 13.3.0
+scope: No Webots physics, perception, localization, or collision metrics
+methods:
+  classical:
+    congestion_feature: true
+    model_error: ''
+  learned:
+    congestion_feature: true
+    model_error: ''
+    model_sha256: b86f66590da3591a8d1ec96cdd113b627e1a69c4dc9b2f39132acf081ea16cb3
+scenarios:
+  g5_debug_delivery:
+    sha256: b9d30f9f152ab456bbefa1584405ab4ab8aef9abbf0061e4baa52c91891d3105
+    seed: 0
+    split: debug
+    family: low
+    layout_id: debug
+dirty: true
+source_snapshot_sha256: 7c02a4e0dedc1e2774e563a29a57d035fab1f0123fe0b4f82bace09970c20b3e
+runtime: native_ros2_jazzy
+docker_image: not_applicable_native_run
+architecture: x86_64
+kernel: 7.0.0-34-generic
+cpu: 11th Gen Intel(R) Core(TM) i5-11400H @ 2.70GHz
+logical_cpus: 12
+executor: SingleThreadedExecutor
+model_inference_threads: 1
+ros_packages:
+  rclcpp: 28.1.22
+  rclcpp_action: 28.1.22
+  nav2_msgs: 1.3.14
+  behaviortree_cpp: 4.11.0
+  launch: 3.4.11
+  launch_ros: 0.26.12
+snapshot_note: Final metadata adds python3-numpy test dependency and ML tests to Makefile;
+  runtime sources match executed binaries.

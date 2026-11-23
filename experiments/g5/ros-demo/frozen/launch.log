@@ -1,0 +1,29 @@
+[INFO] [launch]: All log files can be found below /tmp/g5-closedloop-final-logs/2026-11-23-22-46-07-158120-tim-ASUS-TUF-Gaming-F15-FX506HC-FX506HC-38084
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [debug_navigation-1]: process started with pid [38098]
+[INFO] [mission_node-2]: process started with pid [38099]
+[INFO] [benchmark_runner_node-3]: process started with pid [38100]
+[debug_navigation-1] [WARN] [1795463167.244383731] [debug_navigation]: G5 debug kinematic navigation, not a full robot simulation
+[mission_node-2] [INFO] [1795463167.423900192] [mission]: episode=g5_frozen_clock-0 job= event=episode_ready reason=
+[mission_node-2] [INFO] [1795463167.458346402] [mission]: episode=g5_frozen_clock-0 job= event=episode_started reason=
+[mission_node-2] [INFO] [1795463167.472437936] [mission]: episode=g5_frozen_clock-0 job=job_1 event=released reason=
+[mission_node-2] [INFO] [1795463167.472664406] [mission]: episode=g5_frozen_clock-0 job= event=decision reason=latency_s=0.000004
+[mission_node-2] [INFO] [1795463167.472692669] [mission]: episode=g5_frozen_clock-0 job=job_1 event=selected reason=
+[mission_node-2] [INFO] [1795463167.472829051] [mission]: episode=g5_frozen_clock-0 job=job_1 event=planning_started reason=
+[mission_node-2] [INFO] [1795463167.505005924] [mission]: episode=g5_frozen_clock-0 job=job_1 event=following_started reason=
+[mission_node-2] [INFO] [1795463168.052403146] [mission]: episode=g5_frozen_clock-0 job=job_2 event=released reason=
+[mission_node-2] [INFO] [1795463170.098312443] [mission]: episode=g5_frozen_clock-0 job=job_1 event=stopping reason=operator_cancel
+[mission_node-2] [INFO] [1795463170.098382899] [mission]: episode=g5_frozen_clock-0 job=job_1 event=cancel_requested reason=operator_cancel
+[mission_node-2] [INFO] [1795463172.112375941] [mission]: episode=g5_frozen_clock-0 job=job_1 event=navigation_fault reason=action_result_unknown
+[mission_node-2] [INFO] [1795463172.112461580] [mission]: episode=g5_frozen_clock-0 job=job_1 event=failed reason=operator_cancel
+[mission_node-2] [INFO] [1795463172.112473642] [mission]: episode=g5_frozen_clock-0 job= event=episode_fault reason=action_result_unknown
+[benchmark_runner_node-3] [INFO] [1795463172.112845602] [benchmark_runner]: episode finished: frozen_clock
+[ERROR] [benchmark_runner_node-3]: process has died [pid 38100, exit code 1, cmd '/tmp/g5-final-install/capstone_benchmark/lib/capstone_benchmark/benchmark_runner_node --ros-args --params-file /tmp/launch_params_ot_kmyqg'].
+[INFO] [mission_metrics-4]: process started with pid [38199]
+[INFO] [mission_metrics-4]: process has finished cleanly [pid 38199]
+[ERROR] [launch]: Caught exception in launch (see debug for traceback): G5 episode failed; inspect episode.yaml and events.csv
+[INFO] [mission_node-2]: sending signal 'SIGINT' to process[mission_node-2]
+[INFO] [debug_navigation-1]: sending signal 'SIGINT' to process[debug_navigation-1]
+[debug_navigation-1] [INFO] [1795463172.224881558] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[INFO] [debug_navigation-1]: process has finished cleanly [pid 38098]
+[INFO] [mission_node-2]: process has finished cleanly [pid 38099]

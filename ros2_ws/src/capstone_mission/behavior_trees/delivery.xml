@@ -1,0 +1,13 @@
+<root BTCPP_format="4" main_tree_to_execute="Delivery">
+  <BehaviorTree ID="Delivery">
+    <Sequence>
+      <WaitReady/>
+      <SelectJob/>
+      <NavigatePickup/>
+      <PickupService/>
+      <NavigateDropoff/>
+      <DropoffService/>
+      <CompleteJob/>
+    </Sequence>
+  </BehaviorTree>
+</root>

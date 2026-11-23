@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "format": "JSON float32 MLP, row-major weights, ReLU hidden",
+  "architecture": [
+    32,
+    64,
+    5
+  ],
+  "selected_seed": 2,
+  "selection": "maximum mean validation return over fixed 50 validation episodes",
+  "training": {
+    "algorithm": "DQN with target network, replay, Huber loss and Adam",
+    "numpy_version": "1.26.4",
+    "git_commit": "cf882fe96de686dbf73cda645f2aa4e93178be52",
+    "git_dirty": true,
+    "episodes": 1000,
+    "seeds": [
+      {
+        "training_seed": 0,
+        "episodes": 1000,
+        "transitions": 33974,
+        "optimizer_updates": 16923,
+        "validation_return": 12.030744579678883,
+        "training_seconds": 13.015461998999854,
+        "congestion_feature": true,
+        "sha256": "b9f941d6c5d1fe5de149dc883e554ebe60d8347430d36bfb0c9ba17acea73d4b"
+      },
+      {
+        "training_seed": 1,
+        "episodes": 1000,
+        "transitions": 32036,
+        "optimizer_updates": 15954,
+        "validation_return": 13.386778053123408,
+        "training_seconds": 13.937283535999995,
+        "congestion_feature": true,
+        "sha256": "c124083852d7810a4135ecf75a1b0e3573826d8e9066aad1f0f20d3bc54a3213"
+      },
+      {
+        "training_seed": 2,
+        "episodes": 1000,
+        "transitions": 34157,
+        "optimizer_updates": 17015,
+        "validation_return": 13.94971034068657,
+        "training_seconds": 14.309231585999441,
+        "congestion_feature": true,
+        "sha256": "b86f66590da3591a8d1ec96cdd113b627e1a69c4dc9b2f39132acf081ea16cb3"
+      }
+    ],
+    "selection": "maximum mean validation return over fixed 50 validation episodes"
+  },
+  "source": "ml/mission/{spec,env,dqn,train,export}.py",
+  "limitations": [
+    "Procedural travel tables, not full Webots navigation.",
+    "Closed-loop domain gap must be measured separately.",
+    "Training performed on the documented dirty development checkout."
+  ],
+  "model_sha256": "b86f66590da3591a8d1ec96cdd113b627e1a69c4dc9b2f39132acf081ea16cb3",
+  "source_sha256": {
+    "dqn.py": "2a2c21b7c5db6d1ceed551379034b10e57f4bb40b873c18455335e50ec192f7b",
+    "env.py": "1dd9acd310f3f7dff889b2f902a05f26ce364ce000de20f033b30d0b7db67d4d",
+    "export.py": "bcbb2da0403d33759ab1e2ecb4aaecf4525f5310902c659be475088c1e8831f4",
+    "spec.py": "26408b23fa06f566eb8b5edd34a32d0b44c127e623d4da23bb123e15d64633e3",
+    "test_mission.py": "c3dca579d21a5d9f2ee480e0244d7efdeb70c14f3020b7e76e32eb7a29f33d8f",
+    "train.py": "255bd9978659acd5e6af2aafbcfbd510c1710dc65a89fd865ba00f90a3300f97"
+  },
+  "all_model_sha256": {
+    "dqn_seed_0.json": "b9f941d6c5d1fe5de149dc883e554ebe60d8347430d36bfb0c9ba17acea73d4b",
+    "dqn_seed_1.json": "c124083852d7810a4135ecf75a1b0e3573826d8e9066aad1f0f20d3bc54a3213",
+    "dqn_seed_2.json": "b86f66590da3591a8d1ec96cdd113b627e1a69c4dc9b2f39132acf081ea16cb3",
+    "dqn_no_congestion_seed_0.json": "fc6e247d3cffbda02ff892c2c8e66bb6bd277cae11a777a54b30f09f1edf620b",
+    "dqn_no_congestion_seed_1.json": "3cdfec7a2d3b8aa707a57f7443f0b6bb3f6a50a516f4157ddb72e2db06574c5a",
+    "dqn_no_congestion_seed_2.json": "70f215a0e2cd909e12f939d72b4d36efe356800be9ec5348be193157364418db"
+  },
+  "ablation": {
+    "algorithm": "DQN with target network, replay, Huber loss and Adam",
+    "numpy_version": "1.26.4",
+    "git_commit": "cf882fe96de686dbf73cda645f2aa4e93178be52",
+    "git_dirty": true,
+    "episodes": 1000,
+    "seeds": [
+      {
+        "training_seed": 0,
+        "episodes": 1000,
+        "transitions": 31374,
+        "optimizer_updates": 15623,
+        "validation_return": 9.111555767708266,
+        "training_seconds": 12.393067874000735,
+        "congestion_feature": false,
+        "sha256": "fc6e247d3cffbda02ff892c2c8e66bb6bd277cae11a777a54b30f09f1edf620b"
+      },
+      {
+        "training_seed": 1,
+        "episodes": 1000,
+        "transitions": 33150,
+        "optimizer_updates": 16511,
+        "validation_return": 10.342651297388798,
+        "training_seconds": 15.40949387099954,
+        "congestion_feature": false,
+        "sha256": "3cdfec7a2d3b8aa707a57f7443f0b6bb3f6a50a516f4157ddb72e2db06574c5a"
+      },
+      {
+        "training_seed": 2,
+        "episodes": 1000,
+        "transitions": 35747,
+        "optimizer_updates": 17810,
+        "validation_return": 4.4751637764291665,
+        "training_seconds": 14.81409297800019,
+        "congestion_feature": false,
+        "sha256": "70f215a0e2cd909e12f939d72b4d36efe356800be9ec5348be193157364418db"
+      }
+    ],
+    "selection": "maximum mean validation return over fixed 50 validation episodes"
+  }
+}

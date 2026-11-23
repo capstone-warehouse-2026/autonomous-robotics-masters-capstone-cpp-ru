@@ -1,0 +1,12 @@
+mission:
+  ros__parameters:
+    method: classical
+    autostart: true
+    require_safety: true
+    congestion_feature: true
+    planning_timeout: 0.2
+    navigation_timeout: 120.0
+    stop_timeout: 2.0
+    input_timeout: 0.3
+    clock_timeout: 2.0
+    readiness_timeout: 15.0

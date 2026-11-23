@@ -6,23 +6,65 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(nav2_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(diagnostic_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(behaviortree_cpp REQUIRED)
+find_package(ament_index_cpp REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
-# Node code lives in a library so that the executable and the tests share it.
-add_library(${PROJECT_NAME}_core STATIC src/mission_node.cpp)
-set_target_properties(${PROJECT_NAME}_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_include_directories(${PROJECT_NAME}_core PUBLIC include)
-ament_target_dependencies(${PROJECT_NAME}_core rclcpp)
+# Общая логика используется узлом миссии и изолированным C++ benchmark.
+add_library(capstone_mission_domain SHARED src/domain.cpp src/dispatch.cpp)
+target_include_directories(capstone_mission_domain PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_link_libraries(capstone_mission_domain PUBLIC yaml-cpp)
+target_compile_options(capstone_mission_domain PRIVATE -Wall -Wextra -Wpedantic)
+
+add_library(${PROJECT_NAME}_core SHARED src/mission_node.cpp src/navigation_client.cpp)
+target_include_directories(${PROJECT_NAME}_core PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_link_libraries(${PROJECT_NAME}_core capstone_mission_domain behaviortree_cpp::behaviortree_cpp)
+ament_target_dependencies(${PROJECT_NAME}_core rclcpp rclcpp_action nav2_msgs nav_msgs sensor_msgs
+  geometry_msgs diagnostic_msgs std_srvs ament_index_cpp)
 target_compile_options(${PROJECT_NAME}_core PRIVATE -Wall -Wextra -Wpedantic)
 
 add_executable(mission_node src/main.cpp)
 target_link_libraries(mission_node ${PROJECT_NAME}_core)
 target_compile_options(mission_node PRIVATE -Wall -Wextra -Wpedantic)
 install(TARGETS mission_node DESTINATION lib/${PROJECT_NAME})
+install(TARGETS capstone_mission_domain ${PROJECT_NAME}_core
+  EXPORT export_capstone_mission ARCHIVE DESTINATION lib LIBRARY DESTINATION lib RUNTIME DESTINATION bin)
+install(DIRECTORY include/ DESTINATION include)
+foreach(resource behavior_trees launch config models)
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${resource}")
+    install(DIRECTORY ${resource} DESTINATION share/${PROJECT_NAME})
+  endif()
+endforeach()
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_dispatch test/test_dispatch.cpp)
+  target_link_libraries(test_dispatch capstone_mission_domain)
+  ament_add_gtest(test_dqn test/test_dqn.cpp)
+  target_link_libraries(test_dqn capstone_mission_domain)
+  target_compile_definitions(test_dqn PRIVATE CAPSTONE_MISSION_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+  find_package(rosgraph_msgs REQUIRED)
+  ament_add_gtest(test_navigation_client test/test_navigation_client.cpp TIMEOUT 40)
+  target_link_libraries(test_navigation_client ${PROJECT_NAME}_core)
+  ament_target_dependencies(test_navigation_client rosgraph_msgs)
+  target_compile_definitions(test_navigation_client PRIVATE CAPSTONE_MISSION_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+  set_tests_properties(test_navigation_client PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=173")
   ament_add_gtest(test_mission_node test/test_mission_node.cpp)
   target_link_libraries(test_mission_node ${PROJECT_NAME}_core)
 endif()
-
+ament_export_targets(export_capstone_mission HAS_LIBRARY_TARGET)
+ament_export_include_directories(include)
+ament_export_dependencies(rclcpp rclcpp_action nav2_msgs nav_msgs sensor_msgs geometry_msgs
+  diagnostic_msgs std_srvs ament_index_cpp behaviortree_cpp yaml-cpp)
 ament_package()

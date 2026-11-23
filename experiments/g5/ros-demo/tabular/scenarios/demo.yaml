@@ -1,0 +1,13 @@
+episode_id: g5_debug_delivery
+split: debug
+family: low
+seed: 0
+horizon: 120.0
+initial_station: home
+stations:
+  - {id: home, x: 0.0, y: 0.0, yaw: 0.0}
+  - {id: pickup, x: 1.0, y: 0.0, yaw: 0.0}
+  - {id: dropoff, x: 1.0, y: 1.0, yaw: 1.57}
+jobs:
+  - {id: job_1, pickup: pickup, dropoff: dropoff, release_time: 0.0, due_time: 30.0, pickup_service: 0.5, dropoff_service: 0.5}
+  - {id: job_2, pickup: dropoff, dropoff: home, release_time: 3.0, due_time: 60.0, pickup_service: 0.5, dropoff_service: 0.5}

@@ -1,0 +1,34 @@
+episode_id: g5_frozen_clock
+family: low
+horizon: 120.0
+initial_station: home
+jobs:
+- dropoff: dropoff
+  dropoff_service: 0.5
+  due_time: 30.0
+  id: job_1
+  pickup: pickup
+  pickup_service: 0.5
+  release_time: 0.0
+- dropoff: home
+  dropoff_service: 0.5
+  due_time: 60.0
+  id: job_2
+  pickup: dropoff
+  pickup_service: 0.5
+  release_time: 3.0
+seed: 0
+split: debug
+stations:
+- id: home
+  x: 0.0
+  y: 0.0
+  yaw: 0.0
+- id: pickup
+  x: 10.0
+  y: 0.0
+  yaw: 0.0
+- id: dropoff
+  x: 10.0
+  y: 10.0
+  yaw: 1.57

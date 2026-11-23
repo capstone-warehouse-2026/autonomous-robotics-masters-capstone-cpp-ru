@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>capstone_debug_navigation</name><version>0.1.0</version>
+  <description>Explicitly isolated kinematic action test environment for G5.</description>
+  <maintainer email="g5@example.invalid">G5</maintainer><license>MIT</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend><depend>rclcpp_action</depend><depend>nav2_msgs</depend>
+  <depend>nav_msgs</depend><depend>geometry_msgs</depend><depend>rosgraph_msgs</depend>
+  <depend>diagnostic_msgs</depend><depend>std_srvs</depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>capstone_mission</exec_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

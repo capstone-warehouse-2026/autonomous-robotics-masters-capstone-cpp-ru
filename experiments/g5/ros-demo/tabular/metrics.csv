@@ -1,0 +1,3 @@
+episode_id,family,method,terminal_reason,elapsed_sim_s,released,delivered,on_time,failed,unfinished,unfinished_age_mean_s,deliveries_per_hour,on_time_fraction,tardiness_mean_s,tardiness_p95_s,distance_m,distance_per_job_m,idle_s,recoveries,fallbacks,decisions,decision_latency_p95_ms
+g5_debug_delivery,low,classical,completed,8.82842712475,2,2,2,0,0,0,815.54731078,1,0,0,3.41421356237,1.70710678119,0,0,0,2,0.000817
+g5_debug_delivery,low,learned,completed,8.82842712475,2,2,2,0,0,0,815.54731078,1,0,0,3.41421356237,1.70710678119,0,0,0,2,0.005954

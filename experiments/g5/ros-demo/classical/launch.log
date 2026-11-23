@@ -1,0 +1,48 @@
+[INFO] [launch]: All log files can be found below /tmp/g5-closedloop-final-logs/2026-11-23-22-45-29-364302-tim-ASUS-TUF-Gaming-F15-FX506HC-FX506HC-37754
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [debug_navigation-1]: process started with pid [37758]
+[INFO] [mission_node-2]: process started with pid [37759]
+[INFO] [benchmark_runner_node-3]: process started with pid [37760]
+[debug_navigation-1] [WARN] [1795463129.484764322] [debug_navigation]: G5 debug kinematic navigation, not a full robot simulation
+[mission_node-2] [INFO] [1795463129.663834020] [mission]: episode=g5_debug_delivery-0 job= event=episode_ready reason=
+[mission_node-2] [INFO] [1795463129.698468194] [mission]: episode=g5_debug_delivery-0 job= event=episode_started reason=
+[mission_node-2] [INFO] [1795463129.710946468] [mission]: episode=g5_debug_delivery-0 job=job_1 event=released reason=
+[mission_node-2] [INFO] [1795463129.711107471] [mission]: episode=g5_debug_delivery-0 job= event=decision reason=latency_s=0.000007
+[mission_node-2] [INFO] [1795463129.711125778] [mission]: episode=g5_debug_delivery-0 job=job_1 event=selected reason=
+[mission_node-2] [INFO] [1795463129.711237470] [mission]: episode=g5_debug_delivery-0 job=job_1 event=planning_started reason=
+[mission_node-2] [INFO] [1795463129.745280307] [mission]: episode=g5_debug_delivery-0 job=job_1 event=following_started reason=
+[mission_node-2] [INFO] [1795463129.965171675] [mission]: episode=g5_debug_delivery-0 job=job_1 event=stopping reason=arrived
+[mission_node-2] [INFO] [1795463129.990918758] [mission]: episode=g5_debug_delivery-0 job=job_1 event=navigation_succeeded reason=arrived
+[mission_node-2] [INFO] [1795463129.990995183] [mission]: episode=g5_debug_delivery-0 job=job_1 event=pickup_service reason=
+[mission_node-2] [INFO] [1795463130.090949703] [mission]: episode=g5_debug_delivery-0 job=job_1 event=picked reason=
+[mission_node-2] [INFO] [1795463130.091065120] [mission]: episode=g5_debug_delivery-0 job=job_1 event=planning_started reason=
+[mission_node-2] [INFO] [1795463130.125109474] [mission]: episode=g5_debug_delivery-0 job=job_1 event=following_started reason=
+[mission_node-2] [INFO] [1795463130.290902403] [mission]: episode=g5_debug_delivery-0 job=job_2 event=released reason=
+[mission_node-2] [INFO] [1795463130.345141137] [mission]: episode=g5_debug_delivery-0 job=job_1 event=stopping reason=arrived
+[mission_node-2] [INFO] [1795463130.370915536] [mission]: episode=g5_debug_delivery-0 job=job_1 event=navigation_succeeded reason=arrived
+[mission_node-2] [INFO] [1795463130.370967177] [mission]: episode=g5_debug_delivery-0 job=job_1 event=dropoff_service reason=
+[mission_node-2] [INFO] [1795463130.490963199] [mission]: episode=g5_debug_delivery-0 job=job_1 event=delivered reason=
+[mission_node-2] [INFO] [1795463130.511010285] [mission]: episode=g5_debug_delivery-0 job= event=decision reason=latency_s=0.000001
+[mission_node-2] [INFO] [1795463130.511079231] [mission]: episode=g5_debug_delivery-0 job=job_2 event=selected reason=
+[mission_node-2] [INFO] [1795463130.511132095] [mission]: episode=g5_debug_delivery-0 job=job_2 event=planning_started reason=
+[mission_node-2] [INFO] [1795463130.545202180] [mission]: episode=g5_debug_delivery-0 job=job_2 event=following_started reason=
+[mission_node-2] [INFO] [1795463130.565166814] [mission]: episode=g5_debug_delivery-0 job=job_2 event=stopping reason=arrived
+[mission_node-2] [INFO] [1795463130.590929004] [mission]: episode=g5_debug_delivery-0 job=job_2 event=navigation_succeeded reason=arrived
+[mission_node-2] [INFO] [1795463130.590994371] [mission]: episode=g5_debug_delivery-0 job=job_2 event=pickup_service reason=
+[mission_node-2] [INFO] [1795463130.690964418] [mission]: episode=g5_debug_delivery-0 job=job_2 event=picked reason=
+[mission_node-2] [INFO] [1795463130.691080540] [mission]: episode=g5_debug_delivery-0 job=job_2 event=planning_started reason=
+[mission_node-2] [INFO] [1795463130.725315995] [mission]: episode=g5_debug_delivery-0 job=job_2 event=following_started reason=
+[mission_node-2] [INFO] [1795463131.025144571] [mission]: episode=g5_debug_delivery-0 job=job_2 event=stopping reason=arrived
+[mission_node-2] [INFO] [1795463131.050936253] [mission]: episode=g5_debug_delivery-0 job=job_2 event=navigation_succeeded reason=arrived
+[mission_node-2] [INFO] [1795463131.051020914] [mission]: episode=g5_debug_delivery-0 job=job_2 event=dropoff_service reason=
+[mission_node-2] [INFO] [1795463131.150954365] [mission]: episode=g5_debug_delivery-0 job=job_2 event=delivered reason=
+[mission_node-2] [INFO] [1795463131.170970193] [mission]: episode=g5_debug_delivery-0 job= event=episode_completed reason=
+[benchmark_runner_node-3] [INFO] [1795463131.171518538] [benchmark_runner]: episode finished: completed
+[INFO] [benchmark_runner_node-3]: process has finished cleanly [pid 37760]
+[INFO] [mission_metrics-4]: process started with pid [37805]
+[INFO] [mission_metrics-4]: process has finished cleanly [pid 37805]
+[INFO] [mission_node-2]: sending signal 'SIGINT' to process[mission_node-2]
+[INFO] [debug_navigation-1]: sending signal 'SIGINT' to process[debug_navigation-1]
+[debug_navigation-1] [INFO] [1795463131.283378879] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[INFO] [debug_navigation-1]: process has finished cleanly [pid 37758]
+[INFO] [mission_node-2]: process has finished cleanly [pid 37759]

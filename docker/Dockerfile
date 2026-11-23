@@ -122,3 +122,11 @@ RUN source /opt/ros/jazzy/setup.bash \
     && colcon test --event-handlers console_direct+ \
     && colcon test-result --verbose
 CMD ["bash", "-c", "source /ws/install/setup.bash && exec ros2 run capstone_bringup clock_probe"]
+
+# G5: небольшая offline DQN-среда; исполняемый контур миссии остаётся на C++.
+FROM python:3.12-slim AS train-g5
+RUN apt-get update && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
+COPY ml/mission/requirements.txt /tmp/g5-requirements.txt
+RUN pip install --no-cache-dir -r /tmp/g5-requirements.txt
+WORKDIR /workspace

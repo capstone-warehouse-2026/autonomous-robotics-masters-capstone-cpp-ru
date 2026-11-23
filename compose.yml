@@ -59,3 +59,19 @@ services:
     # PyTorch DataLoader workers exchange batches through shared memory.
     shm_size: 2gb
     init: true
+  train-g5:
+    image: capstone-train-g5:local
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: train-g5
+    profiles: ["train-g5"]
+    environment:
+      HOME: /workspace/.cache/home
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    init: true

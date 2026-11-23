@@ -1,0 +1,16 @@
+schema_version: 1
+episode_id: g5_frozen_clock-0
+method: classical
+code_commit: cf882fe96de686dbf73cda645f2aa4e93178be52
+terminal_reason: frozen_clock
+elapsed_sim_s: 8.2
+distance_m: 7.899999999999988
+simulation_reset_service: debug/reset
+scope: debug_kinematic_actions
+dirty: true
+source_snapshot_sha256: 7c02a4e0dedc1e2774e563a29a57d035fab1f0123fe0b4f82bace09970c20b3e
+scenario_sha256: 6c7da048baf9694a2f7ea715ffe07b8270ef74698fda4b4fa8d09f187e0910f9
+injection: freeze_clock=true after following_started
+injection_sim_s: 8.2
+snapshot_note: Final metadata adds python3-numpy test dependency and ML tests to Makefile;
+  runtime sources match executed binaries.

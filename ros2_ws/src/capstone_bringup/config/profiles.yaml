@@ -1,0 +1,8 @@
+# Порядок методов: G1, G2, G3, G4, G5. Профили фиксируются между эпизодами.
+C0: [classical, classical, classical, classical, classical]
+C1: [learned, classical, classical, classical, classical]
+C2: [classical, learned, classical, classical, classical]
+C3: [classical, classical, learned, classical, classical]
+C4: [classical, classical, classical, learned, classical]
+C5: [classical, classical, classical, classical, learned]
+C6: [learned, learned, learned, learned, learned]

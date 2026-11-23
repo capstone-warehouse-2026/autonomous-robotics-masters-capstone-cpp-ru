@@ -1,0 +1,17 @@
+episode_id,method,job_id,sim_time,event,reason,target
+g5_debug_delivery,classical,job_1,0,released,,
+g5_debug_delivery,classical,job_1,0,selected,classical,pickup
+g5_debug_delivery,classical,job_1,2.5,picked,,pickup
+g5_debug_delivery,classical,job_2,3,released,,
+g5_debug_delivery,classical,job_1,5,delivered,,dropoff
+g5_debug_delivery,classical,job_2,5,selected,classical,dropoff
+g5_debug_delivery,classical,job_2,5.5,picked,,dropoff
+g5_debug_delivery,classical,job_2,8.82842712475,delivered,,home
+g5_debug_delivery,learned,job_1,0,released,,
+g5_debug_delivery,learned,job_1,0,selected,dqn,pickup
+g5_debug_delivery,learned,job_1,2.5,picked,,pickup
+g5_debug_delivery,learned,job_2,3,released,,
+g5_debug_delivery,learned,job_1,5,delivered,,dropoff
+g5_debug_delivery,learned,job_2,5,selected,dqn,dropoff
+g5_debug_delivery,learned,job_2,5.5,picked,,dropoff
+g5_debug_delivery,learned,job_2,8.82842712475,delivered,,home

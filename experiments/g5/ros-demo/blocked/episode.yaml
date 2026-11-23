@@ -1,0 +1,14 @@
+schema_version: 1
+episode_id: g5_debug_delivery-0
+method: classical
+code_commit: cf882fe96de686dbf73cda645f2aa4e93178be52
+terminal_reason: mission_fault
+elapsed_sim_s: 9.8
+distance_m: 0
+simulation_reset_service: debug/reset
+scope: debug_kinematic_actions
+dirty: true
+source_snapshot_sha256: 7c02a4e0dedc1e2774e563a29a57d035fab1f0123fe0b4f82bace09970c20b3e
+scenario_sha256: b9d30f9f152ab456bbefa1584405ab4ab8aef9abbf0061e4baa52c91891d3105
+snapshot_note: Final metadata adds python3-numpy test dependency and ML tests to Makefile;
+  runtime sources match executed binaries.

@@ -13,6 +13,7 @@ target_include_directories(clock_probe PRIVATE include)
 ament_target_dependencies(clock_probe rclcpp rosgraph_msgs)
 target_compile_options(clock_probe PRIVATE -Wall -Wextra -Wpedantic)
 install(TARGETS clock_probe DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   enable_testing()

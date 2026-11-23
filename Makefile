@@ -52,6 +52,7 @@ test: build ## Собрать код и запустить тесты
 	$(DEV_RUN) '$(DEV_ENV) && colcon test $(TEST_ARGS) --event-handlers console_direct+ \
 		&& colcon test-result --verbose $(TEST_RESULT_ARGS)'
 	$(if $(PKG),,$(DEV_RUN) 'python3 -m unittest discover -s /workspace/ml/perception')
+	$(if $(PKG),,$(DEV_RUN) 'python3 -m unittest discover -s /workspace/ml/mission')
 
 shell: dev-image ## Открыть терминал в контейнере разработки (ros2, colcon)
 	$(COMPOSE) run --rm dev bash
@@ -126,3 +127,54 @@ down: ## Остановить все контейнеры проекта
 
 clean: ## Удалить результаты сборки (ros2_ws/build, install, log)
 	rm -rf ros2_ws/build ros2_ws/install ros2_ws/log
+
+# G5: обучение отдельно от C++ runtime; стенд не требует Webots или G1–G4.
+G5_METHOD ?= classical
+G5_EPISODES ?= 1000
+G5_RESULTS ?= /workspace/results/g5-isolated
+G5_MODELS := /workspace/ros2_ws/src/capstone_mission/models
+G5_TRAIN := $(COMPOSE) --profile train-g5 run --rm train-g5
+.PHONY: g5-ml-test g5-train g5-model g5-demo g5-eval g5-test
+
+g5-ml-test: dirs ## G5: тесты offline среды и маскированного DQN
+	$(COMPOSE) --profile train-g5 build train-g5
+	$(G5_TRAIN) python3 -m unittest discover -s ml/mission -p 'test_*.py'
+
+g5-train: dirs ## G5: обучение DQN и ablation на трёх seed (G5_EPISODES=1000)
+	$(COMPOSE) --profile train-g5 build train-g5
+	$(G5_TRAIN) python3 ml/mission/train.py --episodes $(G5_EPISODES) --out data/g5/training
+	$(G5_TRAIN) python3 ml/mission/train.py --episodes $(G5_EPISODES) --no-congestion --out data/g5/ablation
+
+g5-model: dirs ## G5: экспорт весов, SHA256, сценариев и Python/C++ эталона
+	$(COMPOSE) --profile train-g5 build train-g5
+	$(G5_TRAIN) python3 ml/mission/export.py --training data/g5/training --ablation data/g5/ablation
+
+g5-demo: dev-image ## G5: отладочная ROS-симуляция доставки (G5_METHOD=classical|learned)
+	$(MAKE) build PKG=capstone_debug_navigation
+	$(DEV_RUN) '$(DEV_ENV) && ROS_DOMAIN_ID=75 ros2 launch capstone_debug_navigation demo.launch.py method:=$(G5_METHOD)'
+
+g5-test: ## G5: C++ ядро, ROS actions, benchmark и offline тесты
+	$(MAKE) test PKG=capstone_mission
+	$(MAKE) test PKG=capstone_benchmark
+	$(MAKE) test PKG=capstone_debug_navigation
+	$(MAKE) g5-ml-test
+
+g5-eval: dev-image ## G5: C++ сравнение на 100 test-сценариях, 3 seed и 3 ablations
+	$(MAKE) build PKG=capstone_benchmark
+	$(DEV_RUN) '$(DEV_ENV) && ros2 run capstone_benchmark dispatch_benchmark \
+		--scenarios /workspace/ml/mission/scenarios/test --output $(G5_RESULTS) \
+		--commit "$$(git -C /workspace rev-parse HEAD)" \
+		--model seed0=$(G5_MODELS)/dqn_seed_0.json \
+		--model seed1=$(G5_MODELS)/dqn_seed_1.json \
+		--model seed2=$(G5_MODELS)/dqn_seed_2.json \
+		--ablation ablation0=$(G5_MODELS)/dqn_no_congestion_seed_0.json \
+		--ablation ablation1=$(G5_MODELS)/dqn_no_congestion_seed_1.json \
+		--ablation ablation2=$(G5_MODELS)/dqn_no_congestion_seed_2.json \
+		&& ros2 run capstone_benchmark aggregate_dispatch $(G5_RESULTS)/metrics.csv $(G5_RESULTS)/summary.csv'
+
+G5_SMOKE_OUTPUT ?= /workspace/results/g5-ros-episode
+.PHONY: g5-smoke
+g5-smoke: dev-image ## G5: один ROS-эпизод с reset, остановкой, manifest и C++ метриками
+	$(MAKE) build PKG=capstone_benchmark
+	$(DEV_RUN) '$(DEV_ENV) && ros2 launch capstone_benchmark debug_episode.launch.py \
+		method:=$(G5_METHOD) output:=$(G5_SMOKE_OUTPUT) commit:="$$(git -C /workspace rev-parse HEAD)"'

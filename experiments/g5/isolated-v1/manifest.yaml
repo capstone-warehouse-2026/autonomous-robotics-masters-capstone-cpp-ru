@@ -1,0 +1,655 @@
+schema_version: 1
+evaluation: isolated_dispatch_tables
+code_commit: cf882fe96de686dbf73cda645f2aa4e93178be52
+analysis_seed: 2026
+compiler: 13.3.0
+scope: No Webots physics, perception, localization, or collision metrics
+methods:
+  classical:
+    congestion_feature: true
+    model_error: ''
+  seed0:
+    congestion_feature: true
+    model_error: ''
+    model_sha256: b9f941d6c5d1fe5de149dc883e554ebe60d8347430d36bfb0c9ba17acea73d4b
+  seed1:
+    congestion_feature: true
+    model_error: ''
+    model_sha256: c124083852d7810a4135ecf75a1b0e3573826d8e9066aad1f0f20d3bc54a3213
+  seed2:
+    congestion_feature: true
+    model_error: ''
+    model_sha256: b86f66590da3591a8d1ec96cdd113b627e1a69c4dc9b2f39132acf081ea16cb3
+  ablation0:
+    congestion_feature: false
+    model_error: ''
+    model_sha256: fc6e247d3cffbda02ff892c2c8e66bb6bd277cae11a777a54b30f09f1edf620b
+  ablation1:
+    congestion_feature: false
+    model_error: ''
+    model_sha256: 3cdfec7a2d3b8aa707a57f7443f0b6bb3f6a50a516f4157ddb72e2db06574c5a
+  ablation2:
+    congestion_feature: false
+    model_error: ''
+    model_sha256: 70f215a0e2cd909e12f939d72b4d36efe356800be9ec5348be193157364418db
+scenarios:
+  test_blocked_2000:
+    sha256: c1c0857aca100a28554e46b65f9434df801103dc80afcb228233219aa3288a75
+    seed: 2000
+    split: test
+    family: blocked
+    layout_id: test_0
+  test_blocked_2001:
+    sha256: 7206c1b2de0dc7ad992cbae8ad11023ee37c7666814b2fb532f14f9fb7f6fc20
+    seed: 2001
+    split: test
+    family: blocked
+    layout_id: test_1
+  test_blocked_2002:
+    sha256: 189166dbb194b256ebd76a4207630bc1bf628623a530abd60c944eb0e9ef51b1
+    seed: 2002
+    split: test
+    family: blocked
+    layout_id: test_0
+  test_blocked_2003:
+    sha256: 5d787ce05656f2984c36297967e8fe07155912ddeb0a583d7c4f6d7b5fd9ef5a
+    seed: 2003
+    split: test
+    family: blocked
+    layout_id: test_1
+  test_blocked_2004:
+    sha256: 0e618e976cb896cf580180228bb5566363a750f739a913ad2788496f0f18276c
+    seed: 2004
+    split: test
+    family: blocked
+    layout_id: test_0
+  test_blocked_2005:
+    sha256: dc86e1935ec6cc6b56e86fa9ae1e7b88340be6410804b2b1716e71dd6b39b36a
+    seed: 2005
+    split: test
+    family: blocked
+    layout_id: test_1
+  test_blocked_2006:
+    sha256: eaf7418cce984f6f3feac929d119025ec73314398e3a203d68f9120dedd38ba2
+    seed: 2006
+    split: test
+    family: blocked
+    layout_id: test_0
+  test_blocked_2007:
+    sha256: cb414ddd8775a74ef6a24f3c46e2e0a83c058b6f9a3717d457c52a03b07707da
+    seed: 2007
+    split: test
+    family: blocked
+    layout_id: test_1
+  test_blocked_2008:
+    sha256: 7f3ebd53ece8ab9a1d43ca333510de018bb6f1e3cc159c706fc3b7806bead01c
+    seed: 2008
+    split: test
+    family: blocked
+    layout_id: test_0
+  test_blocked_2009:
+    sha256: d1b80e225373503549079486efa4e458669f7ac49f1f582369689b15d27c60ee
+    seed: 2009
+    split: test
+    family: blocked
+    layout_id: test_1
+  test_blocked_2010:
+    sha256: 0a3c27bb703655372ceec1c88d5625c38611b468ca8a37f9a01319c2301d420d
+    seed: 2010
+    split: test
+    family: blocked
+    layout_id: test_0
+  test_blocked_2011:
+    sha256: 2b64cd2c6603cbc14c5bd9f4e4621af0fd81feac64af58221e30ba671c9eefd0
+    seed: 2011
+    split: test
+    family: blocked
+    layout_id: test_1
+  test_blocked_2012:
+    sha256: 401c7fc628b7cb7916a43560cf09a9da3613bc71d33ad035056f4bde63a8d153
+    seed: 2012
+    split: test
+    family: blocked
+    layout_id: test_0
+  test_blocked_2013:
+    sha256: 4cd3a9fdaf00179f1886b3876605c8c5617faf69824d4b231a1eee88f978c3f0
+    seed: 2013
+    split: test
+    family: blocked
+    layout_id: test_1
+  test_blocked_2014:
+    sha256: efc6b626e7c78b425184e30799d0c2cd5b39e8932192296e4ae74f0c32d40003
+    seed: 2014
+    split: test
+    family: blocked
+    layout_id: test_0
+  test_blocked_2015:
+    sha256: 9dc0fc78eb045c14b275a648463c03d6c1c906d2233a8d6cc64f49b69208870d
+    seed: 2015
+    split: test
+    family: blocked
+    layout_id: test_1
+  test_blocked_2016:
+    sha256: 27e8ea94912441cd27276a65f8ca1885ff1f8d25e1aaa1c72250af3b60fbf157
+    seed: 2016
+    split: test
+    family: blocked
+    layout_id: test_0
+  test_blocked_2017:
+    sha256: 76e1aa2669ddc938ce7091c2c4bb0ea2d57f77860faa440bc079ad2d3a60faa1
+    seed: 2017
+    split: test
+    family: blocked
+    layout_id: test_1
+  test_blocked_2018:
+    sha256: 11060a2230ff62d8716f21f12de587d784a4ddbb6b1c79c7668f8ee9d09fb8bc
+    seed: 2018
+    split: test
+    family: blocked
+    layout_id: test_0
+  test_blocked_2019:
+    sha256: 0d5d8f23aed7ea4fa8c8eecdbb10ed6d09b4dba2ecb32546be354a1173adeb0a
+    seed: 2019
+    split: test
+    family: blocked
+    layout_id: test_1
+  test_bottleneck_2000:
+    sha256: ae3380b6275ea4dbe3d3eb63f492dc2c2880f35f06bc6fbd87cbfbc9eab88980
+    seed: 2000
+    split: test
+    family: bottleneck
+    layout_id: test_0
+  test_bottleneck_2001:
+    sha256: 20f4681f5699b40e61a79f1787b4ab79207484b0c824d4a2e9322c1f26a01212
+    seed: 2001
+    split: test
+    family: bottleneck
+    layout_id: test_1
+  test_bottleneck_2002:
+    sha256: 82886c40645495d435184b7eb87e5388a760b460782ebb64d7dd0d1354564df9
+    seed: 2002
+    split: test
+    family: bottleneck
+    layout_id: test_0
+  test_bottleneck_2003:
+    sha256: a37cf51ccf10f441401c813b4d20abb5d96e3bdae6bf6953741ba7ea27fc9f56
+    seed: 2003
+    split: test
+    family: bottleneck
+    layout_id: test_1
+  test_bottleneck_2004:
+    sha256: 1450660e8078c4174f9faf9e11d30a91d56e5f60dabcc84b23d94977d8f3b35e
+    seed: 2004
+    split: test
+    family: bottleneck
+    layout_id: test_0
+  test_bottleneck_2005:
+    sha256: 0b86b366ed695d01502c59a9ca7200dff230622839e1e29291190edea960559d
+    seed: 2005
+    split: test
+    family: bottleneck
+    layout_id: test_1
+  test_bottleneck_2006:
+    sha256: 975f27523749285250c880739b48e8b98bb4bd1482fa682f5fff205b3dd67a0b
+    seed: 2006
+    split: test
+    family: bottleneck
+    layout_id: test_0
+  test_bottleneck_2007:
+    sha256: 3c890c4c04a4015c2f885c2391496f3c6824440c9828a29fbba67e1bd5e42280
+    seed: 2007
+    split: test
+    family: bottleneck
+    layout_id: test_1
+  test_bottleneck_2008:
+    sha256: aea5e7d910214d55052fa6790c22570ec144c6880808d67454f34a984e56d268
+    seed: 2008
+    split: test
+    family: bottleneck
+    layout_id: test_0
+  test_bottleneck_2009:
+    sha256: c013877a71a4ea4dd93ba2994eef3875d28cb14cb41c44d16cf99877c7d59ad3
+    seed: 2009
+    split: test
+    family: bottleneck
+    layout_id: test_1
+  test_bottleneck_2010:
+    sha256: 581dc573e37696dd25031448476ef818084db3227b2f8e8956cf611360f0e79e
+    seed: 2010
+    split: test
+    family: bottleneck
+    layout_id: test_0
+  test_bottleneck_2011:
+    sha256: fc8edc9eda43d6e406f7a9edcbc64dc5351dbb11e8acc202cf66247cf05f5fdf
+    seed: 2011
+    split: test
+    family: bottleneck
+    layout_id: test_1
+  test_bottleneck_2012:
+    sha256: d75ce3fe720a7d0bb3f6fb849950a81368d5eebf9aa449eef2c6c32c612c03f2
+    seed: 2012
+    split: test
+    family: bottleneck
+    layout_id: test_0
+  test_bottleneck_2013:
+    sha256: 917db5b8bbeb784a781c2c37c6c9b0f20bdced952fead530072f855c088646e2
+    seed: 2013
+    split: test
+    family: bottleneck
+    layout_id: test_1
+  test_bottleneck_2014:
+    sha256: eafcd2a2b6531bfa9b36c0a73179f2a77fb1e28f78ae0e2658d819d699cef959
+    seed: 2014
+    split: test
+    family: bottleneck
+    layout_id: test_0
+  test_bottleneck_2015:
+    sha256: c734fc5cee583c9655f9a6ad8d9f332e3ebb7400c4fa78a7b805a6855bb7417d
+    seed: 2015
+    split: test
+    family: bottleneck
+    layout_id: test_1
+  test_bottleneck_2016:
+    sha256: 7f8e49c2005c6f74cc7a8bb61afee47fc33d5288ad4f53c4ea491108958f2b89
+    seed: 2016
+    split: test
+    family: bottleneck
+    layout_id: test_0
+  test_bottleneck_2017:
+    sha256: a597061b63d84e5937546b6ace7b676c133e5cd8f31198e4744c94fe51561232
+    seed: 2017
+    split: test
+    family: bottleneck
+    layout_id: test_1
+  test_bottleneck_2018:
+    sha256: f8e122dda1e054441954c31ee828252a236c524df54c1297a96b10dffaba4e72
+    seed: 2018
+    split: test
+    family: bottleneck
+    layout_id: test_0
+  test_bottleneck_2019:
+    sha256: 8ed16557fa8d9325a516801174f0fee43523e30c8db7375f9c0c9ed2cffb1119
+    seed: 2019
+    split: test
+    family: bottleneck
+    layout_id: test_1
+  test_high_2000:
+    sha256: 78f2cf3beb621f39c39b6c38d318efa90f79d9fcbc77d02dd22ab794899c32f3
+    seed: 2000
+    split: test
+    family: high
+    layout_id: test_0
+  test_high_2001:
+    sha256: 4f7d4e5b2490a87f7b513979722f336543565227d8bd88dc3b8ceeb1a295ecd0
+    seed: 2001
+    split: test
+    family: high
+    layout_id: test_1
+  test_high_2002:
+    sha256: 12b10934b5fc43bfb61bc2e8d4057af08bf512fbc5da58bafdce2a70d7e77d33
+    seed: 2002
+    split: test
+    family: high
+    layout_id: test_0
+  test_high_2003:
+    sha256: 18f1c928ec718c2aa9f363ee61d545ce5a5a862feaad8361b8ff08b591173d35
+    seed: 2003
+    split: test
+    family: high
+    layout_id: test_1
+  test_high_2004:
+    sha256: b8c2136d11ebcd768395d7cd711e743759024d198ee5dc736a2f88681f6f3dc9
+    seed: 2004
+    split: test
+    family: high
+    layout_id: test_0
+  test_high_2005:
+    sha256: f51d36c8c93b9147f20a0663f519be6001aa7446cf24e2841aeb39b8b2737af3
+    seed: 2005
+    split: test
+    family: high
+    layout_id: test_1
+  test_high_2006:
+    sha256: 8e52fe5a1cf9f5350180384b2bd665f4dafa48354f496d051f36675e6af9b55d
+    seed: 2006
+    split: test
+    family: high
+    layout_id: test_0
+  test_high_2007:
+    sha256: f3c3c5330f26d53ae9f4addf0bc9027173e9ebd9ce64dbad6340d1e83cad0509
+    seed: 2007
+    split: test
+    family: high
+    layout_id: test_1
+  test_high_2008:
+    sha256: 1e28f67ec0a5472775656e01bc1fff54196628f9291fb4dbeb3985f3582db765
+    seed: 2008
+    split: test
+    family: high
+    layout_id: test_0
+  test_high_2009:
+    sha256: 8d3294fcd136238ccfcc8162e09a9ddab55362b8f8809125f37d4a2b9ece0df7
+    seed: 2009
+    split: test
+    family: high
+    layout_id: test_1
+  test_high_2010:
+    sha256: 17bf247a3ddd45708354d984131ba04245f35943a32505b53c4a7f93a5320974
+    seed: 2010
+    split: test
+    family: high
+    layout_id: test_0
+  test_high_2011:
+    sha256: dfea188d719803680c4000e26e64e73e88712b9b3c95eac8c1cead9436b440ab
+    seed: 2011
+    split: test
+    family: high
+    layout_id: test_1
+  test_high_2012:
+    sha256: 109c65eba8d66a6eb398e7278866f5f3d5187872b09091f38b86c4ff4d01ff02
+    seed: 2012
+    split: test
+    family: high
+    layout_id: test_0
+  test_high_2013:
+    sha256: 757a8a4b3e6628b99227213bf14b0399820c230e07d4c4232b2cc9320445a029
+    seed: 2013
+    split: test
+    family: high
+    layout_id: test_1
+  test_high_2014:
+    sha256: 822f8608414bbf3618acb915970b8c4a9818d9c023e47b358b1ad41a3410f6db
+    seed: 2014
+    split: test
+    family: high
+    layout_id: test_0
+  test_high_2015:
+    sha256: f0023b78ce7878bf59ef7bc2ca3f8654867c14df24f1a68897d62e9e15293e34
+    seed: 2015
+    split: test
+    family: high
+    layout_id: test_1
+  test_high_2016:
+    sha256: c36ff5db15597b7e25064266ed9ea72b5d890e72f2ccab5f616d77d874964062
+    seed: 2016
+    split: test
+    family: high
+    layout_id: test_0
+  test_high_2017:
+    sha256: 73512d890e541a7749d1118488bcc06ca9509a0cefd3d8a80549680806dd6617
+    seed: 2017
+    split: test
+    family: high
+    layout_id: test_1
+  test_high_2018:
+    sha256: f0701e4a9226bd9b0df64c786728d49db824a3e0824de7d0e7c126b85f3b8f85
+    seed: 2018
+    split: test
+    family: high
+    layout_id: test_0
+  test_high_2019:
+    sha256: cbf76bb9ebd0a3ee5ab463b4bfee77e239afaffb77a02e8c7dc9e12bf6f122ca
+    seed: 2019
+    split: test
+    family: high
+    layout_id: test_1
+  test_low_2000:
+    sha256: 238a37f79e0dd7e420159734eb6b3aa7f86e7707b06cdc50fb03feb459233e5f
+    seed: 2000
+    split: test
+    family: low
+    layout_id: test_0
+  test_low_2001:
+    sha256: 3706fb3a433084a396a33cec212a2f3828a72b953e5ef5e1d3a857b4ff4838ff
+    seed: 2001
+    split: test
+    family: low
+    layout_id: test_1
+  test_low_2002:
+    sha256: f13dbfd3d7a84d76a6cddd4ec2e7c681afc8be2a8f0bb5e67dee6ca898d35b36
+    seed: 2002
+    split: test
+    family: low
+    layout_id: test_0
+  test_low_2003:
+    sha256: bb6bc91556f065bc2bdc0d3225733f03ef59924978c0b3d6571e497d2ea674dc
+    seed: 2003
+    split: test
+    family: low
+    layout_id: test_1
+  test_low_2004:
+    sha256: 11312df1b9494f7a9df0032deefab248000d41dfb38137e4ef9228210b88fd77
+    seed: 2004
+    split: test
+    family: low
+    layout_id: test_0
+  test_low_2005:
+    sha256: 6e979381a22b10db646cd885332d7f2ec80d39c4e5afdb12613d76c4b10307e8
+    seed: 2005
+    split: test
+    family: low
+    layout_id: test_1
+  test_low_2006:
+    sha256: 145df0f5443763c111e16fd918520d1a5f0e5bf663843c4acefaa83e565173f8
+    seed: 2006
+    split: test
+    family: low
+    layout_id: test_0
+  test_low_2007:
+    sha256: 0b7979ec7199bdc1beed00afd2ef39ef8b4f67814963d625a786a495ca88049b
+    seed: 2007
+    split: test
+    family: low
+    layout_id: test_1
+  test_low_2008:
+    sha256: f10b3186d7a3527d45a2becc04e55b98be206b3a47b40dbc77c387766e184c5f
+    seed: 2008
+    split: test
+    family: low
+    layout_id: test_0
+  test_low_2009:
+    sha256: b21f45bb3634f6db3e1c1890b06f34fa02f261b5c0ee7b7ddd7e68821b6adbeb
+    seed: 2009
+    split: test
+    family: low
+    layout_id: test_1
+  test_low_2010:
+    sha256: 7815b742e2878d7b56d427ca9c95fc32628691b3bec3b31ddf718dec29f28d5f
+    seed: 2010
+    split: test
+    family: low
+    layout_id: test_0
+  test_low_2011:
+    sha256: ca60d90d1d4dce89a10ee29ae7d01429cbce19dcfdd36cebd8447cd858cf1d31
+    seed: 2011
+    split: test
+    family: low
+    layout_id: test_1
+  test_low_2012:
+    sha256: 108b7392c7dc97b83cc95362258240540826ed724419372ae53f5f96984d43bb
+    seed: 2012
+    split: test
+    family: low
+    layout_id: test_0
+  test_low_2013:
+    sha256: 09e3897b06834837ac6935dea423dd6e8b890c93b4b9aa9642d4f71e46e9de6f
+    seed: 2013
+    split: test
+    family: low
+    layout_id: test_1
+  test_low_2014:
+    sha256: 675a7902d4757d1886b3395ca67bcc6ab32c3d12d98f2b97d8ead1991c0ed097
+    seed: 2014
+    split: test
+    family: low
+    layout_id: test_0
+  test_low_2015:
+    sha256: d8754b89b9e2f43b007e4aed37b240704b3b0611144d6a84bcae857bd51924f2
+    seed: 2015
+    split: test
+    family: low
+    layout_id: test_1
+  test_low_2016:
+    sha256: 8a18c14bcc626e3ff8954e6122f59223f1183c64b4c66bc97dbf26806d0c068b
+    seed: 2016
+    split: test
+    family: low
+    layout_id: test_0
+  test_low_2017:
+    sha256: 300cbab7f9ab0a81834609c4ee55f6e2bb52a008ff76b94e3636281b46e1ebc9
+    seed: 2017
+    split: test
+    family: low
+    layout_id: test_1
+  test_low_2018:
+    sha256: e9d122c2a4ce464589af44608a6bbe3a54dbcc6b60c1e7f08f576252bf522ad5
+    seed: 2018
+    split: test
+    family: low
+    layout_id: test_0
+  test_low_2019:
+    sha256: c417ed8d49b5c8a8cf5e3bf214665f71b7ab64c749d75a235ca75c428d15a641
+    seed: 2019
+    split: test
+    family: low
+    layout_id: test_1
+  test_unequal_2000:
+    sha256: f39eba16d68599af2d0f8997afabeafb2e8f09a8220e0a5ccb25cb8cda47d0fa
+    seed: 2000
+    split: test
+    family: unequal
+    layout_id: test_0
+  test_unequal_2001:
+    sha256: efc968bf752e0ea67222f61caaeea3e58d9adc1144f63616421c45f7c1923f6e
+    seed: 2001
+    split: test
+    family: unequal
+    layout_id: test_1
+  test_unequal_2002:
+    sha256: 38f61b23a1db2e0113fe92e75a1a0a8a85da7623f1b19e7728f4dad1f180bcd9
+    seed: 2002
+    split: test
+    family: unequal
+    layout_id: test_0
+  test_unequal_2003:
+    sha256: f32e43f7d157086198fcba723dd4c9490ff029ff99e3736e087bc1cc39b7c957
+    seed: 2003
+    split: test
+    family: unequal
+    layout_id: test_1
+  test_unequal_2004:
+    sha256: eb85823eba14c94a12767fc0a908b47a6d1860e6ed047b340390a209b179967c
+    seed: 2004
+    split: test
+    family: unequal
+    layout_id: test_0
+  test_unequal_2005:
+    sha256: 7236b3ac3711597f1a6de73eba85d0ef9618171510943678d9d50a6cfa8e2763
+    seed: 2005
+    split: test
+    family: unequal
+    layout_id: test_1
+  test_unequal_2006:
+    sha256: 15a4ade51f3381714885247ceddb08e5ba19993bf5faf42125b8bb0889bec2d6
+    seed: 2006
+    split: test
+    family: unequal
+    layout_id: test_0
+  test_unequal_2007:
+    sha256: 6d4a160077ea8b18003c57908879753d5e17aceb2c84e0a0cae58db9d783290f
+    seed: 2007
+    split: test
+    family: unequal
+    layout_id: test_1
+  test_unequal_2008:
+    sha256: d5d0e3322fd391a556be24472ec2b45ac4761c0be59b1eba4eaf49bde979710d
+    seed: 2008
+    split: test
+    family: unequal
+    layout_id: test_0
+  test_unequal_2009:
+    sha256: b752c72c8cefb6b0ce8616844120997b514201dc9caa22487f462318aebf505d
+    seed: 2009
+    split: test
+    family: unequal
+    layout_id: test_1
+  test_unequal_2010:
+    sha256: 33cf720ac4f7c1e7e74be52ee16b1d8161d8070f122b5530c159622f118b826a
+    seed: 2010
+    split: test
+    family: unequal
+    layout_id: test_0
+  test_unequal_2011:
+    sha256: a16b5e3b3ae36f382b4d9c047a2e2a01bea819ba1437a4a003559548505ed906
+    seed: 2011
+    split: test
+    family: unequal
+    layout_id: test_1
+  test_unequal_2012:
+    sha256: 7dcce86bcbd1e8765452c029c2f3d8bd5e5c53b6c08b9df4c7543bc9ca0338ba
+    seed: 2012
+    split: test
+    family: unequal
+    layout_id: test_0
+  test_unequal_2013:
+    sha256: 0a99bcd88cbc480f1eac322cef5d8e3ad018f880be64a1dfb1806288aceed128
+    seed: 2013
+    split: test
+    family: unequal
+    layout_id: test_1
+  test_unequal_2014:
+    sha256: 5e353a18afb1e88ff2c59a5df88cf6f567fd40b6e208ab57dde9996e83accf38
+    seed: 2014
+    split: test
+    family: unequal
+    layout_id: test_0
+  test_unequal_2015:
+    sha256: dc67702f3f2d77ebaaa263ea4dc055e0a8b202c6c0b1272d54d0da6a4f16fa09
+    seed: 2015
+    split: test
+    family: unequal
+    layout_id: test_1
+  test_unequal_2016:
+    sha256: cd1f3e1d216ab5a79bd107a643d44e7786156f33a124e19a302fdc3c53016461
+    seed: 2016
+    split: test
+    family: unequal
+    layout_id: test_0
+  test_unequal_2017:
+    sha256: e59fa81c02e89098b85f47e3c86ed8236dfa2000a76cf11ff8dfa7b4ad0397a7
+    seed: 2017
+    split: test
+    family: unequal
+    layout_id: test_1
+  test_unequal_2018:
+    sha256: bb268ee04c41a83d411141d9092355461a9c37dac46a4267ee4292e4d5d2fcfc
+    seed: 2018
+    split: test
+    family: unequal
+    layout_id: test_0
+  test_unequal_2019:
+    sha256: 81846299f537b365db1d57357ce4ffbde219d77a2ac854be46cb0e2611dc0c60
+    seed: 2019
+    split: test
+    family: unequal
+    layout_id: test_1
+dirty: true
+source_snapshot_sha256: 7c02a4e0dedc1e2774e563a29a57d035fab1f0123fe0b4f82bace09970c20b3e
+runtime: native_ros2_jazzy
+docker_image: not_applicable_native_run
+architecture: x86_64
+kernel: 7.0.0-34-generic
+cpu: 11th Gen Intel(R) Core(TM) i5-11400H @ 2.70GHz
+logical_cpus: 12
+executor: SingleThreadedExecutor
+model_inference_threads: 1
+ros_packages:
+  rclcpp: 28.1.22
+  rclcpp_action: 28.1.22
+  nav2_msgs: 1.3.14
+  behaviortree_cpp: 4.11.0
+  launch: 3.4.11
+  launch_ros: 0.26.12
+scenario_directory: ml/mission/scenarios/test
+snapshot_note: Final metadata adds python3-numpy test dependency and ML tests to Makefile;
+  runtime sources match executed binaries.

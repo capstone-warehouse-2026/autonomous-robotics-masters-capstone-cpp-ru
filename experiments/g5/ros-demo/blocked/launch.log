@@ -1,0 +1,41 @@
+[INFO] [launch]: All log files can be found below /tmp/g5-closedloop-final-logs/2026-11-23-22-45-34-011254-tim-ASUS-TUF-Gaming-F15-FX506HC-FX506HC-37861
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [debug_navigation-1]: process started with pid [37864]
+[INFO] [mission_node-2]: process started with pid [37865]
+[INFO] [benchmark_runner_node-3]: process started with pid [37866]
+[debug_navigation-1] [WARN] [1795463134.095581359] [debug_navigation]: G5 debug kinematic navigation, not a full robot simulation
+[mission_node-2] [INFO] [1795463134.274746363] [mission]: episode=g5_debug_delivery-0 job= event=episode_ready reason=
+[mission_node-2] [INFO] [1795463134.310416429] [mission]: episode=g5_debug_delivery-0 job= event=episode_started reason=
+[mission_node-2] [INFO] [1795463134.322937070] [mission]: episode=g5_debug_delivery-0 job=job_1 event=released reason=
+[mission_node-2] [INFO] [1795463134.323098783] [mission]: episode=g5_debug_delivery-0 job= event=decision reason=latency_s=0.000008
+[mission_node-2] [INFO] [1795463134.323118273] [mission]: episode=g5_debug_delivery-0 job=job_1 event=selected reason=
+[mission_node-2] [INFO] [1795463134.323291964] [mission]: episode=g5_debug_delivery-0 job=job_1 event=planning_started reason=
+[mission_node-2] [INFO] [1795463134.355948842] [mission]: episode=g5_debug_delivery-0 job=job_1 event=stopping reason=planning_failed
+[mission_node-2] [INFO] [1795463134.382972699] [mission]: episode=g5_debug_delivery-0 job=job_1 event=navigation_failed reason=planning_failed
+[mission_node-2] [INFO] [1795463134.383043491] [mission]: episode=g5_debug_delivery-0 job=job_1 event=recovery reason=planning_failed
+[mission_node-2] [INFO] [1795463134.583033710] [mission]: episode=g5_debug_delivery-0 job=job_1 event=planning_started reason=
+[mission_node-2] [INFO] [1795463134.616078189] [mission]: episode=g5_debug_delivery-0 job=job_1 event=stopping reason=planning_failed
+[mission_node-2] [INFO] [1795463134.642950179] [mission]: episode=g5_debug_delivery-0 job=job_1 event=navigation_failed reason=planning_failed
+[mission_node-2] [INFO] [1795463134.643038917] [mission]: episode=g5_debug_delivery-0 job=job_1 event=failed reason=planning_failed
+[mission_node-2] [INFO] [1795463134.902989459] [mission]: episode=g5_debug_delivery-0 job=job_2 event=released reason=
+[mission_node-2] [INFO] [1795463134.903116589] [mission]: episode=g5_debug_delivery-0 job= event=decision reason=latency_s=0.000001
+[mission_node-2] [INFO] [1795463134.903134392] [mission]: episode=g5_debug_delivery-0 job=job_2 event=selected reason=
+[mission_node-2] [INFO] [1795463134.903185099] [mission]: episode=g5_debug_delivery-0 job=job_2 event=planning_started reason=
+[mission_node-2] [INFO] [1795463134.935973511] [mission]: episode=g5_debug_delivery-0 job=job_2 event=stopping reason=planning_failed
+[mission_node-2] [INFO] [1795463134.962978599] [mission]: episode=g5_debug_delivery-0 job=job_2 event=navigation_failed reason=planning_failed
+[mission_node-2] [INFO] [1795463134.963040491] [mission]: episode=g5_debug_delivery-0 job=job_2 event=recovery reason=planning_failed
+[mission_node-2] [INFO] [1795463135.183079300] [mission]: episode=g5_debug_delivery-0 job=job_2 event=planning_started reason=
+[mission_node-2] [INFO] [1795463135.216057790] [mission]: episode=g5_debug_delivery-0 job=job_2 event=stopping reason=planning_failed
+[mission_node-2] [INFO] [1795463135.242965069] [mission]: episode=g5_debug_delivery-0 job=job_2 event=navigation_failed reason=planning_failed
+[mission_node-2] [INFO] [1795463135.243052059] [mission]: episode=g5_debug_delivery-0 job=job_2 event=failed reason=planning_failed
+[mission_node-2] [INFO] [1795463135.262965131] [mission]: episode=g5_debug_delivery-0 job= event=episode_failed reason=unfinished_deliveries
+[benchmark_runner_node-3] [INFO] [1795463136.263740159] [benchmark_runner]: episode finished: mission_fault
+[ERROR] [benchmark_runner_node-3]: process has died [pid 37866, exit code 1, cmd '/tmp/g5-final-install/capstone_benchmark/lib/capstone_benchmark/benchmark_runner_node --ros-args --params-file /tmp/launch_params_cr0r8q15'].
+[INFO] [mission_metrics-4]: process started with pid [37911]
+[INFO] [mission_metrics-4]: process has finished cleanly [pid 37911]
+[ERROR] [launch]: Caught exception in launch (see debug for traceback): G5 episode failed; inspect episode.yaml and events.csv
+[INFO] [mission_node-2]: sending signal 'SIGINT' to process[mission_node-2]
+[INFO] [debug_navigation-1]: sending signal 'SIGINT' to process[debug_navigation-1]
+[debug_navigation-1] [INFO] [1795463136.376388199] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[INFO] [debug_navigation-1]: process has finished cleanly [pid 37864]
+[INFO] [mission_node-2]: process has finished cleanly [pid 37865]
