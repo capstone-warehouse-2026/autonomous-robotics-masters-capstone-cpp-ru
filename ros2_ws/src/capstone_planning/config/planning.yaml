@@ -1,0 +1,22 @@
+# Parameters of the G3 planning node (ros2 launch capstone_planning planning.launch.py).
+planning:
+  ros__parameters:
+    method: classical            # classical (method A) | learned (method B, not implemented: classical fallback)
+    map_frame: map
+    # Shared robot geometry (docs/adr/0002: TIAGo base radius 0.272 m). The hard collision mask is
+    # robot_radius + inflation_margin around obstacle cells; G2 publishes an un-inflated grid.
+    robot_radius: 0.272          # m
+    inflation_margin: 0.05       # m
+    unknown_is_obstacle: true    # docs/INTERFACES.md: unknown blocks unless fixed otherwise before test
+    cost:                        # fixed cost of method A, per metre: 1 + clearance + observed + unknown terms
+      clearance_band: 0.5        # m beyond the hard mask where the clearance cost decays to 0
+      clearance_weight: 2.0
+      observed_band: 1.0         # m, proximity cost of obstacles seen by perception but absent from /map
+      observed_weight: 3.0
+      unknown_weight: 1.0        # used only when unknown_is_obstacle is false
+    planning_timeout: 0.2        # s, steady clock (docs/INTERFACES.md budget); then TIMEOUT
+    max_obstacles_age: 0.3       # s, sim time; older /perception/obstacles are not used
+    require_obstacles: true      # true: no fresh /perception/obstacles -> explicit failure, not a plan on an old map
+    max_pose_age: 0.3            # s, sim time, /localization/pose as the start when use_start is false
+    tf_timeout: 0.05             # s
+    start_escape_radius: 0.5     # m, a start inside the inflated zone may leave it along this distance
