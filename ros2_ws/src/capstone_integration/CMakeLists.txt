@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME}_logic STATIC
   src/episode_record.cpp
   src/contracts.cpp
   src/audit_core.cpp
+  src/aggregate.cpp
 )
 set_target_properties(${PROJECT_NAME}_logic PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(${PROJECT_NAME}_logic PUBLIC include)
@@ -54,6 +55,11 @@ target_link_libraries(graph_audit ${PROJECT_NAME}_core)
 target_compile_options(graph_audit PRIVATE -Wall -Wextra -Wpedantic)
 install(TARGETS graph_audit DESTINATION lib/${PROJECT_NAME})
 
+add_executable(benchmark_aggregate src/aggregate_main.cpp)
+target_link_libraries(benchmark_aggregate ${PROJECT_NAME}_logic)
+target_compile_options(benchmark_aggregate PRIVATE -Wall -Wextra -Wpedantic)
+install(TARGETS benchmark_aggregate DESTINATION lib/${PROJECT_NAME})
+
 install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME})
 install(FILES README.md DESTINATION share/${PROJECT_NAME})
 
@@ -70,6 +76,9 @@ if(BUILD_TESTING)
 
   ament_add_gtest(test_audit_core test/test_audit_core.cpp)
   target_link_libraries(test_audit_core ${PROJECT_NAME}_logic)
+
+  ament_add_gtest(test_aggregate test/test_aggregate.cpp)
+  target_link_libraries(test_aggregate ${PROJECT_NAME}_logic)
 
   ament_add_gtest(test_world_stub_node test/test_world_stub_node.cpp TIMEOUT 60)
   target_link_libraries(test_world_stub_node ${PROJECT_NAME}_core)

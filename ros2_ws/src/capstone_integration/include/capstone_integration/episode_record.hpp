@@ -34,4 +34,7 @@ std::string csv_header();
 // One CSV line, no trailing newline. Values never contain commas: the placeholder list uses ';'.
 std::string to_csv_row(const EpisodeRecord &record);
 
+// Parses one data line written by to_csv_row; throws std::invalid_argument on a schema mismatch.
+EpisodeRecord parse_csv_row(const std::string &line);
+
 }  // namespace capstone_integration

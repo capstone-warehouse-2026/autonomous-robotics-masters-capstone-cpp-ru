@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 namespace capstone_integration {
 
@@ -60,6 +61,53 @@ std::string to_csv_row(const EpisodeRecord &record) {
   row += std::to_string(record.fallback_count) + ',';
   row += sanitize(record.placeholder_components);
   return row;
+}
+
+EpisodeRecord parse_csv_row(const std::string &line) {
+  std::vector<std::string> fields;
+  std::string current;
+  for (char c : line) {
+    if (c == ',') {
+      fields.push_back(current);
+      current.clear();
+    } else {
+      current.push_back(c);
+    }
+  }
+  fields.push_back(current);
+
+  constexpr std::size_t kFields = 18;
+  if (fields.size() != kFields) {
+    throw std::invalid_argument("parse_csv_row: expected " + std::to_string(kFields) +
+                                " fields, got " + std::to_string(fields.size()));
+  }
+  EpisodeRecord record;
+  try {
+    record.episode_id = fields[0];
+    record.config_id = fields[1];
+    record.scenario_id = fields[2];
+    record.layout_id = fields[3];
+    record.scenario_seed = std::stoi(fields[4]);
+    record.training_seed_bundle = fields[5];
+    record.terminal_reason = fields[6];
+    record.elapsed_sim_s = std::stod(fields[7]);
+    record.delivered = std::stoi(fields[8]);
+    record.released = std::stoi(fields[9]);
+    record.on_time = std::stoi(fields[10]);
+    record.collision_count = std::stoi(fields[11]);
+    record.distance_m = std::stod(fields[12]);
+    record.min_clearance_m = fields[13];
+    record.deadline_misses = std::stoi(fields[14]);
+    record.safety_interventions = std::stoi(fields[15]);
+    record.fallback_count = std::stoi(fields[16]);
+    record.placeholder_components = fields[17];
+  } catch (const std::exception &) {
+    throw std::invalid_argument("parse_csv_row: a numeric field is not a number");
+  }
+  if (record.episode_id.empty()) {
+    throw std::invalid_argument("parse_csv_row: empty episode_id");
+  }
+  return record;
 }
 
 }  // namespace capstone_integration
