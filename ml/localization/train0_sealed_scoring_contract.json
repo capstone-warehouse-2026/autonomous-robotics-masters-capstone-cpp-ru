@@ -1,0 +1,66 @@
+{
+  "schema": "g1-train0-sealed-score-contract-v1",
+  "classification": "ungraded_commissioning",
+  "training_eligible": false,
+  "sealed_capture": {
+    "id": "hw1-train0-odom-capture.9IRYFIrQ",
+    "original_compose_exit": 1,
+    "sha256": {
+      "inputs/metadata.yaml": "aa058369d16b61ab0862917fcf936463810df7c4897474ef67888bfc965a01ae",
+      "inputs/inputs_0.db3": "8f46a7899cf568fa81451ce5a94728945981896ee98105fc66cb20697765be24",
+      "ground_truth/ground_truth_0.db3": "9f30113a64ed82c7c5ecdd54f5d82c90396d60095c8dd4987cad13ea44ed2f4a",
+      "ground_truth/metadata.yaml": "cc12fe486530c9c60b050f0ab57998ab04cc4c6288fdeffcf85e46e174ecccf5",
+      "control-route.json": "e9372b5a3991bfa56f3e638ddc2c946d32066b37a92b9986240a83b56a8319dd",
+      "stationary-overlay.json": "f53912240256d62b78775a4fd8fd3fe4dc8f12ed50e9d2f07fe1115270c1cb69"
+    }
+  },
+  "offline_capture_validation": {
+    "id": "hw1-train0-odom-offline.HCOq47Z5",
+    "exit": 0,
+    "seal_manifest_sha256": "13def48c028e4b1da8a5e84a73a0e8c60425fa93139d128ab765ce22717f66a9",
+    "capture_validation_sha256": "99437a6c56f7b180c431625e5ccc5cfe1097b6c9c3b8288df1cc99de3485e486",
+    "bag_validation_sha256": "08dafd3c064bd576b914eb91fd7ad9348f7c4919afedb41203c7660ad745738c"
+  },
+  "classical_score": {
+    "id": "hw1-train0-classical-replay-20261123-210310.8FYYxDuF",
+    "exit": 0,
+    "sha256": {
+      "estimates.csv": "e3111a41fb8034f13900036cb1a6b5ca290fbe99a30bf6adf0ff0eb6171dad04",
+      "inference-check.json": "801fce1b583c1097fc799883a1222bc78e4bdf3f25125450625db882b6eeb77c",
+      "scoring-trace.csv": "faadbbf38dedc7379c68d26c9e4304e7d4be1e1904a7562f77edc903ee860e70",
+      "scoring-contract.json": "506fde8d8099497795923933ab23d4338bed458ec704218d328d79891706cb54",
+      "metrics.json": "3103a771df15fdff1142d37e316926b07adddf20bb58fa7aee084ac980cf335e",
+      "paired.csv": "ed0033f4a559b1915cd98693818c7e4701095168de6fa8c0e352abe97d394422",
+      "provenance.txt": "886405a08912d7aec634fd867decc18e2fed89c088a1fdd258c21aff18084ef7"
+    }
+  },
+  "inference": {
+    "mount": "input bag only",
+    "initial_g1_map_xy_yaw": [
+      0,
+      0,
+      0
+    ],
+    "frozen_occupancy_grid_sha256": "1906e4fbb898a25a80749ea4b2d925a195701408a2977706d276910ae58e140e"
+  },
+  "evaluator": {
+    "truth_topic": "/evaluation/ground_truth",
+    "truth_logged_frame_id": "map",
+    "truth_numeric_frame": "Webots world",
+    "truth_child_frame_id": "base_link",
+    "fixed_world_to_map_xy_m_yaw_rad": [
+      8,
+      0,
+      0
+    ],
+    "posthoc_fit": false,
+    "closed_score_window_sim_ns": [
+      23088000000,
+      35868000000
+    ],
+    "max_bracket_ns": 40000000,
+    "bracket_max_observed_ns": 20000000,
+    "pre_start_inputs": "replayed for warm-up, not scored",
+    "primary_metrics": "raw common-map; start-aligned is diagnostic only"
+  }
+}

@@ -2,4 +2,10 @@
   <class type="capstone_sim::DiffDrive" base_class_type="webots_ros2_driver::PluginInterface">
     <description>Differential drive: /cmd_vel (TwistStamped) to two wheel velocities with a watchdog.</description>
   </class>
+  <class type="capstone_sim::LocalizationSensors" base_class_type="webots_ros2_driver::PluginInterface">
+    <description>Wheel odometry, IMU, laser scan and static sensor transforms.</description>
+  </class>
+  <class type="capstone_sim::GroundTruth" base_class_type="webots_ros2_driver::PluginInterface">
+    <description>Independent Supervisor pose for evaluation and offline training.</description>
+  </class>
 </library>
