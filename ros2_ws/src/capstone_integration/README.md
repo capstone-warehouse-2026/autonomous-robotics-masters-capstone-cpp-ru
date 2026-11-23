@@ -84,6 +84,41 @@ ros2 launch capstone_integration system.launch.py start_mission:=false
 Всё это заменяется по одному узлу: когда группа приносит свой узел, он запускается вместо
 соответствующего `*_stub` (флаг `start_mission`, отдельные `Node(...)` в `launch/system.launch.py`).
 
+## Аудит контрактов
+
+Пока система запущена, отдельным терминалом:
+
+```bash
+ros2 run capstone_integration graph_audit --ros-args \
+  -p window_s:=5.0 -p json_path:=/workspace/results/audit.json
+```
+
+Узел ничего не публикует и не двигает: он слушает граф 5 секунд и сверяет его с таблицей
+`docs/INTERFACES.md` (топик, тип, число publisher'ов, частота, `frame_id`, TF, action-серверы,
+подписка runtime-узлов на ground truth, лишние топики). Результат: таблица в терминал, JSON в файл,
+`/diagnostics`, код возврата 1 при наличии FAIL (`-p fail_on:=never` отключает).
+
+Замер на стенде (эпизод `audit-002`, окно 5 с):
+
+```text
+/clock                           OK      advancing
+/sensors/wheel_odom              OK      50.0 Hz, frame 'odom'
+/sensors/imu                     FAIL    0 publisher(s), expected >= 1
+/sensors/scan                    OK      10.0 Hz, frame 'base_link'
+/sensors/rgb                     WARN    6.8 Hz, expected about 10.0 Hz
+/state/odom                      OK      50.0 Hz, frame 'odom'
+/localization/pose               OK      10.0 Hz, frame 'map'
+/cmd_vel                         OK      20.2 Hz, frame 'base_link'
+/planning/compute_path           OK      action server present
+/control/follow_path             OK      action server present
+TF map->base_link                OK      chain resolves
+placeholders                     WARN    placeholder nodes active: ...
+ground_truth_leak                OK      no runtime subscriber
+```
+
+`-p measured_run:=true` превращает активные заглушки в FAIL: результаты такого прогона нельзя
+считать системными.
+
 ## Тесты
 
 ```bash

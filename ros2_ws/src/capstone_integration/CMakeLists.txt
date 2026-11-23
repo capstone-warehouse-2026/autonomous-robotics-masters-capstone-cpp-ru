@@ -20,6 +20,8 @@ add_library(${PROJECT_NAME}_logic STATIC
   src/kinematics.cpp
   src/path_builder.cpp
   src/episode_record.cpp
+  src/contracts.cpp
+  src/audit_core.cpp
 )
 set_target_properties(${PROJECT_NAME}_logic PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(${PROJECT_NAME}_logic PUBLIC include)
@@ -31,6 +33,7 @@ add_library(${PROJECT_NAME}_core STATIC
   src/path_stub_node.cpp
   src/drive_stub_node.cpp
   src/mission_stub_node.cpp
+  src/graph_audit_node.cpp
 )
 set_target_properties(${PROJECT_NAME}_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(${PROJECT_NAME}_core PUBLIC include)
@@ -46,6 +49,11 @@ foreach(node world_stub path_stub drive_stub mission_stub)
   install(TARGETS ${node}_node DESTINATION lib/${PROJECT_NAME})
 endforeach()
 
+add_executable(graph_audit src/graph_audit_main.cpp)
+target_link_libraries(graph_audit ${PROJECT_NAME}_core)
+target_compile_options(graph_audit PRIVATE -Wall -Wextra -Wpedantic)
+install(TARGETS graph_audit DESTINATION lib/${PROJECT_NAME})
+
 install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME})
 install(FILES README.md DESTINATION share/${PROJECT_NAME})
 
@@ -59,6 +67,9 @@ if(BUILD_TESTING)
 
   ament_add_gtest(test_episode_record test/test_episode_record.cpp)
   target_link_libraries(test_episode_record ${PROJECT_NAME}_logic)
+
+  ament_add_gtest(test_audit_core test/test_audit_core.cpp)
+  target_link_libraries(test_audit_core ${PROJECT_NAME}_logic)
 
   ament_add_gtest(test_world_stub_node test/test_world_stub_node.cpp TIMEOUT 60)
   target_link_libraries(test_world_stub_node ${PROJECT_NAME}_core)
