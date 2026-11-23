@@ -7,6 +7,7 @@
 
 #include <diagnostic_msgs/msg/diagnostic_status.hpp>
 #include <diagnostic_msgs/msg/key_value.hpp>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <tf2/time.h>
 
 #include "capstone_planning/map_fusion.hpp"
@@ -139,9 +140,23 @@ PlanningNode::PlanningNode(const rclcpp::NodeOptions &options)
       [this](std::shared_ptr<GoalHandle> goal_handle) { return on_cancel(std::move(goal_handle)); },
       [this](std::shared_ptr<GoalHandle> goal_handle) { on_accepted(std::move(goal_handle)); });
 
+  learned_model_path_ = declare_parameter<std::string>("learned.model_path", "");
+  learned_threads_ = static_cast<int>(declare_parameter<int>("learned.threads", 1));
   if (method_ == "learned") {
-    RCLCPP_WARN(get_logger(), "method=learned: the learned cost is not implemented yet, the classical cost is used "
-                              "as its fallback");
+    std::string path = learned_model_path_;
+    try {
+      if (path.empty()) {
+        path = ament_index_cpp::get_package_share_directory("capstone_planning") + "/models/planning_cost.onnx";
+      }
+      model_ = std::make_unique<CostModel>(path, learned_threads_);
+      history_ = ObservationHistory(model_->info().history_period);
+      RCLCPP_INFO(get_logger(), "learned cost model %s (history %s, unobserved prior %.3f)", path.c_str(),
+                  model_->info().history ? "on" : "off", model_->info().unobserved_prior);
+    } catch (const std::exception &e) {
+      // The node still runs: every request falls back to the classical cost (reported).
+      model_error_ = e.what();
+      RCLCPP_ERROR(get_logger(), "learned cost model unavailable, classical fallback: %s", e.what());
+    }
   }
   RCLCPP_INFO(get_logger(), "planning started: method=%s, frame %s, inflation radius %.3f m", method_.c_str(),
               map_frame_.c_str(), cost_params_.inflation_radius());
@@ -195,8 +210,15 @@ void PlanningNode::on_obstacles(const nav_msgs::msg::OccupancyGrid::SharedPtr me
     local->grid = grid_from_message(*message);
     local->frame = message->header.frame_id;
     local->stamp = stamp;
-    std::lock_guard<std::mutex> lock(inputs_mutex_);
-    local_grid_ = std::move(local);
+    std::shared_ptr<const Grid> static_map;
+    {
+      std::lock_guard<std::mutex> lock(inputs_mutex_);
+      local_grid_ = local;
+      static_map = static_map_;
+    }
+    if (model_ && static_map) {
+      update_history(*static_map, *local);
+    }
   } catch (const std::exception &error) {
     std::lock_guard<std::mutex> lock(inputs_mutex_);
     last_input_error_ = std::string("/perception/obstacles rejected: ") + error.what();
@@ -208,6 +230,23 @@ void PlanningNode::on_obstacles(const nav_msgs::msg::OccupancyGrid::SharedPtr me
     last_path_check_ = now_steady;
     check_last_path();
   }
+}
+
+void PlanningNode::update_history(const Grid &static_map, const LocalGrid &local) {
+  {
+    std::lock_guard<std::mutex> lock(inputs_mutex_);
+    const auto &frames = history_.frames();
+    if (!frames.empty() && local.stamp.seconds() >= frames.front().stamp &&
+        local.stamp.seconds() - frames.front().stamp < model_->info().history_period - 1e-6) {
+      return;  // not due yet: skip the fusion
+    }
+  }
+  Pose2D map_from_local;
+  std::string error;
+  if (!local_transform(local, map_from_local, error)) return;
+  const FusedMap fused = fuse_maps(static_map, &local.grid, map_from_local);
+  std::lock_guard<std::mutex> lock(inputs_mutex_);
+  history_.push(local.stamp.seconds(), fused);
 }
 
 void PlanningNode::on_pose(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr message) {
@@ -308,7 +347,78 @@ std::optional<Pose2D> PlanningNode::to_map_frame(const geometry_msgs::msg::PoseS
   }
 }
 
-std::shared_ptr<const CostMap> PlanningNode::build_cost_map(std::string &error, uint16_t &error_code) {
+bool PlanningNode::local_transform(const LocalGrid &local, Pose2D &map_from_local, std::string &error) {
+  if (local.frame == map_frame_) {
+    map_from_local = {};
+    return true;
+  }
+  try {
+    const auto t = tf_buffer_->lookupTransform(map_frame_, local.frame, local.stamp,
+                                               rclcpp::Duration::from_seconds(tf_timeout_));
+    map_from_local = {t.transform.translation.x, t.transform.translation.y,
+                      yaw_from_quaternion(t.transform.rotation.x, t.transform.rotation.y, t.transform.rotation.z,
+                                          t.transform.rotation.w)};
+    return true;
+  } catch (const std::exception &e) {
+    error = "no transform " + map_frame_ + " <- " + local.frame + " for /perception/obstacles: " + e.what();
+    return false;
+  }
+}
+
+std::shared_ptr<const CostMap> PlanningNode::learned_cost_map(const FusedMap &fused) {
+  const auto started = std::chrono::steady_clock::now();
+  std::string problem;
+  if (!model_) {
+    problem = model_error_;
+  } else {
+    try {
+      ObservationHistory history(model_->info().history_period);
+      {
+        std::lock_guard<std::mutex> lock(inputs_mutex_);
+        history = history_;
+      }
+      LearnedLayout layout;
+      layout.block = model_->info().block;
+      layout.history_period = model_->info().history_period;
+      int height = 0;
+      int width = 0;
+      const std::vector<float> input =
+          build_input(fused, now().seconds(), history, model_->info().history, layout, height, width);
+      std::vector<float> output;
+      {
+        std::lock_guard<std::mutex> lock(model_mutex_);
+        output = model_->run(input, height, width);
+      }
+      const std::vector<double> extra =
+          extra_cost_from_output(output, width, height, fused.grid, fused.observed_area, layout.block,
+                                 model_->info().unobserved_prior, model_->info().max_extra_cost);
+      // Method B replaces the hand-made observed-occupancy term of method A by the learned cost;
+      // the mask, clearance and length terms are the same.
+      CostParams params = cost_params_;
+      params.observed_weight = 0.0;
+      auto map = std::make_shared<const CostMap>(fused, params, &extra);
+      std::lock_guard<std::mutex> lock(stats_mutex_);
+      ++learned_inferences_;
+      last_inference_ms_ =
+          std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - started).count();
+      return map;
+    } catch (const std::exception &e) {
+      problem = e.what();
+    }
+  }
+  // docs/INTERFACES.md: invalid model -> classical fallback, logged and counted.
+  {
+    std::lock_guard<std::mutex> lock(stats_mutex_);
+    ++learned_fallbacks_;
+    last_fallback_reason_ = problem;
+  }
+  RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 5000, "learned cost unavailable (%s): classical fallback",
+                       problem.c_str());
+  return nullptr;
+}
+
+std::shared_ptr<const CostMap> PlanningNode::build_cost_map(std::string &error, uint16_t &error_code,
+                                                            bool method_cost) {
   std::shared_ptr<const Grid> static_map;
   std::shared_ptr<const LocalGrid> local;
   {
@@ -325,18 +435,13 @@ std::shared_ptr<const CostMap> PlanningNode::build_cost_map(std::string &error, 
                      (now() - local->stamp).seconds() >= -max_obstacles_age_;
   Pose2D map_from_local;
   bool use_local = fresh;
-  if (fresh && local->frame != map_frame_) {
-    try {
-      const auto t = tf_buffer_->lookupTransform(map_frame_, local->frame, local->stamp,
-                                                 rclcpp::Duration::from_seconds(tf_timeout_));
-      map_from_local = {t.transform.translation.x, t.transform.translation.y,
-                        yaw_from_quaternion(t.transform.rotation.x, t.transform.rotation.y, t.transform.rotation.z,
-                                            t.transform.rotation.w)};
-    } catch (const std::exception &e) {
+  if (fresh) {
+    std::string tf_error;
+    if (!local_transform(*local, map_from_local, tf_error)) {
       use_local = false;
       if (require_obstacles_) {
         error_code = Result::TF_ERROR;
-        error = "no transform " + map_frame_ + " <- " + local->frame + " for /perception/obstacles: " + e.what();
+        error = tf_error;
         return nullptr;
       }
     }
@@ -348,6 +453,9 @@ std::shared_ptr<const CostMap> PlanningNode::build_cost_map(std::string &error, 
   }
   try {
     const FusedMap fused = fuse_maps(*static_map, use_local ? &local->grid : nullptr, map_from_local);
+    if (method_cost && method_ == "learned") {
+      if (auto learned = learned_cost_map(fused)) return learned;
+    }
     return std::make_shared<const CostMap>(fused, cost_params_);
   } catch (const std::exception &e) {
     error = std::string("cost map: ") + e.what();
@@ -397,12 +505,8 @@ PlanningNode::ComputePath::Result PlanningNode::plan(const ComputePath::Goal &go
   if (!target) return finish(failure(Result::TF_ERROR, "goal: " + error));
 
   uint16_t map_error_code = Result::UNKNOWN;
-  const auto cost_map = build_cost_map(error, map_error_code);
+  const auto cost_map = build_cost_map(error, map_error_code, true);
   if (!cost_map) return finish(failure(map_error_code, error));
-  if (method_ == "learned") {
-    std::lock_guard<std::mutex> lock(stats_mutex_);
-    ++learned_fallbacks_;  // learned cost not implemented: classical fallback
-  }
 
   SearchOptions options;
   options.deadline = started + std::chrono::duration_cast<std::chrono::steady_clock::duration>(
@@ -469,7 +573,7 @@ void PlanningNode::check_last_path() {
   }
   std::string error;
   uint16_t code = 0;
-  const auto cost_map = build_cost_map(error, code);
+  const auto cost_map = build_cost_map(error, code, false);  // the hard mask is the same for both methods
   if (!cost_map || !path_blocked(*cost_map, path)) return;
   {
     std::lock_guard<std::mutex> lock(stats_mutex_);
@@ -507,9 +611,12 @@ void PlanningNode::publish_diagnostics() {
   } else if (last_path_blocked_) {
     status.level = diagnostic_msgs::msg::DiagnosticStatus::WARN;
     status.message = "last path blocked by the updated map: replan";
-  } else if (method_ == "learned") {
+  } else if (method_ == "learned" && !model_) {
+    status.level = diagnostic_msgs::msg::DiagnosticStatus::ERROR;
+    status.message = "learned cost model unavailable: classical fallback";
+  } else if (method_ == "learned" && learned_fallbacks_ > 0) {
     status.level = diagnostic_msgs::msg::DiagnosticStatus::WARN;
-    status.message = "learned cost not implemented: classical fallback";
+    status.message = "learned cost falls back to classical";
   } else {
     status.level = diagnostic_msgs::msg::DiagnosticStatus::OK;
     status.message = "ok";
@@ -530,7 +637,10 @@ void PlanningNode::publish_diagnostics() {
                    value("last_path_length_m", std::to_string(last_length_)),
                    value("last_min_clearance_m", std::to_string(last_min_clearance_)),
                    value("path_blocked_events", std::to_string(path_blocked_events_)),
+                   value("learned_inferences", std::to_string(learned_inferences_)),
                    value("learned_fallbacks", std::to_string(learned_fallbacks_)),
+                   value("learned_fallback_reason", last_fallback_reason_),
+                   value("learned_inference_ms", std::to_string(last_inference_ms_)),
                    value("obstacles_age_s", obstacles_age),
                    value("last_error", last_error_),
                    value("last_input_error", input_error)};

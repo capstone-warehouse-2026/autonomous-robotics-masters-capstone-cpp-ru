@@ -2,9 +2,12 @@
 
 Сокращения раскрыты при первом употреблении; [полный словарь терминов](../../../docs/GLOSSARY.md).
 
-Пакет группы G3. Задание: [projects/03_planning.md](../../../projects/03_planning.md), контракты: [docs/INTERFACES.md](../../../docs/INTERFACES.md), описание и результаты метода A: [docs/G3_METHOD_A.md](../../../docs/G3_METHOD_A.md).
+Пакет группы G3. Задание: [projects/03_planning.md](../../../projects/03_planning.md), контракты: [docs/INTERFACES.md](../../../docs/INTERFACES.md), описание и результаты: [метод A](../../../docs/G3_METHOD_A.md), [метод B](../../../docs/G3_METHOD_B.md).
 
-Состояние: метод A (classical) — A* (A-star — алгоритм поиска пути с оценкой уже пройденной стоимости и эвристикой оставшегося пути) с фиксированной стоимостью длины, clearance и наблюдаемой occupancy — реализован и подключён к action server. Метод B (learned) не реализован: `method: learned` использует стоимость метода A как fallback и сообщает об этом в `/diagnostics`.
+Состояние: оба метода подключены к action server и переключаются параметром `method`.
+
+- **A (classical)** — A* (A-star — алгоритм поиска пути с оценкой уже пройденной стоимости и эвристикой оставшегося пути) с фиксированной стоимостью длины, clearance и наблюдаемой occupancy.
+- **B (learned)** — тот же A* и та же hard collision mask; вместо члена наблюдаемой occupancy к стоимости метра добавляется прогноз CNN (Convolutional Neural Network — свёрточная нейронная сеть) по статической карте и истории наблюдаемой занятости (`models/planning_cost.onnx`, ONNX (Open Neural Network Exchange — открытый формат обмена моделями нейронных сетей) Runtime). Нет модели, ошибка инференса или NaN в выходе → для этого запроса стоимость метода A, счётчик `learned_fallbacks` в `/diagnostics`. Обучение: [ml/planning](../../../ml/planning/README.md).
 
 | | |
 |---|---|
@@ -19,11 +22,13 @@
   - `cost_map.hpp` — inflation (hard collision mask: радиус робота + запас), clearance и стоимость метра;
   - `grid_search.hpp` — A* / Dijkstra на 8-связной сетке без corner cutting, cancel, deadline, явные статусы отказа;
   - `planner.hpp` — путь в виде поз, длина, clearance, проверка блокировки пути после обновления карты;
+  - `learned_cost.hpp` (библиотека `capstone_planning_learned`, ONNX Runtime) — вход сети по истории наблюдений, выход в дополнительную стоимость, `CostModel`;
   - `scenarios.hpp` — синтетические карты сценариев задания (узкий проход, перекрытый коридор, два маршрута, недостижимая цель, склад).
 - `include/capstone_planning/planning_node.hpp`, `src/planning_node.cpp` — узел: подписки, fusion, action server с отдельным потоком поиска, preemption/cancel, метрики в `/diagnostics`.
-- `src/main.cpp` — `ros2 run capstone_planning planning_node`; `src/planning_benchmark.cpp` — офлайн-бенчмарк сценариев.
+- `src/main.cpp` — `ros2 run capstone_planning planning_node`; `src/planning_benchmark.cpp` — офлайн-бенчмарк сценариев; `src/planning_replay.cpp` — планирование экспортированных эпизодов любым методом (оценка `make g3-eval`).
+- `models/` — модель метода B, её карточка (`planning_cost.json`), эталон для C++-теста и результаты замкнутого цикла.
 - `config/planning.yaml`, `launch/planning.launch.py` — параметры и запуск.
-- `test/test_algorithms.cpp` — тесты алгоритмов (в том числе A* против Dijkstra на случайных картах), `test/test_planning_node.cpp` — тесты узла и action.
+- `test/test_algorithms.cpp` — тесты алгоритмов (в том числе A* против Dijkstra на случайных картах), `test/test_learned_cost.cpp` — вход/выход метода B, эталон PyTorch, отказы модели, сохранение маски и допустимость эвристики, `test/test_planning_node.cpp` — тесты узла и action.
 
 ## Поведение action
 

@@ -100,18 +100,27 @@ std::vector<double> squared_distance_transform(const std::vector<std::uint8_t> &
   return out;
 }
 
-CostMap::CostMap(const FusedMap &map, const CostParams &params) : grid_(map.grid), params_(params) {
+CostMap::CostMap(const FusedMap &map, const CostParams &params, const std::vector<double> *extra_cost)
+    : grid_(map.grid), params_(params) {
   if (map.observed_obstacle.size() != map.grid.size()) {
     throw std::invalid_argument("CostMap: observed_obstacle size mismatch");
   }
-  build(map.observed_obstacle);
+  if (extra_cost != nullptr) {
+    if (extra_cost->size() != map.grid.size()) {
+      throw std::invalid_argument("CostMap: extra_cost size mismatch");
+    }
+    for (double v : *extra_cost) {
+      if (!std::isfinite(v) || v < 0.0) throw std::invalid_argument("CostMap: extra_cost must be finite and >= 0");
+    }
+  }
+  build(map.observed_obstacle, extra_cost);
 }
 
 CostMap::CostMap(const Grid &map, const CostParams &params) : grid_(map), params_(params) {
-  build(std::vector<std::uint8_t>(map.size(), 0));
+  build(std::vector<std::uint8_t>(map.size(), 0), nullptr);
 }
 
-void CostMap::build(const std::vector<std::uint8_t> &observed_obstacle) {
+void CostMap::build(const std::vector<std::uint8_t> &observed_obstacle, const std::vector<double> *extra_cost) {
   if (!grid_.valid()) {
     throw std::invalid_argument("CostMap: invalid grid");
   }
@@ -150,6 +159,9 @@ void CostMap::build(const std::vector<std::uint8_t> &observed_obstacle) {
     }
     if (is_unknown_value(grid_.data[i])) {
       c += params_.unknown_weight;
+    }
+    if (extra_cost != nullptr) {
+      c += (*extra_cost)[i];
     }
     cost_[i] = c;
   }

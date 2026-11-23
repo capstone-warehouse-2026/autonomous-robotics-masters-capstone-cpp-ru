@@ -292,6 +292,34 @@ TEST_F(PlanningNodeTest, UsesFreshLocalizationPose) {
   EXPECT_NEAR(direct.path.poses.front().pose.position.y, 2.5, 1e-9);
 }
 
+TEST_F(PlanningNodeTest, LearnedMethodPlansWithModelAndFallsBackWithout) {
+  const auto s = scenarios::two_routes(false, true);
+  for (const std::string &model : {std::string(CAPSTONE_PLANNING_SOURCE_DIR) + "/models/planning_cost.onnx",
+                                  std::string("/nonexistent/model.onnx")}) {
+    Harness h({rclcpp::Parameter("method", "learned"), rclcpp::Parameter("learned.model_path", model)});
+    h.publish_map(s.static_map);
+    h.publish_map_from_odom(s.map_from_local);
+    std::atomic<bool> running{true};
+    std::thread perception([&] {
+      while (running) {
+        h.obstacles_pub->publish(to_message(s.local, "odom", h.io->now()));
+        std::this_thread::sleep_for(100ms);
+      }
+    });
+    std::this_thread::sleep_for(1500ms);  // a few history frames
+    Result r;
+    const auto deadline = std::chrono::steady_clock::now() + 5s;
+    do {
+      r = h.node->plan(goal_from(pose(1.0, 3.0, 0.0), pose(9.0, 3.0, 0.0)));
+    } while (r.error_code != Result::NONE && std::chrono::steady_clock::now() < deadline);
+    running = false;
+    perception.join();
+    // With or without a model the request succeeds (the fallback is the classical cost).
+    ASSERT_EQ(r.error_code, Result::NONE) << model << ": " << r.error_msg;
+    EXPECT_EQ(h.node->learned_model_loaded(), model.rfind("/nonexistent", 0) != 0) << model;
+  }
+}
+
 TEST_F(PlanningNodeTest, CancelAndTimeoutStopTheSearch) {
   // Large map with an unreachable goal: the search would expand the whole map.
   Grid grid = scenarios::make_grid(30.0, 30.0, 0.05);

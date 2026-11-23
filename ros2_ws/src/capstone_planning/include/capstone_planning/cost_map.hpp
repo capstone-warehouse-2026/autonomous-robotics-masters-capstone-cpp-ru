@@ -47,7 +47,10 @@ class CostMap {
   static constexpr double kMinCostPerMeter = 1.0;
   static constexpr double kBlocked = std::numeric_limits<double>::infinity();
 
-  CostMap(const FusedMap &map, const CostParams &params);
+  /// `extra_cost` (optional, one value per cell, finite and >= 0): learned cost of method B added to
+  /// the per-metre cost of traversable cells; it never changes the hard mask. Throws
+  /// std::invalid_argument for a wrong size or a negative / non-finite value.
+  CostMap(const FusedMap &map, const CostParams &params, const std::vector<double> *extra_cost = nullptr);
   explicit CostMap(const Grid &map, const CostParams &params);
 
   const Grid &grid() const { return grid_; }
@@ -63,7 +66,7 @@ class CostMap {
   double clearance(const Cell &c) const { return clearance_[grid_.index(c)]; }
 
  private:
-  void build(const std::vector<std::uint8_t> &observed_obstacle);
+  void build(const std::vector<std::uint8_t> &observed_obstacle, const std::vector<double> *extra_cost);
 
   Grid grid_;
   CostParams params_;

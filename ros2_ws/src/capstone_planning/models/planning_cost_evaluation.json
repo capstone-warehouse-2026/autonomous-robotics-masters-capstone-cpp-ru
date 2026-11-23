@@ -1,0 +1,67 @@
+{
+  "episodes": 100,
+  "queries": 1200,
+  "paired_completed": 1077,
+  "methods": {
+    "A classical": {
+      "planning_success": 1.0,
+      "arrival_rate": 0.9133333333333333,
+      "travel_time_s": 31.02126276694522,
+      "wait_time_s": 4.149303621169917,
+      "path_length_m": 13.410630952811884,
+      "planning_ms_p50": 2.59588,
+      "planning_ms_p95": 11.7392,
+      "expanded_mean": 11329.07,
+      "travel_time_diff_to_A_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "wait_time_diff_to_A_s": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "B learned": {
+      "planning_success": 1.0,
+      "arrival_rate": 0.905,
+      "travel_time_s": 30.796750232126282,
+      "wait_time_s": 4.019127205199629,
+      "path_length_m": 13.363376684811612,
+      "planning_ms_p50": 3.702305,
+      "planning_ms_p95": 13.564874999999995,
+      "expanded_mean": 18782.458333333332,
+      "travel_time_diff_to_A_s": [
+        -0.22451253481894154,
+        -0.4884935004642525,
+        0.012356081708449245
+      ],
+      "wait_time_diff_to_A_s": [
+        -0.1301764159702879,
+        -0.3772539461467039,
+        0.10447307335190324
+      ]
+    },
+    "B without history": {
+      "planning_success": 1.0,
+      "arrival_rate": 0.9033333333333333,
+      "travel_time_s": 30.827483751160635,
+      "wait_time_s": 4.033333333333333,
+      "path_length_m": 13.371124507823707,
+      "planning_ms_p50": 3.6967749999999997,
+      "planning_ms_p95": 13.505169999999996,
+      "expanded_mean": 18759.784166666668,
+      "travel_time_diff_to_A_s": [
+        -0.19377901578458678,
+        -0.452836583101207,
+        0.0367757660167131
+      ],
+      "wait_time_diff_to_A_s": [
+        -0.1159702878365831,
+        -0.37281337047353763,
+        0.11570334261838419
+      ]
+    }
+  }
+}

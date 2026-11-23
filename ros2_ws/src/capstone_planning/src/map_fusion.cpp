@@ -12,6 +12,7 @@ FusedMap fuse_maps(const Grid &static_map, const Grid *local, const Pose2D &map_
   FusedMap fused;
   fused.grid = static_map;
   fused.observed_obstacle.assign(static_map.size(), 0);
+  fused.observed_area.assign(static_map.size(), 0);
   if (local == nullptr) {
     return fused;
   }
@@ -37,6 +38,7 @@ FusedMap fuse_maps(const Grid &static_map, const Grid *local, const Pose2D &map_
       }
       const std::int8_t observed = local->data[local->index(lc)];
       const std::size_t i = static_map.index(x, y);
+      fused.observed_area[i] = 1;
       if (is_occupied_value(observed)) {
         mark_observed_obstacle(i);
       } else if (is_free_value(observed) && options.observed_free_clears_unknown &&

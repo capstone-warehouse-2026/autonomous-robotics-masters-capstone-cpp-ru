@@ -18,6 +18,8 @@ struct FusedMap {
   // 1 where the cell is occupied only because perception observes an obstacle there (not in /map):
   // the "observed occupancy" that gets an extra proximity cost.
   std::vector<std::uint8_t> observed_obstacle;
+  // 1 where the cell centre lies inside the local grid (the area perception currently observes).
+  std::vector<std::uint8_t> observed_area;
 };
 
 /// Fuses an un-inflated local grid (G2 /perception/obstacles, normally in `odom`) into the static map.

@@ -1,7 +1,7 @@
 # Parameters of the G3 planning node (ros2 launch capstone_planning planning.launch.py).
 planning:
   ros__parameters:
-    method: classical            # classical (method A) | learned (method B, not implemented: classical fallback)
+    method: classical            # classical (method A) | learned (method B: CNN cost, classical fallback); switch between episodes
     map_frame: map
     # Shared robot geometry (docs/adr/0002: TIAGo base radius 0.272 m). The hard collision mask is
     # robot_radius + inflation_margin around obstacle cells; G2 publishes an un-inflated grid.
@@ -20,3 +20,6 @@ planning:
     max_pose_age: 0.3            # s, sim time, /localization/pose as the start when use_start is false
     tf_timeout: 0.05             # s
     start_escape_radius: 0.5     # m, a start inside the inflated zone may leave it along this distance
+    learned:
+      model_path: ""             # ONNX model of method B; "" = models/planning_cost.onnx of this package
+      threads: 1                 # CPU threads of ONNX Runtime

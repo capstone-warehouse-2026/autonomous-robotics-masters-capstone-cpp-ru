@@ -2,7 +2,7 @@
 
 Сокращения раскрыты при первом употреблении; [полный словарь терминов](GLOSSARY.md).
 
-Задание: [projects/03_planning.md](../projects/03_planning.md). Код: пакет [capstone_planning](../ros2_ws/src/capstone_planning/README.md). Метод B (обучаемая стоимость на CNN (Convolutional Neural Network — свёрточная нейронная сеть)) пока не реализован: при `method: learned` узел использует стоимость метода A как fallback и сообщает об этом в `/diagnostics`.
+Задание: [projects/03_planning.md](../projects/03_planning.md). Код: пакет [capstone_planning](../ros2_ws/src/capstone_planning/README.md). Метод B (обучаемая стоимость на CNN (Convolutional Neural Network — свёрточная нейронная сеть)) описан в [G3_METHOD_B.md](G3_METHOD_B.md).
 
 ## Что реализовано
 
@@ -46,4 +46,4 @@
 - Внутренняя стоимость A не сравнивается со стоимостью B; итоговые сравнения — по внешним метрикам закрытого цикла с одним G4 (travel time, delay, completed deliveries), которые ещё не измерены в симуляции.
 - Карта склада в бенчмарке — приближение по [ADR 0002](adr/0002-tiago-base-warehouse.md), а не экспорт `/map` G1; после появления карты G1 бенчмарк нужно повторить на ней и на записанном replay.
 - Узел не реализует `rclcpp_lifecycle`; готовность видна в `/diagnostics` («waiting for /map»).
-- Метод B (CNN-стоимость, labels задержки из rollouts, ONNX inference, ablation без истории) — следующий этап; он должен использовать ту же `CostMap`-маску и `plan_on_grid`.
+- Метод B использует ту же `CostMap`-маску и `plan_on_grid`: [G3_METHOD_B.md](G3_METHOD_B.md).
