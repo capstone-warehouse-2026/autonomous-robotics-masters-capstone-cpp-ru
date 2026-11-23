@@ -17,7 +17,7 @@ G1/G3/G4/G5 не сдали свои узлы. Каждый временный �
 | `/state/odom`, `/localization/pose`, `/map`, TF | **PLACEHOLDER G1** (dead reckoning) |
 | `/planning/compute_path` | **PLACEHOLDER G3** (прямая линия) |
 | `/control/follow_path`, `/control/cmd_vel_raw` | **PLACEHOLDER G4** (pure pursuit) |
-| `/mission/status`, одна заявка, CSV | **PLACEHOLDER G5** |
+| `/mission/status`, 6 заявок, CSV | **PLACEHOLDER G5** (earliest due date) |
 
 ## Запуск
 
@@ -34,8 +34,9 @@ make shell
 ros2 launch capstone_integration system.launch.py
 ```
 
-Что произойдёт: робот начнёт движение от стартовой точки `(-8, 0)` к станции `STATION_1`
-`(-8.8, 7.5)`, остановится там на 2 секунды и запишет результат.
+Что произойдёт: робот поедет от стартовой точки `(-8, 0)` по шести заявкам манифеста
+`config/jobs.csv` — кольцом по станциям склада, с остановкой на 2 секунды на погрузке и разгрузке,
+и запишет строку результата.
 
 Ожидаемые строки в логе:
 
@@ -52,7 +53,7 @@ episode written to /workspace/results/stub-001/episode.csv
 
 ```text
 episode_id,config_id,...,terminal_reason,elapsed_sim_s,delivered,...
-stub-001,SKELETON,...,SUCCESS,38.420,1,...
+stub-001,SKELETON,...,SUCCESS,208.400,6,...
 ```
 
 Полезные варианты запуска:
@@ -71,14 +72,17 @@ ros2 launch capstone_integration system.launch.py start_mission:=false
 ## Параметры
 
 Все пороги — в `config/system.yaml`: стартовая поза, частоты, допуски цели (`0.25 м`, `0.2 рад` по
-`docs/INTERFACES.md`), время обслуживания `2 с`, лимит эпизода `300 с`, координаты станции.
+`docs/INTERFACES.md`), время обслуживания `2 с`, лимит эпизода `300 с`. Заявки — в
+`config/jobs.csv` (id, погрузка, разгрузка, время появления, срок); пустой `jobs_file` включает
+встроенный манифест из шести заявок.
 
 ## Ограничения стенда (важно)
 
 - Локализация — **dead reckoning** по `/cmd_vel`: накапливает ошибку, это не EKF/ICP.
 - `/sensors/scan` — **пустой** скан: препятствий нет, safety не срабатывает по препятствиям.
 - Планировщик **игнорирует** карту препятствий и едет по прямой; может проехать через стеллаж.
-- Миссия — **одна фиксированная заявка**, без очереди, сроков и Behavior Tree.
+- Миссия — **последовательная** (вместимость 1): earliest due date, без Behavior Tree, без
+  прерывания активной доставки и без recovery; заявки выдаются по одной.
 - Сброс эпизода — **перезапуск контейнера симулятора**, а не reset через supervisor: медленно
   (~25 с) и не очищает TF/истории внутри узлов, потому что узлы тоже перезапускаются.
 - Расстояние в CSV берётся из длины маршрута, а не из пройденного пути.

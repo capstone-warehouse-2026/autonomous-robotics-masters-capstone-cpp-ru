@@ -40,9 +40,6 @@ drive_stub:
 mission_stub:
   ros__parameters:
     map_frame: map
-    goal_x: -8.8             # STATION_1 of warehouse.wbt
-    goal_y: 7.5
-    goal_yaw: 1.5708
     service_time_s: 2.0      # load/unload is a 2 s stop at the station
     mission_timeout_s: 300.0 # episode limit, docs/EXPERIMENTS.md
     results_dir: /workspace/results
@@ -50,3 +47,5 @@ mission_stub:
     config_id: SKELETON
     scenario_id: S1
     auto_start: true
+    # jobs_file: set by launch/system.launch.py to config/jobs.csv of this package;
+    # an empty value falls back to the built-in six-job manifest.

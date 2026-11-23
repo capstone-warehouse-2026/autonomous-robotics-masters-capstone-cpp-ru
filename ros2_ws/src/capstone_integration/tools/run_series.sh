@@ -15,11 +15,11 @@ for i in $(seq 1 "$episodes"); do
   docker compose restart simulator >/dev/null
   sleep 25
   echo "=== $id: running the integration stack ==="
-  timeout 35 docker compose run --rm dev bash -c \
+  timeout 260 docker compose run --rm dev bash -c \
     "source /etc/capstone_dev.sh && ros2 launch capstone_integration system.launch.py start_perception:=false episode_id:=$id results_dir:=/workspace/$results" \
     || true
   if [ ! -f "$results/$id/episode.csv" ]; then
-    echo "WARNING: $id produced no episode.csv (mission did not finish in 35 s)"
+    echo "WARNING: $id produced no episode.csv (mission did not finish in 260 s)"
   fi
 done
 

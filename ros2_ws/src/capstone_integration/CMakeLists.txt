@@ -23,6 +23,7 @@ add_library(${PROJECT_NAME}_logic STATIC
   src/contracts.cpp
   src/audit_core.cpp
   src/aggregate.cpp
+  src/jobs.cpp
 )
 set_target_properties(${PROJECT_NAME}_logic PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(${PROJECT_NAME}_logic PUBLIC include)
@@ -79,6 +80,9 @@ if(BUILD_TESTING)
 
   ament_add_gtest(test_aggregate test/test_aggregate.cpp)
   target_link_libraries(test_aggregate ${PROJECT_NAME}_logic)
+
+  ament_add_gtest(test_jobs test/test_jobs.cpp)
+  target_link_libraries(test_jobs ${PROJECT_NAME}_logic)
 
   ament_add_gtest(test_world_stub_node test/test_world_stub_node.cpp TIMEOUT 60)
   target_link_libraries(test_world_stub_node ${PROJECT_NAME}_core)

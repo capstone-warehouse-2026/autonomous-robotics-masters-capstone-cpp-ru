@@ -17,8 +17,9 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
@@ -89,6 +90,8 @@ def generate_launch_description():
                 'auto_start': autostart_mission,
                 'episode_id': episode_id,
                 'results_dir': results_dir,
+                'jobs_file': PathJoinSubstitution(
+                    [FindPackageShare('capstone_integration'), 'config', 'jobs.csv']),
             }],
         ),
 
