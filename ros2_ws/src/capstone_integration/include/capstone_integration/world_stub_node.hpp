@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 #include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
@@ -9,6 +10,7 @@
 #include <nav_msgs/msg/odometry.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
+#include <std_msgs/msg/bool.hpp>
 #include <tf2_ros/static_transform_broadcaster.hpp>
 #include <tf2_ros/transform_broadcaster.hpp>
 
@@ -45,6 +47,7 @@ class WorldStubNode : public rclcpp::Node {
   double last_cmd_stamp_s_{0.0};
   bool have_cmd_stamp_{false};
   int map_publish_count_{0};
+  bool sensors_disabled_{false};  // fault injection: sensor dropout
 
   double map_resolution_{0.1};
   double map_width_m_{20.0};
@@ -53,6 +56,7 @@ class WorldStubNode : public rclcpp::Node {
   double map_origin_y_{-10.0};
 
   rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_sub_;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr dropout_sub_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr wheel_odom_pub_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr state_odom_pub_;
   rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pose_pub_;

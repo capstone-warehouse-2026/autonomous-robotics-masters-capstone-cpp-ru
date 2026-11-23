@@ -11,6 +11,7 @@
 #include <nav_msgs/msg/odometry.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
+#include <std_msgs/msg/bool.hpp>
 
 #include "capstone_integration/path_builder.hpp"
 
@@ -54,8 +55,11 @@ class DriveStubNode : public rclcpp::Node {
   std::chrono::steady_clock::time_point started_{};
   int stop_ticks_{0};
   double last_v_{0.0};
+  bool paused_{false};  // fault injection: stale command
 
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr pause_sub_;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr crash_sub_;
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_pub_;
   rclcpp_action::Server<FollowPath>::SharedPtr server_;
   rclcpp::TimerBase::SharedPtr timer_;

@@ -53,6 +53,15 @@ WorldStubNode::WorldStubNode(const rclcpp::NodeOptions &options)
   cmd_sub_ = create_subscription<geometry_msgs::msg::TwistStamped>(
       "/cmd_vel", rclcpp::QoS(1).reliable(),
       [this](const geometry_msgs::msg::TwistStamped &message) { on_cmd_vel(message); });
+  dropout_sub_ = create_subscription<std_msgs::msg::Bool>(
+      "/fault/sensor_dropout", rclcpp::QoS(1).reliable(),
+      [this](const std_msgs::msg::Bool &message) {
+        if (message.data != sensors_disabled_) {
+          sensors_disabled_ = message.data;
+          RCLCPP_WARN(get_logger(), "FAULT: sensor dropout %s",
+                      sensors_disabled_ ? "ON" : "OFF");
+        }
+      });
 
   wheel_odom_pub_ = create_publisher<nav_msgs::msg::Odometry>("/sensors/wheel_odom", 10);
   state_odom_pub_ = create_publisher<nav_msgs::msg::Odometry>(
@@ -113,6 +122,9 @@ void WorldStubNode::on_cmd_vel(const geometry_msgs::msg::TwistStamped &message) 
 }
 
 void WorldStubNode::publish_odometry() {
+  if (sensors_disabled_) {
+    return;
+  }
   const rclcpp::Time stamp = now();
   nav_msgs::msg::Odometry odometry;
   odometry.header.stamp = stamp;
@@ -149,6 +161,9 @@ void WorldStubNode::publish_odometry() {
 }
 
 void WorldStubNode::publish_scan_and_pose() {
+  if (sensors_disabled_) {
+    return;
+  }
   const rclcpp::Time stamp = now();
 
   sensor_msgs::msg::LaserScan scan;

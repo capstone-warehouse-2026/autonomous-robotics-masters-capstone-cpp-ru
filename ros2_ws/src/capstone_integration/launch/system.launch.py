@@ -34,6 +34,8 @@ def generate_launch_description():
     start_safety = LaunchConfiguration('start_safety')
     start_perception = LaunchConfiguration('start_perception')
     start_mission = LaunchConfiguration('start_mission')
+    start_faults = LaunchConfiguration('start_faults')
+    fault = LaunchConfiguration('fault')
     autostart_mission = LaunchConfiguration('autostart_mission')
     episode_id = LaunchConfiguration('episode_id')
     results_dir = LaunchConfiguration('results_dir')
@@ -47,6 +49,10 @@ def generate_launch_description():
                               description='start the real G2 perception node'),
         DeclareLaunchArgument('start_mission', default_value='true',
                               description='start the placeholder mission node'),
+        DeclareLaunchArgument('start_faults', default_value='false',
+                              description='start the fault injector (fault suite)'),
+        DeclareLaunchArgument('fault', default_value='sensor_dropout',
+                              description='sensor_dropout | controller_pause | controller_crash'),
         DeclareLaunchArgument('autostart_mission', default_value='true',
                               description='start the episode without an external command'),
         DeclareLaunchArgument('episode_id', default_value='stub-001',
@@ -92,6 +98,20 @@ def generate_launch_description():
                 'results_dir': results_dir,
                 'jobs_file': PathJoinSubstitution(
                     [FindPackageShare('capstone_integration'), 'config', 'jobs.csv']),
+            }],
+        ),
+        # Fault injector for the fault suite (docs/INTERFACES.md, fault table).
+        Node(
+            package='capstone_integration',
+            executable='fault_injector',
+            name='fault_injector',
+            output='screen',
+            condition=IfCondition(start_faults),
+            parameters=[{
+                'use_sim_time': use_sim_time,
+                'fault': fault,
+                'run_id': episode_id,
+                'output_dir': PathJoinSubstitution([results_dir, 'faults']),
             }],
         ),
 

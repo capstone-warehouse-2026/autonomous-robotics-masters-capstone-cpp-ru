@@ -36,6 +36,7 @@ add_library(${PROJECT_NAME}_core STATIC
   src/drive_stub_node.cpp
   src/mission_stub_node.cpp
   src/graph_audit_node.cpp
+  src/fault_injector_node.cpp
 )
 set_target_properties(${PROJECT_NAME}_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(${PROJECT_NAME}_core PUBLIC include)
@@ -60,6 +61,11 @@ add_executable(benchmark_aggregate src/aggregate_main.cpp)
 target_link_libraries(benchmark_aggregate ${PROJECT_NAME}_logic)
 target_compile_options(benchmark_aggregate PRIVATE -Wall -Wextra -Wpedantic)
 install(TARGETS benchmark_aggregate DESTINATION lib/${PROJECT_NAME})
+
+add_executable(fault_injector src/fault_injector_main.cpp)
+target_link_libraries(fault_injector ${PROJECT_NAME}_core)
+target_compile_options(fault_injector PRIVATE -Wall -Wextra -Wpedantic)
+install(TARGETS fault_injector DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME})
 install(FILES README.md DESTINATION share/${PROJECT_NAME})

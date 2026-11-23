@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <cmath>
+#include <cstdlib>
 #include <memory>
 #include <stdexcept>
 #include <utility>
@@ -44,6 +45,24 @@ DriveStubNode::DriveStubNode(const rclcpp::NodeOptions &options)
   odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
       "/state/odom", rclcpp::QoS(5).reliable(),
       [this](const nav_msgs::msg::Odometry &message) { on_odom(message); });
+  pause_sub_ = create_subscription<std_msgs::msg::Bool>(
+      "/fault/controller_pause", rclcpp::QoS(1).reliable(),
+      [this](const std_msgs::msg::Bool &message) {
+        if (message.data != paused_) {
+          paused_ = message.data;
+          RCLCPP_WARN(get_logger(), "FAULT: controller command output %s",
+                      paused_ ? "PAUSED (stale command)" : "RESUMED");
+        }
+      });
+  crash_sub_ = create_subscription<std_msgs::msg::Bool>(
+      "/fault/controller_crash", rclcpp::QoS(1).reliable(),
+      [](const std_msgs::msg::Bool &message) {
+        if (message.data) {
+          RCLCPP_FATAL(rclcpp::get_logger("drive_stub"),
+                       "FAULT: simulated controller process exit (SIGKILL-like)");
+          std::_Exit(42);
+        }
+      });
 
   server_ = rclcpp_action::create_server<FollowPath>(
       this, "/control/follow_path",
@@ -119,6 +138,9 @@ void DriveStubNode::publish_command(double v, double w) {
 void DriveStubNode::tick() {
   if (!active_.has_value()) {
     return;
+  }
+  if (paused_) {
+    return;  // the watchdog in the safety monitor must stop the robot
   }
   const auto goal_handle = active_.value();
 
