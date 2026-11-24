@@ -138,6 +138,9 @@ ros2_ws/src/capstone_integration/tools/run_series.sh 3 results
 
 # эпизод как «измеряемый»: заглушки обязаны провалить аудит (скрипт вернёт 1)
 ros2_ws/src/capstone_integration/tools/run_series.sh 1 results 1
+
+# продолжить серию с эпизода 4, не перезаписывая первые три
+START_AT=4 ros2_ws/src/capstone_integration/tools/run_series.sh 20 results
 ```
 
 Каждый эпизод получает три файла:

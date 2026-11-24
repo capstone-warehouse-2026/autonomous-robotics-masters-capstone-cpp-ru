@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 # Episode series with a simulator reset, a live contract audit and a per-episode manifest.
 #   tools/run_series.sh [episodes] [results_dir] [measured]
+#   START_AT=4 resumes from a finished episode without overwriting earlier results.
 # measured=1 marks the run as measured: placeholder nodes make the audit FAIL and the script exits 1.
 set -euo pipefail
 cd "$(dirname "$0")/../../../.."
 
 episodes="${1:-1}"
+start_at="${START_AT:-1}"
 results="${2:-results}"
 measured="${3:-0}"
 stack_timeout="${STACK_TIMEOUT:-300}"
@@ -16,7 +18,7 @@ measured_flag=false
 [ "$measured" = "1" ] && measured_flag=true
 invalid=0
 
-for i in $(seq 1 "$episodes"); do
+for i in $(seq "$start_at" "$episodes"); do
   id="series-$i"
   docker rm -f "$id" >/dev/null 2>&1 || true
   rm -rf "$results/$id"
