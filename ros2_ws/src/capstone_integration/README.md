@@ -136,6 +136,29 @@ ground_truth_leak                OK      no runtime subscriber
 # 3 эпизода, каждый со свежим симулятором; результаты в results/
 ros2_ws/src/capstone_integration/tools/run_series.sh 3 results
 
+# эпизод как «измеряемый»: заглушки обязаны провалить аудит (скрипт вернёт 1)
+ros2_ws/src/capstone_integration/tools/run_series.sh 1 results 1
+```
+
+Каждый эпизод получает три файла:
+
+| Файл | Содержимое |
+|---|---|
+| `episode.csv` | строка метрик эпизода |
+| `audit.json` | снимок аудита контрактов во время эпизода |
+| `manifest.json` | commit, id образа, config/scenario, `measured_run`, код возврата аудита, время |
+
+Сводка по аудитам — `results/series_audit.csv`:
+
+```text
+episode_id,measured,failures,warnings,audit_exit
+series-1,false,1,5,1
+```
+
+Если `measured=1` и аудит красный, эпизод помечается `INVALID`, а скрипт завершается с кодом 1:
+такой прогон нельзя предъявлять как системный результат.
+
+```bash
 # сводка по всем results/*/episode.csv
 make shell
 ros2 run capstone_integration benchmark_aggregate /workspace/results
