@@ -198,7 +198,11 @@ fault-controller_pause controller_pause  0.203   0.163   STALE_CMD            tr
 fault-controller_crash controller_crash  0.153   0.132   STALE_CMD            false
 ```
 
-Ещё два отказа проверены вручную:
+Ещё два отказа проверяет отдельный скрипт (ему нужен свободный симулятор):
+
+```bash
+ros2_ws/src/capstone_integration/tools/check_manual_faults.sh results
+```
 
 - **Битая модель.** `ros2 run capstone_perception perception_node --ros-args -p method:=learned
   -p learned.model_path:=/nonexistent.onnx` — узел не падает и на каждый кадр пишет
@@ -206,7 +210,7 @@ fault-controller_crash controller_crash  0.153   0.132   STALE_CMD            fa
   заполняется.
 - **Заморозка `/clock`.** `docker pause ...-simulator-1` во время движения: `/cmd_vel` меняется с
   `0.50` на `0.0`, в логе `halt: STALE_CMD`; после `docker unpause` система продолжает работу.
-  Задержка не измеряется автоматически (нужен отдельный режим инжектора).
+  Задержка пишется как `NA`: разрешение проверки — секунды, а не миллисекунды.
 
 Полный набор по заданию — 5 отказов × 5 повторов × C0/C6; здесь автоматизированы 3 из 5 и один
 повтор на демонстрации. C6 требует настоящих обученных компонентов G1/G3/G5.
