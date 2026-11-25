@@ -1,0 +1,3 @@
+Cannot connect to Webots instance, retrying for another 50 seconds...
+[INFO] [1795585733.411949507] [webots_bridge]: Webots physical bridge ready: wheel encoders, LiDAR, step=20 ms
+[INFO] [1795585738.971068413] [webots_bridge]: Reset requested: restored physical spawn and restarted episode clock

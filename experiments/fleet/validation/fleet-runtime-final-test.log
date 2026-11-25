@@ -1,0 +1,103 @@
+Starting >>> capstone_fleet_runtime
+UpdateCTestConfiguration  from :/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime/CTestConfiguration.ini
+Parse Config file:/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime/CTestConfiguration.ini
+   Site: tim-ASUS-TUF-Gaming-F15-FX506HC-FX506HC
+   Build name: (empty)
+ Add coverage exclude regular expressions.
+Create new tag: 20261125-0833 - Experimental
+UpdateCTestConfiguration  from :/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime/CTestConfiguration.ini
+Parse Config file:/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime/CTestConfiguration.ini
+Test project /home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: test_fleet_runtime
+
+1: Test command: /usr/bin/python3 "-u" "/opt/ros/jazzy/share/ament_cmake_test/cmake/run_test.py" "/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime/test_results/capstone_fleet_runtime/test_fleet_runtime.gtest.xml" "--package-name" "capstone_fleet_runtime" "--output-file" "/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime/ament_cmake_gtest/test_fleet_runtime.txt" "--command" "/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime/test_fleet_runtime" "--gtest_output=xml:/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime/test_results/capstone_fleet_runtime/test_fleet_runtime.gtest.xml"
+1: Working Directory: /home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime
+1: Environment variables: 
+1:  ROS_DOMAIN_ID=177
+1: Test timeout computed to be: 30
+1: -- run_test.py: invoking following command in '/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime':
+1:  - /home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime/test_fleet_runtime --gtest_output=xml:/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime/test_results/capstone_fleet_runtime/test_fleet_runtime.gtest.xml
+1: Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+1: [==========] Running 21 tests from 5 test suites.
+1: [----------] Global test environment set-up.
+1: [----------] 6 tests from FleetQueue
+1: [ RUN      ] FleetQueue.DifferentRobotsCanOwnAndCarryDeliveriesConcurrently
+1: [       OK ] FleetQueue.DifferentRobotsCanOwnAndCarryDeliveriesConcurrently (0 ms)
+1: [ RUN      ] FleetQueue.AJobCannotBeAssignedTwiceAndEachRobotHasCapacityOne
+1: [       OK ] FleetQueue.AJobCannotBeAssignedTwiceAndEachRobotHasCapacityOne (0 ms)
+1: [ RUN      ] FleetQueue.OnlyOwnerCanPickDeliverOrFailItsJob
+1: [       OK ] FleetQueue.OnlyOwnerCanPickDeliverOrFailItsJob (0 ms)
+1: [ RUN      ] FleetQueue.ReleasedSecondWaveWaitsUntilRobotHasDeliveredFirstJob
+1: [       OK ] FleetQueue.ReleasedSecondWaveWaitsUntilRobotHasDeliveredFirstJob (0 ms)
+1: [ RUN      ] FleetQueue.InvalidTimesAndUnknownJobsCannotChangeTheQueue
+1: [       OK ] FleetQueue.InvalidTimesAndUnknownJobsCannotChangeTheQueue (0 ms)
+1: [ RUN      ] FleetQueue.SingleRobotG5RetainsItsOriginalGlobalCapacityInvariant
+1: [       OK ] FleetQueue.SingleRobotG5RetainsItsOriginalGlobalCapacityInvariant (0 ms)
+1: [----------] 6 tests from FleetQueue (0 ms total)
+1: 
+1: [----------] 3 tests from TimedInput
+1: [ RUN      ] TimedInput.FutureMessageWaitsForClockAndKeepsOriginalStampAndArrival
+1: [       OK ] TimedInput.FutureMessageWaitsForClockAndKeepsOriginalStampAndArrival (0 ms)
+1: [ RUN      ] TimedInput.RepeatedFuturePacketsCannotExtendOriginalDeadline
+1: [       OK ] TimedInput.RepeatedFuturePacketsCannotExtendOriginalDeadline (0 ms)
+1: [ RUN      ] TimedInput.BackwardClockInvalidatesPreviousEpochAndPendingPacket
+1: [       OK ] TimedInput.BackwardClockInvalidatesPreviousEpochAndPendingPacket (0 ms)
+1: [----------] 3 tests from TimedInput (0 ms total)
+1: 
+1: [----------] 2 tests from StaticMap
+1: [ RUN      ] StaticMap.CapsuleRejectsEdgeThatCrossesObstacleBetweenFreeEndpoints
+1: [       OK ] StaticMap.CapsuleRejectsEdgeThatCrossesObstacleBetweenFreeEndpoints (0 ms)
+1: [ RUN      ] StaticMap.UnknownCellsBlockFootprintAndRotatedOrNonfiniteMapsAreRejected
+1: [       OK ] StaticMap.UnknownCellsBlockFootprintAndRotatedOrNonfiniteMapsAreRejected (0 ms)
+1: [----------] 2 tests from StaticMap (0 ms total)
+1: 
+1: [----------] 2 tests from Scene
+1: [ RUN      ] Scene.SwapScenarioHasDistinctRobotsAndOppositeDeliveryTargets
+1: [       OK ] Scene.SwapScenarioHasDistinctRobotsAndOppositeDeliveryTargets (0 ms)
+1: [ RUN      ] Scene.QueuedScenarioReleasesSecondWaveDuringFirstDeliveries
+1: [       OK ] Scene.QueuedScenarioReleasesSecondWaveDuringFirstDeliveries (0 ms)
+1: [----------] 2 tests from Scene (0 ms total)
+1: 
+1: [----------] 8 tests from RobotActionTest
+1: [ RUN      ] RobotActionTest.SucceededResultDoesNotOpenBarrierUntilFreshPhysicalStop
+1: [       OK ] RobotActionTest.SucceededResultDoesNotOpenBarrierUntilFreshPhysicalStop (558 ms)
+1: [ RUN      ] RobotActionTest.StaticMapPathPosesUseLatestTransformAfterLocalizationCorrections
+1: [       OK ] RobotActionTest.StaticMapPathPosesUseLatestTransformAfterLocalizationCorrections (452 ms)
+1: [ RUN      ] RobotActionTest.RejectedGoalIsTerminalFailure
+1: [       OK ] RobotActionTest.RejectedGoalIsTerminalFailure (234 ms)
+1: [ RUN      ] RobotActionTest.CancellationBeforeGoalResponseCancelsLateOwnedGoal
+1: [       OK ] RobotActionTest.CancellationBeforeGoalResponseCancelsLateOwnedGoal (451 ms)
+1: [ RUN      ] RobotActionTest.CancellationNeedsQuietSamplesAfterResultAndAnyLateMotion
+1: [       OK ] RobotActionTest.CancellationNeedsQuietSamplesAfterResultAndAnyLateMotion (552 ms)
+1: [ RUN      ] RobotActionTest.CancellingIdleRobotRequiresFreshQuietWindowAfterRequest
+1: [       OK ] RobotActionTest.CancellingIdleRobotRequiresFreshQuietWindowAfterRequest (430 ms)
+1: [ RUN      ] RobotActionTest.LeavingReservedEdgeCancelsGoalAndCannotOpenBarrier
+1: [       OK ] RobotActionTest.LeavingReservedEdgeCancelsGoalAndCannotOpenBarrier (244 ms)
+1: [ RUN      ] RobotActionTest.MotionAndZeroWithinOneExecutorBatchResetQuietWindow
+1: [       OK ] RobotActionTest.MotionAndZeroWithinOneExecutorBatchResetQuietWindow (538 ms)
+1: [----------] 8 tests from RobotActionTest (3462 ms total)
+1: 
+1: [----------] Global test environment tear-down
+1: [==========] 21 tests from 5 test suites ran. (3470 ms total)
+1: [  PASSED  ] 21 tests.
+1: -- run_test.py: return code 0
+1: -- run_test.py: inject classname prefix into gtest result file '/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime/test_results/capstone_fleet_runtime/test_fleet_runtime.gtest.xml'
+1: -- run_test.py: verify result file '/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/build/capstone_fleet_runtime/test_results/capstone_fleet_runtime/test_fleet_runtime.gtest.xml'
+1/1 Test #1: test_fleet_runtime ...............   Passed    3.64 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Label Time Summary:
+gtest    =   3.64 sec*proc (1 test)
+
+Total Test time (real) =   3.64 sec
+Finished <<< capstone_fleet_runtime [3.67s]
+
+Summary: 1 package finished [3.81s]

@@ -1,0 +1,53 @@
+episode_id: webots_nav2_deliveries-0
+terminal: completed
+elapsed_sim_s: 64.799999999999997
+ground_truth_samples: 3256
+wheel_odom_samples: 3256
+ground_truth_distance_m: 16.177055991532363
+plan_count: 4
+detour_plan_seen: true
+physical_shelf_intersection: false
+physical_stop_confirmed: true
+physical_contact_events: 0
+physical_contact_samples: 3256
+service_position_checks:
+  - job_id: left_to_right
+    event: picked
+    sim_time: 1.52
+    actual_xy:
+      - -3
+      - -4.0113280568107168e-17
+    target_xy:
+      - -3
+      - 0
+    position_error_m: 4.0113280568107168e-17
+  - job_id: left_to_right
+    event: delivered
+    sim_time: 32.640000000000001
+    actual_xy:
+      - 2.8910921044424231
+      - 0.10778320782067938
+    target_xy:
+      - 3
+      - 0
+    position_error_m: 0.15322581245630851
+  - job_id: right_to_left
+    event: picked
+    sim_time: 33.880000000000003
+    actual_xy:
+      - 2.8910921044424231
+      - 0.10778320782067938
+    target_xy:
+      - 3
+      - 0
+    position_error_m: 0.15322581245630851
+  - job_id: right_to_left
+    event: delivered
+    sim_time: 64.840000000000003
+    actual_xy:
+      - -2.846422875966037
+      - 0.10796083524372396
+    target_xy:
+      - -3
+      - 0
+    position_error_m: 0.18772712902792113

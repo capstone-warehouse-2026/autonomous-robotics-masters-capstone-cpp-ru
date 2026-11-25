@@ -1,0 +1,72 @@
+success: true
+reason: verified
+scope: physical_Webots_Nav2_G5_integration
+expected_terminal: completed
+required_episodes: 1
+completed_audits: 1
+time_resets_observed: 0
+active_episode: webots_nav2_deliveries-0
+current_ground_truth_samples: 3265
+current_plan_count: 5
+current_contact_events: 0
+current_service_position_checks: &1
+  - job_id: left_to_right
+    event: picked
+    sim_time: 1.24
+    actual_xy:
+      - -3
+      - -4.207263040894243e-17
+    target_xy:
+      - -3
+      - 0
+    position_error_m: 4.207263040894243e-17
+  - job_id: left_to_right
+    event: delivered
+    sim_time: 32.100000000000001
+    actual_xy:
+      - 2.8957981600821414
+      - 0.11287216558266228
+    target_xy:
+      - 3
+      - 0
+    position_error_m: 0.15361689101653814
+  - job_id: right_to_left
+    event: picked
+    sim_time: 33.140000000000001
+    actual_xy:
+      - 2.8957981600821414
+      - 0.11287216558266228
+    target_xy:
+      - 3
+      - 0
+    position_error_m: 0.15361689101653814
+  - job_id: right_to_left
+    event: delivered
+    sim_time: 64.939999999999998
+    actual_xy:
+      - -2.8409106648894111
+      - 0.11720769338530185
+    target_xy:
+      - -3
+      - 0
+    position_error_m: 0.19760328928090284
+delivery_tolerance_m: 0.34999999999999998
+episodes:
+  - episode_id: webots_nav2_deliveries-0
+    terminal: completed
+    elapsed_sim_s: 65.040000000000006
+    ground_truth_samples: 3265
+    wheel_odom_samples: 3265
+    ground_truth_distance_m: 16.210321165368448
+    plan_count: 5
+    detour_plan_seen: true
+    physical_shelf_intersection: false
+    physical_stop_confirmed: true
+    physical_contact_events: 0
+    physical_contact_samples: 3265
+    service_position_checks: *1
+obstacle_inflated:
+  - -0.78000000000000003
+  - -2.2800000000000002
+  - 0.78000000000000003
+  - 2.2800000000000002

@@ -1,0 +1,24 @@
+assignment_id: 1
+sim_time: 11.94
+policy: EDF_batch_then_minimum_total_pickup_distance
+robot_ids:
+  - robot_1
+  - robot_2
+job_ids:
+  - left_to_right
+  - right_to_left
+cost_matrix:
+  -
+    - 0
+    - 6
+  -
+    - 6
+    - 0
+total_cost: 0
+chosen_pairs:
+  - robot_id: robot_1
+    job_id: left_to_right
+    cost: 0
+  - robot_id: robot_2
+    job_id: right_to_left
+    cost: 0

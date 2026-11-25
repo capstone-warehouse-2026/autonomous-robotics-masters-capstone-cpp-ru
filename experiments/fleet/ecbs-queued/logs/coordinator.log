@@ -1,0 +1,67 @@
+[INFO] [1795595838.493946795] [fleet_coordinator]: event=map_ready robot= job= 
+[INFO] [1795595839.533063442] [fleet_coordinator]: event=fleet_started robot= job= method=ecbs
+[INFO] [1795595839.552867921] [fleet_coordinator]: event=released robot= job=left_to_right 
+[INFO] [1795595839.552901362] [fleet_coordinator]: event=released robot= job=right_to_left 
+[INFO] [1795595839.553152050] [fleet_coordinator]: event=assigned robot=robot_1 job=left_to_right assignment=1;cost=0
+[INFO] [1795595839.553166048] [fleet_coordinator]: event=assigned robot=robot_2 job=right_to_left assignment=1;cost=0
+[INFO] [1795595839.553173265] [fleet_coordinator]: event=planning_started robot= job= plan=1
+[INFO] [1795595839.573125889] [fleet_coordinator]: event=planning_succeeded robot= job= plan=1;initial_conflicts=0
+[INFO] [1795595839.573163524] [fleet_coordinator]: event=pickup_service robot=robot_1 job=left_to_right 
+[INFO] [1795595839.573173751] [fleet_coordinator]: event=pickup_service robot=robot_2 job=right_to_left 
+[INFO] [1795595840.592871016] [fleet_coordinator]: event=picked robot=robot_1 job=left_to_right 
+[INFO] [1795595840.592905350] [fleet_coordinator]: event=picked robot=robot_2 job=right_to_left 
+[INFO] [1795595840.592914259] [fleet_coordinator]: event=planning_started robot= job= plan=2
+[INFO] [1795595840.613116219] [fleet_coordinator]: event=planning_succeeded robot= job= plan=2;initial_conflicts=2
+[INFO] [1795595840.613148807] [fleet_coordinator]: event=round_started robot= job= plan=2;step=1
+[INFO] [1795595844.672882666] [fleet_coordinator]: event=released robot= job=return_left_to_right 
+[INFO] [1795595844.672922716] [fleet_coordinator]: event=released robot= job=return_right_to_left 
+[INFO] [1795595846.712856126] [fleet_coordinator]: event=round_completed robot= job= plan=2;step=1
+[INFO] [1795595846.712895356] [fleet_coordinator]: event=round_started robot= job= plan=2;step=2
+[INFO] [1795595852.772870836] [fleet_coordinator]: event=round_completed robot= job= plan=2;step=2
+[INFO] [1795595852.772903432] [fleet_coordinator]: event=round_started robot= job= plan=2;step=3
+[INFO] [1795595861.452898308] [fleet_coordinator]: event=round_completed robot= job= plan=2;step=3
+[INFO] [1795595861.452935503] [fleet_coordinator]: event=round_started robot= job= plan=2;step=4
+[INFO] [1795595870.292903639] [fleet_coordinator]: event=round_completed robot= job= plan=2;step=4
+[INFO] [1795595870.292937516] [fleet_coordinator]: event=round_started robot= job= plan=2;step=5
+[INFO] [1795595876.392881121] [fleet_coordinator]: event=round_completed robot= job= plan=2;step=5
+[INFO] [1795595876.392917846] [fleet_coordinator]: event=round_started robot= job= plan=2;step=6
+[INFO] [1795595882.432903544] [fleet_coordinator]: event=round_completed robot= job= plan=2;step=6
+[INFO] [1795595882.432935197] [fleet_coordinator]: event=round_started robot= job= plan=2;step=7
+[INFO] [1795595888.452888920] [fleet_coordinator]: event=round_completed robot= job= plan=2;step=7
+[INFO] [1795595888.452997684] [fleet_coordinator]: event=round_started robot= job= plan=2;step=8
+[INFO] [1795595897.612867192] [fleet_coordinator]: event=round_completed robot= job= plan=2;step=8
+[INFO] [1795595897.612905252] [fleet_coordinator]: event=dropoff_service robot=robot_1 job=left_to_right 
+[INFO] [1795595897.612913415] [fleet_coordinator]: event=dropoff_service robot=robot_2 job=right_to_left 
+[INFO] [1795595898.632858340] [fleet_coordinator]: event=delivered robot=robot_1 job=left_to_right 
+[INFO] [1795595898.632891665] [fleet_coordinator]: event=delivered robot=robot_2 job=right_to_left 
+[INFO] [1795595898.633107630] [fleet_coordinator]: event=assigned robot=robot_1 job=return_right_to_left assignment=2;cost=0
+[INFO] [1795595898.633121633] [fleet_coordinator]: event=assigned robot=robot_2 job=return_left_to_right assignment=2;cost=0
+[INFO] [1795595898.633129302] [fleet_coordinator]: event=planning_started robot= job= plan=3
+[INFO] [1795595898.653121415] [fleet_coordinator]: event=planning_succeeded robot= job= plan=3;initial_conflicts=0
+[INFO] [1795595898.653160023] [fleet_coordinator]: event=pickup_service robot=robot_1 job=return_right_to_left 
+[INFO] [1795595898.653171478] [fleet_coordinator]: event=pickup_service robot=robot_2 job=return_left_to_right 
+[INFO] [1795595899.672863052] [fleet_coordinator]: event=picked robot=robot_1 job=return_right_to_left 
+[INFO] [1795595899.672897399] [fleet_coordinator]: event=picked robot=robot_2 job=return_left_to_right 
+[INFO] [1795595899.672910767] [fleet_coordinator]: event=planning_started robot= job= plan=4
+[INFO] [1795595899.693146114] [fleet_coordinator]: event=planning_succeeded robot= job= plan=4;initial_conflicts=2
+[INFO] [1795595899.693183036] [fleet_coordinator]: event=round_started robot= job= plan=4;step=1
+[INFO] [1795595911.812902580] [fleet_coordinator]: event=round_completed robot= job= plan=4;step=1
+[INFO] [1795595911.812958424] [fleet_coordinator]: event=round_started robot= job= plan=4;step=2
+[INFO] [1795595917.872922894] [fleet_coordinator]: event=round_completed robot= job= plan=4;step=2
+[INFO] [1795595917.872958132] [fleet_coordinator]: event=round_started robot= job= plan=4;step=3
+[INFO] [1795595926.872889535] [fleet_coordinator]: event=round_completed robot= job= plan=4;step=3
+[INFO] [1795595926.872928595] [fleet_coordinator]: event=round_started robot= job= plan=4;step=4
+[INFO] [1795595936.052882623] [fleet_coordinator]: event=round_completed robot= job= plan=4;step=4
+[INFO] [1795595936.052919629] [fleet_coordinator]: event=round_started robot= job= plan=4;step=5
+[INFO] [1795595942.132872078] [fleet_coordinator]: event=round_completed robot= job= plan=4;step=5
+[INFO] [1795595942.132913612] [fleet_coordinator]: event=round_started robot= job= plan=4;step=6
+[INFO] [1795595948.092855605] [fleet_coordinator]: event=round_completed robot= job= plan=4;step=6
+[INFO] [1795595948.092892208] [fleet_coordinator]: event=round_started robot= job= plan=4;step=7
+[INFO] [1795595954.092861204] [fleet_coordinator]: event=round_completed robot= job= plan=4;step=7
+[INFO] [1795595954.092893986] [fleet_coordinator]: event=round_started robot= job= plan=4;step=8
+[INFO] [1795595962.952893799] [fleet_coordinator]: event=round_completed robot= job= plan=4;step=8
+[INFO] [1795595962.952939660] [fleet_coordinator]: event=dropoff_service robot=robot_1 job=return_right_to_left 
+[INFO] [1795595962.952951716] [fleet_coordinator]: event=dropoff_service robot=robot_2 job=return_left_to_right 
+[INFO] [1795595963.972912434] [fleet_coordinator]: event=delivered robot=robot_1 job=return_right_to_left 
+[INFO] [1795595963.972962994] [fleet_coordinator]: event=delivered robot=robot_2 job=return_left_to_right 
+[INFO] [1795595963.972970369] [fleet_coordinator]: event=fleet_completed robot= job= completed

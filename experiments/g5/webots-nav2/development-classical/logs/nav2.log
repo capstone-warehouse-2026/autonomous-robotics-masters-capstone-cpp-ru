@@ -1,0 +1,249 @@
+[INFO] [launch]: All log files can be found below /home/tim/autonomous-robotics-masters-capstone-cpp-ru/results/g5-physical-dev4/logs/ros/2026-11-25-08-57-19-738399-tim-ASUS-TUF-Gaming-F15-FX506HC-FX506HC-28377
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [map_server-1]: process started with pid [28419]
+[INFO] [amcl-2]: process started with pid [28420]
+[INFO] [planner_server-3]: process started with pid [28421]
+[INFO] [controller_server-4]: process started with pid [28422]
+[INFO] [nav2_contracts-5]: process started with pid [28423]
+[INFO] [safety_monitor_node-6]: process started with pid [28424]
+[INFO] [lifecycle_manager-7]: process started with pid [28425]
+[INFO] [lifecycle_manager-8]: process started with pid [28426]
+[lifecycle_manager-7] [INFO] [1795586239.839916567] [lifecycle_localization]: Creating
+[safety_monitor_node-6] [INFO] [1795586239.842325646] [safety_monitor]: created (unconfigured), autostart=true
+[lifecycle_manager-7] [INFO] [1795586239.843847717] [lifecycle_localization]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[safety_monitor_node-6] [INFO] [1795586239.851096052] [safety_monitor]: configured: 20.0 Hz, base frame 'base_link'
+[safety_monitor_node-6] [INFO] [1795586239.851158378] [safety_monitor]: active: /cmd_vel is published at 20.0 Hz
+[lifecycle_manager-8] [INFO] [1795586239.853143838] [lifecycle_navigation]: Creating
+[map_server-1] [INFO] [1795586239.853526206] [map_server]: 
+[map_server-1] 	map_server lifecycle node launched. 
+[map_server-1] 	Waiting on external lifecycle transitions to activate
+[map_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-1] [INFO] [1795586239.853600939] [map_server]: Creating
+[planner_server-3] [INFO] [1795586239.857454958] [planner_server]: 
+[planner_server-3] 	planner_server lifecycle node launched. 
+[planner_server-3] 	Waiting on external lifecycle transitions to activate
+[planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[lifecycle_manager-8] [INFO] [1795586239.857920943] [lifecycle_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[planner_server-3] [INFO] [1795586239.859758955] [planner_server]: Creating
+[controller_server-4] [INFO] [1795586239.863622199] [controller_server]: 
+[controller_server-4] 	controller_server lifecycle node launched. 
+[controller_server-4] 	Waiting on external lifecycle transitions to activate
+[controller_server-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-4] [INFO] [1795586239.866472930] [controller_server]: Creating controller server
+[planner_server-3] [INFO] [1795586239.867075917] [global_costmap.global_costmap]: 
+[planner_server-3] 	global_costmap lifecycle node launched. 
+[planner_server-3] 	Waiting on external lifecycle transitions to activate
+[planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-3] [INFO] [1795586239.867604025] [global_costmap.global_costmap]: Creating Costmap
+[controller_server-4] [INFO] [1795586239.874762086] [local_costmap.local_costmap]: 
+[controller_server-4] 	local_costmap lifecycle node launched. 
+[controller_server-4] 	Waiting on external lifecycle transitions to activate
+[controller_server-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-4] [INFO] [1795586239.875179576] [local_costmap.local_costmap]: Creating Costmap
+[safety_monitor_node-6] [WARN] [1795586239.901332105] [safety_monitor]: halt: NOT_READY
+[lifecycle_manager-7] [INFO] [1795586240.002668924] [lifecycle_localization]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-7] [INFO] [1795586240.002708951] [lifecycle_localization]: [34m[1mConfiguring map_server[0m[0m
+[lifecycle_manager-8] [INFO] [1795586240.004112479] [lifecycle_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-8] [INFO] [1795586240.004176097] [lifecycle_navigation]: [34m[1mConfiguring planner_server[0m[0m
+[planner_server-3] [INFO] [1795586240.114345271] [planner_server]: Configuring
+[planner_server-3] [INFO] [1795586240.114380874] [global_costmap.global_costmap]: Configuring
+[planner_server-3] [INFO] [1795586240.119329674] [global_costmap.global_costmap]: Using plugin "static"
+[planner_server-3] [INFO] [1795586240.122148970] [global_costmap.global_costmap]: Subscribing to the map topic (/map) with transient local durability
+[planner_server-3] [INFO] [1795586240.123409110] [global_costmap.global_costmap]: Initialized plugin "static"
+[planner_server-3] [INFO] [1795586240.123429433] [global_costmap.global_costmap]: Using plugin "obstacles"
+[planner_server-3] [INFO] [1795586240.123708075] [global_costmap.global_costmap]: Subscribed to Topics: scan
+[planner_server-3] [INFO] [1795586240.126240935] [global_costmap.global_costmap]: Initialized plugin "obstacles"
+[planner_server-3] [INFO] [1795586240.126269760] [global_costmap.global_costmap]: Using plugin "inflation"
+[planner_server-3] [INFO] [1795586240.126645899] [global_costmap.global_costmap]: Initialized plugin "inflation"
+[planner_server-3] [INFO] [1795586240.139488232] [planner_server]: Created global planner plugin GridBased of type nav2_navfn_planner::NavfnPlanner
+[planner_server-3] [INFO] [1795586240.139522374] [planner_server]: Configuring plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1795586240.139768440] [planner_server]: Planner Server has GridBased  planners available.
+[lifecycle_manager-8] [INFO] [1795586240.145822735] [lifecycle_navigation]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-4] [INFO] [1795586240.145938338] [controller_server]: Configuring controller interface
+[controller_server-4] [INFO] [1795586240.145956892] [controller_server]: getting progress checker plugins..
+[controller_server-4] [INFO] [1795586240.145970345] [controller_server]: getting goal checker plugins..
+[controller_server-4] [INFO] [1795586240.146048623] [controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-4] [INFO] [1795586240.146078583] [local_costmap.local_costmap]: Configuring
+[controller_server-4] [INFO] [1795586240.150871854] [local_costmap.local_costmap]: Using plugin "obstacles"
+[controller_server-4] [INFO] [1795586240.153432445] [local_costmap.local_costmap]: Subscribed to Topics: scan
+[controller_server-4] [INFO] [1795586240.156138458] [local_costmap.local_costmap]: Initialized plugin "obstacles"
+[controller_server-4] [INFO] [1795586240.156169584] [local_costmap.local_costmap]: Using plugin "inflation"
+[controller_server-4] [INFO] [1795586240.156486075] [local_costmap.local_costmap]: Initialized plugin "inflation"
+[controller_server-4] [INFO] [1795586240.170572428] [controller_server]: Created progress_checker : progress of type nav2_controller::PoseProgressChecker
+[controller_server-4] [INFO] [1795586240.170795610] [controller_server]: Controller Server has progress  progress checkers available.
+[controller_server-4] [INFO] [1795586240.171263499] [controller_server]: Created goal checker : goal of type nav2_controller::StoppedGoalChecker
+[controller_server-4] [INFO] [1795586240.171516129] [controller_server]: Controller Server has goal  goal checkers available.
+[controller_server-4] [INFO] [1795586240.172233131] [controller_server]: Created controller : FollowPath of type nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-4] [INFO] [1795586240.175434125] [controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-8] [INFO] [1795586240.180598956] [lifecycle_navigation]: [34m[1mActivating planner_server[0m[0m
+[planner_server-3] [INFO] [1795586240.180700772] [planner_server]: Activating
+[planner_server-3] [INFO] [1795586240.180732294] [global_costmap.global_costmap]: Activating
+[planner_server-3] [INFO] [1795586240.180739256] [global_costmap.global_costmap]: Checking transform
+[planner_server-3] [INFO] [1795586240.180774478] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[map_server-1] [INFO] [1795586240.187488282] [map_server]: Configuring
+[map_server-1] [INFO] [1795586240.187547160] [map_io]: Loading yaml file: /home/tim/autonomous-robotics-masters-capstone-cpp-ru/simulation/integration/map.yaml
+[map_server-1] [INFO] [1795586240.187765750] [map_io]: resolution: 0.05
+[map_server-1] [INFO] [1795586240.187771590] [map_io]: origin[0]: -6
+[map_server-1] [INFO] [1795586240.187773516] [map_io]: origin[1]: -5
+[map_server-1] [INFO] [1795586240.187776054] [map_io]: origin[2]: 0
+[map_server-1] [INFO] [1795586240.187778183] [map_io]: free_thresh: 0.196
+[map_server-1] [INFO] [1795586240.187780166] [map_io]: occupied_thresh: 0.65
+[map_server-1] [INFO] [1795586240.187783515] [map_io]: mode: trinary
+[map_server-1] [INFO] [1795586240.187786143] [map_io]: negate: 0
+[map_server-1] [INFO] [1795586240.187930869] [map_io]: Loading image_file: /home/tim/autonomous-robotics-masters-capstone-cpp-ru/simulation/integration/map.pgm
+[map_server-1] [INFO] [1795586240.188721167] [map_io]: Read map /home/tim/autonomous-robotics-masters-capstone-cpp-ru/simulation/integration/map.pgm: 240 X 200 map @ 0.05 m/cell
+[lifecycle_manager-7] [INFO] [1795586240.194417691] [lifecycle_localization]: [34m[1mConfiguring amcl[0m[0m
+[lifecycle_manager-7] [INFO] [1795586240.208959644] [lifecycle_localization]: [34m[1mActivating map_server[0m[0m
+[map_server-1] [INFO] [1795586240.209058141] [map_server]: Activating
+[map_server-1] [INFO] [1795586240.209256104] [map_server]: Creating bond (map_server) to lifecycle manager.
+[planner_server-3] [INFO] [1795586240.209475766] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 240 X 200 at 0.050000 m/pix
+[lifecycle_manager-7] [INFO] [1795586240.312558808] [lifecycle_localization]: Server map_server connected with bond.
+[lifecycle_manager-7] [INFO] [1795586240.312600677] [lifecycle_localization]: [34m[1mActivating amcl[0m[0m
+[lifecycle_manager-7] [INFO] [1795586240.415524643] [lifecycle_localization]: Server amcl connected with bond.
+[lifecycle_manager-7] [INFO] [1795586240.415556123] [lifecycle_localization]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-7] [INFO] [1795586240.415564655] [lifecycle_localization]: [34m[1mCreating bond timer...[0m[0m
+[planner_server-3] [INFO] [1795586240.680842971] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1795586241.180832230] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1795586241.680830595] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[safety_monitor_node-6] [INFO] [1795586241.910712192] [safety_monitor]: laser 'lidar_link' in 'base_link': x=0.000 y=0.000 yaw=0.000
+[planner_server-3] [INFO] [1795586242.180875576] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 0.420000 but the earliest data is at time 0.500000, when looking up transform from frame [base_link] to frame [map]
+[planner_server-3] [INFO] [1795586242.680911006] [global_costmap.global_costmap]: start
+[planner_server-3] [INFO] [1795586242.931833171] [planner_server]: Activating plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1795586242.932862123] [planner_server]: Creating bond (planner_server) to lifecycle manager.
+[lifecycle_manager-8] [INFO] [1795586243.036205266] [lifecycle_navigation]: Server planner_server connected with bond.
+[lifecycle_manager-8] [INFO] [1795586243.036236399] [lifecycle_navigation]: [34m[1mActivating controller_server[0m[0m
+[controller_server-4] [INFO] [1795586243.036383428] [controller_server]: Activating
+[controller_server-4] [INFO] [1795586243.036412103] [local_costmap.local_costmap]: Activating
+[controller_server-4] [INFO] [1795586243.036417617] [local_costmap.local_costmap]: Checking transform
+[controller_server-4] [INFO] [1795586243.036525550] [local_costmap.local_costmap]: start
+[controller_server-4] [INFO] [1795586243.137286233] [controller_server]: Activating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-4] [INFO] [1795586243.137319508] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[lifecycle_manager-8] [INFO] [1795586243.240674707] [lifecycle_navigation]: Server controller_server connected with bond.
+[lifecycle_manager-8] [INFO] [1795586243.240708786] [lifecycle_navigation]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-8] [INFO] [1795586243.240716634] [lifecycle_navigation]: [34m[1mCreating bond timer...[0m[0m
+[nav2_contracts-5] [WARN] [1795586245.388876865] [tf2_buffer]: Detected jump back in time. Clearing TF buffer.
+[planner_server-3] [WARN] [1795586245.388897610] [tf2_buffer]: Detected jump back in time. Clearing TF buffer.
+[controller_server-4] [WARN] [1795586245.388981080] [tf2_buffer]: Detected jump back in time. Clearing TF buffer.
+[safety_monitor_node-6] [WARN] [1795586245.389026738] [tf2_buffer]: Detected jump back in time. Clearing TF buffer.
+[amcl-2] [WARN] [1795586245.389081545] [tf2_buffer]: Detected jump back in time. Clearing TF buffer.
+[safety_monitor_node-6] [WARN] [1795586245.401352337] [safety_monitor]: halt: TIME_JUMP
+[safety_monitor_node-6] [WARN] [1795586245.451257342] [safety_monitor]: halt: NOT_READY
+[planner_server-3] [ERROR] [1795586245.683413448] [transformPoseInTargetFrame]: Extrapolation Error looking up target frame: Lookup would require extrapolation into the past.  Requested time 0.280000 but the earliest data is at time 0.300000, when looking up transform from frame [base_link] to frame [map]
+[planner_server-3] 
+[planner_server-3] [WARN] [1795586245.704448172] [planner_server]: No planners specified in action call. Server will use only plugin GridBased  in server. This warning will appear once.
+[controller_server-4] [INFO] [1795586245.705556728] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-4] [WARN] [1795586245.705585061] [controller_server]: No controller was specified in action call. Server will use only plugin loaded FollowPath . This warning will appear once.
+[controller_server-4] [WARN] [1795586245.705591238] [controller_server]: No goal checker was specified in parameter 'current_goal_checker'. Server will use only plugin loaded goal . This warning will appear once.
+[controller_server-4] [WARN] [1795586245.705617284] [controller_server]: No progress checker was specified in parameter 'current_progress_checker'. Server will use only plugin loaded progress . This warning will appear once.
+[controller_server-4] [INFO] [1795586245.705683881] [controller_server]: Reached the goal!
+[safety_monitor_node-6] [INFO] [1795586245.751300659] [safety_monitor]: commands pass through
+[safety_monitor_node-6] [WARN] [1795586245.901352914] [safety_monitor]: halt: STALE_CMD
+[controller_server-4] [INFO] [1795586246.754775730] [controller_server]: Received a goal, begin computing control effort.
+[safety_monitor_node-6] [INFO] [1795586246.801320288] [safety_monitor]: commands pass through
+[nav2_contracts-5] [WARN] [1795586248.692123238] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 3.200000 but the latest data is at time 3.180000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586250.953347065] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 5.400000 but the latest data is at time 5.380000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586253.013544653] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 7.400000 but the latest data is at time 7.380000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586255.485364680] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 9.800000 but the latest data is at time 9.780000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586257.649714761] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 11.900000 but the latest data is at time 11.880000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586260.124097189] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 14.300000 but the latest data is at time 14.280000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586262.797329634] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 16.900000 but the latest data is at time 16.880000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586266.198137760] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 20.200000 but the latest data is at time 20.180000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586268.472260180] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 22.400000 but the latest data is at time 22.380000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586270.522145803] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 24.400000 but the latest data is at time 24.380000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586272.684528872] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 26.500000 but the latest data is at time 26.480000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586275.258899546] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 29.000000 but the latest data is at time 28.980000, when looking up transform from frame [lidar_link] to frame [odom]
+[controller_server-4] [INFO] [1795586277.504991469] [controller_server]: Reached the goal!
+[nav2_contracts-5] [WARN] [1795586277.631930504] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 31.300000 but the latest data is at time 31.280000, when looking up transform from frame [lidar_link] to frame [odom]
+[safety_monitor_node-6] [WARN] [1795586277.701280498] [safety_monitor]: halt: STALE_CMD
+[controller_server-4] [INFO] [1795586278.574237017] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-4] [INFO] [1795586278.574305379] [controller_server]: Reached the goal!
+[safety_monitor_node-6] [INFO] [1795586278.601290471] [safety_monitor]: commands pass through
+[safety_monitor_node-6] [WARN] [1795586278.751301286] [safety_monitor]: halt: STALE_CMD
+[controller_server-4] [INFO] [1795586279.614242084] [controller_server]: Received a goal, begin computing control effort.
+[safety_monitor_node-6] [INFO] [1795586279.651290432] [safety_monitor]: commands pass through
+[nav2_contracts-5] [WARN] [1795586279.690908469] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 33.300000 but the latest data is at time 33.280000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586282.692410629] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 36.200000 but the latest data is at time 36.180000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586285.259077874] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 38.700000 but the latest data is at time 38.680000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586288.557357712] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 41.900000 but the latest data is at time 41.880000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586290.717817097] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 44.000000 but the latest data is at time 43.980000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586293.198123841] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 46.400000 but the latest data is at time 46.380000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586295.870268302] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 49.000000 but the latest data is at time 48.980000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586298.136027143] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 51.200000 but the latest data is at time 51.180000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586300.298853654] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 53.300000 but the latest data is at time 53.280000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586303.486006086] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 56.400000 but the latest data is at time 56.380000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795586305.547135853] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 58.400000 but the latest data is at time 58.380000, when looking up transform from frame [lidar_link] to frame [odom]
+[controller_server-4] [INFO] [1795586307.864362563] [controller_server]: Cancellation was successful. Stopping the robot.
+[controller_server-4] [INFO] [1795586307.864405772] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[nav2_contracts-5] [WARN] [1795586307.918093963] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 60.700000 but the latest data is at time 60.680000, when looking up transform from frame [lidar_link] to frame [odom]
+[safety_monitor_node-6] [WARN] [1795586308.051280894] [safety_monitor]: halt: STALE_CMD
+[controller_server-4] [INFO] [1795586308.973596632] [controller_server]: Received a goal, begin computing control effort.
+[safety_monitor_node-6] [INFO] [1795586309.001309205] [safety_monitor]: commands pass through
+[nav2_contracts-5] [WARN] [1795586311.006563531] [nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 63.700000 but the latest data is at time 63.680000, when looking up transform from frame [lidar_link] to frame [odom]
+[controller_server-4] [INFO] [1795586311.323740525] [controller_server]: Reached the goal!
+[safety_monitor_node-6] [WARN] [1795586311.501324148] [safety_monitor]: halt: STALE_CMD
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[lifecycle_manager-7] [INFO] [1795586312.990753390] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-7] [INFO] [1795586312.990859145] [lifecycle_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_localization)
+[lifecycle_manager-7] [INFO] [1795586312.990893733] [lifecycle_localization]: [34m[1mTerminating bond timer...[0m[0m
+[planner_server-3] [INFO] [1795586312.990754696] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[planner_server-3] [INFO] [1795586312.990827758] [planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[planner_server-3] [INFO] [1795586312.990882927] [planner_server]: Deactivating
+[planner_server-3] [INFO] [1795586312.990910537] [global_costmap.global_costmap]: Deactivating
+[controller_server-4] [INFO] [1795586312.990755691] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[controller_server-4] [INFO] [1795586312.990825781] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[controller_server-4] [INFO] [1795586312.990876879] [controller_server]: Deactivating
+[controller_server-4] [INFO] [1795586312.990890682] [controller_server]: Deactivating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-4] [INFO] [1795586312.990911414] [local_costmap.local_costmap]: Deactivating
+[map_server-1] [INFO] [1795586312.990751548] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[map_server-1] [INFO] [1795586312.990866098] [map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[map_server-1] [INFO] [1795586312.990923484] [map_server]: Deactivating
+[map_server-1] [INFO] [1795586312.990935981] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[lifecycle_manager-8] [INFO] [1795586312.990777557] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-8] [INFO] [1795586312.990866908] [lifecycle_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_navigation)
+[lifecycle_manager-8] [INFO] [1795586312.990904644] [lifecycle_navigation]: [34m[1mTerminating bond timer...[0m[0m
+[amcl-2] [INFO] [1795586312.990785912] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[INFO] [lifecycle_manager-8]: sending signal 'SIGINT' to process[lifecycle_manager-8]
+[INFO] [lifecycle_manager-7]: sending signal 'SIGINT' to process[lifecycle_manager-7]
+[INFO] [safety_monitor_node-6]: sending signal 'SIGINT' to process[safety_monitor_node-6]
+[INFO] [nav2_contracts-5]: sending signal 'SIGINT' to process[nav2_contracts-5]
+[INFO] [controller_server-4]: sending signal 'SIGINT' to process[controller_server-4]
+[INFO] [planner_server-3]: sending signal 'SIGINT' to process[planner_server-3]
+[INFO] [amcl-2]: sending signal 'SIGINT' to process[amcl-2]
+[INFO] [map_server-1]: sending signal 'SIGINT' to process[map_server-1]
+[nav2_contracts-5] [INFO] [1795586312.990749156] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[safety_monitor_node-6] [INFO] [1795586312.990749201] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ERROR] [safety_monitor_node-6]: process has died [pid 28424, exit code -2, cmd '/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/install/capstone_safety/lib/capstone_safety/safety_monitor_node --ros-args -r __node:=safety_monitor --params-file /home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/install/capstone_safety/share/capstone_safety/config/safety.yaml --params-file /tmp/launch_params_ql69u3zx --params-file /tmp/launch_params_5p85m8go'].
+[map_server-1] [INFO] [1795586313.003933701] [map_server]: Cleaning up
+[map_server-1] [INFO] [1795586313.004005932] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[map_server-1] [INFO] [1795586313.009088549] [map_server]: Destroying
+[nav2_contracts-5] [INFO] [1795586313.009858650] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[amcl-2] [INFO] [1795586313.012151191] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-7] [INFO] [1795586313.018571926] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-8] [INFO] [1795586313.019016915] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-7] [INFO] [1795586313.019302758] [lifecycle_localization]: Destroying lifecycle_localization
+[lifecycle_manager-8] [INFO] [1795586313.019839723] [lifecycle_navigation]: Destroying lifecycle_navigation
+[ERROR] [map_server-1]: process has died [pid 28419, exit code -2, cmd '/opt/ros/jazzy/lib/nav2_map_server/map_server --ros-args -r __node:=map_server --params-file /home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/install/capstone_nav2/share/capstone_nav2/config/navigation.yaml --params-file /tmp/launch_params_y8swcd6o --params-file /tmp/launch_params_5jrqxp5m'].
+[controller_server-4] [INFO] [1795586313.036775466] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-4] [INFO] [1795586313.047045379] [controller_server]: Cleaning up
+[controller_server-4] [INFO] [1795586313.047096733] [controller_server]: Cleaning up controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-4] [INFO] [1795586313.047186367] [local_costmap.local_costmap]: Cleaning up
+[controller_server-4] [INFO] [1795586313.056972552] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-4] [INFO] [1795586313.058133655] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[controller_server-4] [INFO] [1795586313.060051840] [local_costmap.local_costmap]: Destroying
+[controller_server-4] [INFO] [1795586313.063351830] [controller_server]: Destroying
+[planner_server-3] [INFO] [1795586313.081094615] [planner_server]: Deactivating plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1795586313.081136463] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-3] [INFO] [1795586313.091278626] [planner_server]: Cleaning up
+[planner_server-3] [INFO] [1795586313.094520012] [global_costmap.global_costmap]: Cleaning up
+[planner_server-3] [INFO] [1795586313.096196227] [planner_server]: Cleaning up plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1795586313.096355850] [planner_server]: Destroying plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1795586313.100045813] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-3] [INFO] [1795586313.100596557] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[planner_server-3] [INFO] [1795586313.101747499] [global_costmap.global_costmap]: Destroying
+[planner_server-3] [INFO] [1795586313.104849741] [planner_server]: Destroying
+[INFO] [nav2_contracts-5]: process has finished cleanly [pid 28423]
+[INFO] [lifecycle_manager-7]: process has finished cleanly [pid 28425]
+[INFO] [lifecycle_manager-8]: process has finished cleanly [pid 28426]
+[INFO] [amcl-2]: process has finished cleanly [pid 28420]
+[INFO] [controller_server-4]: process has finished cleanly [pid 28422]
+[INFO] [planner_server-3]: process has finished cleanly [pid 28421]

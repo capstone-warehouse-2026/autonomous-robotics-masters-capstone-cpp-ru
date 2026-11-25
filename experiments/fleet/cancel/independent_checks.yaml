@@ -1,0 +1,8 @@
+scope: independent_review_of_cancel_runtime_events
+cancel_requested_sim_time: 20.16
+fleet_stopped_sim_time: 20.44
+runtime_stop_delay_sim_s: 0.28
+runtime_delay_excludes_subsequent_independent_physical_stop_audit: true
+completed_rounds: 1
+interrupted_rounds: 1
+source_differences_at_capture: []

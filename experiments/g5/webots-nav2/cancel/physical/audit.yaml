@@ -1,0 +1,43 @@
+success: true
+reason: verified
+scope: physical_Webots_Nav2_G5_integration
+expected_terminal: cancelled
+required_episodes: 1
+completed_audits: 1
+time_resets_observed: 0
+active_episode: webots_nav2_deliveries-0
+current_ground_truth_samples: 271
+current_plan_count: 2
+current_contact_events: 0
+current_service_position_checks: &1
+  - job_id: left_to_right
+    event: picked
+    sim_time: 1.52
+    actual_xy:
+      - -3
+      - -1.3243741007391728e-17
+    target_xy:
+      - -3
+      - 0
+    position_error_m: 1.3243741007391728e-17
+delivery_tolerance_m: 0.34999999999999998
+episodes:
+  - episode_id: webots_nav2_deliveries-0
+    terminal: cancelled
+    elapsed_sim_s: 5.1000000000000005
+    ground_truth_samples: 271
+    wheel_odom_samples: 271
+    ground_truth_distance_m: 1.040431092069438
+    plan_count: 2
+    detour_plan_seen: true
+    physical_shelf_intersection: false
+    physical_stop_confirmed: true
+    physical_contact_events: 0
+    physical_contact_samples: 271
+    service_position_checks: *1
+    cancel_to_stop_sim_s: 0.62000000000000011
+obstacle_inflated:
+  - -0.78000000000000003
+  - -2.2800000000000002
+  - 0.78000000000000003
+  - 2.2800000000000002

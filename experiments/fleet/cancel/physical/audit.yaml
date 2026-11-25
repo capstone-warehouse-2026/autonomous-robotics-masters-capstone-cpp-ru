@@ -1,0 +1,62 @@
+success: true
+reason: verified
+scope: physical_multi_robot_Webots_CBS_ECBS_dispatch
+terminal: cancelled
+robots:
+- robot_1
+- robot_2
+monitoring_armed:
+  reason: mission_running
+  sim_time: 11.56
+  wall_seconds_since_observer_start: 5.482140376000643
+ground_truth_samples:
+  robot_1: 688
+  robot_2: 703
+distance_m:
+  robot_1: 1.5271498218315118
+  robot_2: 1.487008934143327
+contact_samples:
+  robot_1: 688
+  robot_2: 703
+physical_contacts:
+  robot_1: 0
+  robot_2: 0
+synchronized_pair_samples: 688
+minimum_robot_separation_m: 2.987944487070386
+minimum_static_clearance_m: 1.385965994521971
+maximum_truth_sim_gap_s: 0.020000000000003126
+maximum_pair_sim_gap_s: 0.020000000000003126
+maximum_contact_wall_gap_s: 0.025099399000282574
+physical_stop_confirmed: true
+plans:
+- plan_id: '1'
+  initial_conflicts: 0
+  final_conflicts: 0
+- plan_id: '2'
+  initial_conflicts: 2
+  final_conflicts: 0
+service_positions:
+- job_id: left_to_right
+  robot_id: robot_1
+  event: picked
+  sim_time: 12.6
+  position_error_m: 0.0
+  service_duration_s: 1.0
+  service_samples: 51
+- job_id: right_to_left
+  robot_id: robot_2
+  event: picked
+  sim_time: 12.6
+  position_error_m: 1.0111784520816514e-07
+  service_duration_s: 1.0
+  service_samples: 51
+execution:
+  verified_rounds: 2
+  max_edge_deviation_m: 0.05285419609130218
+  completed_rounds: 1
+  interrupted_rounds: 1
+  max_physical_sample_gap_s: 0.020000000000003126
+assignments:
+- file: assignment_1.yaml
+  assigned: 2
+  optimal_cost: 0

@@ -1,0 +1,9 @@
+schema_version: 1
+episode_id: webots_nav2_deliveries-1
+method: classical
+code_commit: 7821de94c14ccc3e6cae194d8676f5edca8a4f3c
+terminal_reason: completed
+elapsed_sim_s: 82.5
+distance_m: 16.01995476610179
+simulation_reset_service: simulation/reset
+scope: external_navigation

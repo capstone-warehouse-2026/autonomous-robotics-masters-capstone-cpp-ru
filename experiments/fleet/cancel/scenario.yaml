@@ -1,0 +1,24 @@
+schema_version: 1
+episode_id: fleet_swap
+split: integration
+family: opposing_deliveries
+seed: 42
+horizon: 300.0
+initial_station: left
+grid:
+  origin_x: -5.0
+  origin_y: -4.0
+  width: 11
+  height: 9
+  resolution: 1.0
+robots:
+  - {id: robot_1, initial_station: left}
+  - {id: robot_2, initial_station: right}
+stations:
+  - {id: left, x: -3.0, y: -3.0, yaw: 0.0}
+  - {id: right, x: 3.0, y: -3.0, yaw: 3.141592653589793}
+jobs:
+  - {id: left_to_right, pickup: left, dropoff: right, release_time: 0.0,
+     due_time: 180.0, pickup_service: 1.0, dropoff_service: 1.0}
+  - {id: right_to_left, pickup: right, dropoff: left, release_time: 0.0,
+     due_time: 220.0, pickup_service: 1.0, dropoff_service: 1.0}

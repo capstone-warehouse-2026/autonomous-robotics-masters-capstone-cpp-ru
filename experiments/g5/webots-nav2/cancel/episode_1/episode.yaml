@@ -1,0 +1,9 @@
+schema_version: 1
+episode_id: webots_nav2_deliveries-0
+method: classical
+code_commit: 7821de94c14ccc3e6cae194d8676f5edca8a4f3c
+terminal_reason: mission_cancelled
+elapsed_sim_s: 5.1000000000000005
+distance_m: 1.0374581068607762
+simulation_reset_service: simulation/reset
+scope: external_navigation

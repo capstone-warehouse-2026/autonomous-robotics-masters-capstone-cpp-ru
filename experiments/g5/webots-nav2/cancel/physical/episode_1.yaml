@@ -1,0 +1,24 @@
+episode_id: webots_nav2_deliveries-0
+terminal: cancelled
+elapsed_sim_s: 5.1000000000000005
+ground_truth_samples: 271
+wheel_odom_samples: 271
+ground_truth_distance_m: 1.040431092069438
+plan_count: 2
+detour_plan_seen: true
+physical_shelf_intersection: false
+physical_stop_confirmed: true
+physical_contact_events: 0
+physical_contact_samples: 271
+service_position_checks:
+  - job_id: left_to_right
+    event: picked
+    sim_time: 1.52
+    actual_xy:
+      - -3
+      - -1.3243741007391728e-17
+    target_xy:
+      - -3
+      - 0
+    position_error_m: 1.3243741007391728e-17
+cancel_to_stop_sim_s: 0.62000000000000011

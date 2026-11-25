@@ -1,0 +1,35 @@
+WARNING: System below the minimal requirements.
+
+Webots has detected that your GPU vendor is 'Mesa'. A recent NVIDIA or AMD graphics adapter is highly recommended to run Webots smoothly. Webots has detected that your computer uses a slow 3D software rendering system. It is strongly recommended to install the latest graphics drivers provided by your GPU manufacturer. Webots will run much faster after the installation of the correct driver.
+
+ - Shadows have been deactivated.
+ - Anti-aliasing has been deactivated.
+ - Main 3D view global ambient occlusion has been de-activated.
+ - Texture quality has been reduced.
+
+You can try to re-activate some OpenGL features from the Webots preferences.
+WARNING: Cannot initialize the sound engine: Cannot initialize OpenAL default device 'OpenAL Soft'
+WARNING: System below the minimal requirements.
+
+Webots has detected that your GPU vendor is 'Mesa'. A recent NVIDIA or AMD graphics adapter is highly recommended to run Webots smoothly. Webots has detected that your computer uses a slow 3D software rendering system. It is strongly recommended to install the latest graphics drivers provided by your GPU manufacturer. Webots will run much faster after the installation of the correct driver.
+
+ - Shadows have been deactivated.
+ - Anti-aliasing has been deactivated.
+ - Main 3D view global ambient occlusion has been de-activated.
+ - Texture quality has been reduced.
+
+You can try to re-activate some OpenGL features from the Webots preferences.
+WARNING: WARNING: System below the minimal requirements.
+
+Webots has detected that your GPU vendor is 'Mesa'. A recent NVIDIA or AMD graphics adapter is highly recommended to run Webots smoothly. Webots has detected that your computer uses a slow 3D software rendering system. It is strongly recommended to install the latest graphics drivers provided by your GPU manufacturer. Webots will run much faster after the installation of the correct driver.
+
+ - Shadows have been deactivated.
+ - Anti-aliasing has been deactivated.
+ - Main 3D view global ambient occlusion has been de-activated.
+ - Texture quality has been reduced.
+
+You can try to re-activate some OpenGL features from the Webots preferences.
+INFO: 'g5_robot' extern controller: Waiting for local or remote connection on port 12586 targeting robot named 'g5_robot'.
+INFO: 'g5_robot' extern controller: connected.
+INFO: <extern>: Terminating.
+Warning: The X11 connection broke (error 1). Did the X11 server die?

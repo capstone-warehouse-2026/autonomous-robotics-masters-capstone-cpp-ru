@@ -1,0 +1,113 @@
+success: true
+reason: verified
+scope: physical_multi_robot_Webots_CBS_ECBS_dispatch
+terminal: completed
+robots:
+- robot_1
+- robot_2
+monitoring_armed:
+  reason: mission_running
+  sim_time: 11.92
+  wall_seconds_since_observer_start: 5.525809171000219
+ground_truth_samples:
+  robot_1: 6348
+  robot_2: 6347
+distance_m:
+  robot_1: 15.653688671380653
+  robot_2: 11.858288245798242
+contact_samples:
+  robot_1: 6348
+  robot_2: 6347
+physical_contacts:
+  robot_1: 0
+  robot_2: 0
+synchronized_pair_samples: 6347
+minimum_robot_separation_m: 0.9435981599182974
+minimum_static_clearance_m: 0.9353922920458756
+maximum_truth_sim_gap_s: 0.020000000000010232
+maximum_pair_sim_gap_s: 0.020000000000010232
+maximum_contact_wall_gap_s: 0.05918474099962623
+physical_stop_confirmed: true
+plans:
+- plan_id: '1'
+  initial_conflicts: 0
+  final_conflicts: 0
+- plan_id: '2'
+  initial_conflicts: 2
+  final_conflicts: 0
+- plan_id: '3'
+  initial_conflicts: 0
+  final_conflicts: 0
+- plan_id: '4'
+  initial_conflicts: 2
+  final_conflicts: 0
+service_positions:
+- job_id: left_to_right
+  robot_id: robot_1
+  event: picked
+  sim_time: 12.96
+  position_error_m: 0.0
+  service_duration_s: 1.0
+  service_samples: 51
+- job_id: right_to_left
+  robot_id: robot_2
+  event: picked
+  sim_time: 12.96
+  position_error_m: 1.0111784520816514e-07
+  service_duration_s: 1.0
+  service_samples: 51
+- job_id: left_to_right
+  robot_id: robot_1
+  event: delivered
+  sim_time: 69.5
+  position_error_m: 0.026797123322082412
+  service_duration_s: 1.0
+  service_samples: 51
+- job_id: right_to_left
+  robot_id: robot_2
+  event: delivered
+  sim_time: 69.5
+  position_error_m: 0.0673746376285109
+  service_duration_s: 1.0
+  service_samples: 51
+- job_id: return_right_to_left
+  robot_id: robot_1
+  event: picked
+  sim_time: 70.52
+  position_error_m: 0.026797121041710514
+  service_duration_s: 1.0
+  service_samples: 51
+- job_id: return_left_to_right
+  robot_id: robot_2
+  event: picked
+  sim_time: 70.52
+  position_error_m: 0.0673746376285109
+  service_duration_s: 1.0
+  service_samples: 51
+- job_id: return_right_to_left
+  robot_id: robot_1
+  event: delivered
+  sim_time: 133.12
+  position_error_m: 0.05438505137159768
+  service_duration_s: 1.0
+  service_samples: 51
+- job_id: return_left_to_right
+  robot_id: robot_2
+  event: delivered
+  sim_time: 133.12
+  position_error_m: 0.053197486563305744
+  service_duration_s: 1.0
+  service_samples: 51
+execution:
+  verified_rounds: 16
+  max_edge_deviation_m: 0.09683265894245639
+  completed_rounds: 16
+  interrupted_rounds: 0
+  max_physical_sample_gap_s: 0.020000000000010232
+assignments:
+- file: assignment_1.yaml
+  assigned: 2
+  optimal_cost: 0
+- file: assignment_2.yaml
+  assigned: 2
+  optimal_cost: 0

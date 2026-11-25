@@ -1,0 +1,30 @@
+plan_id: 1
+method: cbs
+status: 0
+reason: conflict-free plan
+cost: 0
+lower_bound: 0
+bound: 1
+weight: 1.5
+clearance: 0.84999999999999998
+initial_conflicts: 0
+final_conflicts: 0
+high_level_expansions: 1
+low_level_expansions: 2
+high_level_focal_slack_expansions: 0
+low_level_focal_slack_expansions: 0
+robots:
+  - robot_id: robot_1
+    start:
+      - -3
+      - -3
+    goal:
+      - -3
+      - -3
+  - robot_id: robot_2
+    start:
+      - 3
+      - -3
+    goal:
+      - 3
+      - -3

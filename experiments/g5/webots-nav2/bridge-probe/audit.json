@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-11-25T05:48:59.341314+00:00",
+  "scope": "physical Webots bridge only; not autonomous navigation",
+  "webots_version": "R2025a",
+  "git_commit": "7821de94c14ccc3e6cae194d8676f5edca8a4f3c",
+  "git_dirty": true,
+  "passed": true,
+  "exit_code": 0,
+  "metrics": {
+    "physical_distance": 0.855997,
+    "encoder_distance": 0.855882,
+    "contact": 0.0,
+    "physical_v": -4e-06,
+    "encoder_v": 0.0,
+    "yaw_rate": 0.0
+  },
+  "checks": [
+    "real LiDAR: front=2.5±0.12m, back=2.9±0.12m",
+    "physical displacement 0.5..1.2m and encoder disagreement <=0.12m",
+    "no obstacle contacts",
+    "physical and encoder speed after watchdog <0.03m/s",
+    "reset acknowledgement after physical step",
+    "post-reset map x=-3±0.05m and encoder x=0±0.05m"
+  ],
+  "sha256": {
+    "simulation/integration/warehouse.wbt": "550a341e71c6ec4a738998f2bfbe583f2d8f76efc0ea585a1201dbaa1cae2c35",
+    "simulation/integration/map.pgm": "ac15b1c8d023197a702b3a797a73ab43cefb8453af81b141c867467baf44d5ef",
+    "ros2_ws/src/capstone_webots_bridge/src/webots_bridge.cpp": "2ef42c0bcc88dc24233a11776200bfafd05d894df3265e4695bcd981b78e772d",
+    "ros2_ws/src/capstone_webots_bridge/include/capstone_webots_bridge/odometry.hpp": "fef8ab118a641e64c6928a770e419d46722a52f93247c7f7d42e434ebbca2cad",
+    "ros2_ws/src/capstone_webots_bridge/test/bridge_probe.cpp": "117cd5ddf2353f433d433a6f1847b139e5d8126aecd5c07e3835bf232d068f1c",
+    "/tmp/webots-bridge-install/capstone_webots_bridge/lib/capstone_webots_bridge/webots_bridge": "c75254d09181c675da6b6773731ee6ffe3613b25865d8addc65e258e56a16213",
+    "/tmp/webots-bridge-install/capstone_webots_bridge/lib/capstone_webots_bridge/bridge_probe": "5b67c5e2978a80804f98943b7dca232d971ed65a545c6e1122c36f8accf0ecbf"
+  }
+}

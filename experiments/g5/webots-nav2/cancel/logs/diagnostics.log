@@ -1,0 +1,64 @@
+6,0,,b'\x00',lifecycle_navigation: Nav2 Health,Managed nodes are active,Nav2,
+6,0,,b'\x00',lifecycle_localization: Nav2 Health,Managed nodes are active,Nav2,
+6,160000000,,b'\x01',capstone_safety/safety_monitor,NOT_READY,,reason,NOT_READY,latched,false,in_v,0.000000,in_w,0.000000,out_v,0.000000,out_w,0.000000,ticks,139,count_NOT_READY,139
+6,200000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+6,200000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+7,0,,b'\x00',lifecycle_localization: Nav2 Health,Managed nodes are active,Nav2,
+7,0,,b'\x00',lifecycle_navigation: Nav2 Health,Managed nodes are active,Nav2,
+7,140000000,,b'\x01',capstone_safety/safety_monitor,NOT_READY,,reason,NOT_READY,latched,false,in_v,0.000000,in_w,0.000000,out_v,0.000000,out_w,0.000000,ticks,159,count_NOT_READY,159
+7,400000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+7,400000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+7,500000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+7,500000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+8,0,,b'\x00',lifecycle_localization: Nav2 Health,Managed nodes are active,Nav2,
+8,0,,b'\x00',lifecycle_navigation: Nav2 Health,Managed nodes are active,Nav2,
+8,100000000,,b'\x01',capstone_safety/safety_monitor,NOT_READY,,reason,NOT_READY,latched,false,in_v,0.000000,in_w,0.000000,out_v,0.000000,out_w,0.000000,ticks,179,count_NOT_READY,179
+8,500000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+8,500000000,,b'\x01',capstone_nav2/contracts,SIMULATION_RESET,nav2_baseline,
+0,0,,b'\x02',capstone_safety/safety_monitor,TIME_JUMP,,reason,TIME_JUMP,latched,false,in_v,0.000000,in_w,0.000000,out_v,0.000000,out_w,0.000000,ticks,188,count_TIME_JUMP,1,count_NOT_READY,187
+0,40000000,,b'\x01',capstone_safety/safety_monitor,NOT_READY,,reason,NOT_READY,latched,false,in_v,0.000000,in_w,0.000000,out_v,0.000000,out_w,0.000000,ticks,189,count_TIME_JUMP,1,count_NOT_READY,188
+0,100000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+0,100000000,,b'\x00',capstone_nav2/contracts,INITIAL_POSE_RESTORED,nav2_baseline,
+0,200000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+0,300000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+0,300000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+0,320000000,,b'\x00',capstone_safety/safety_monitor,OK,,reason,OK,latched,false,in_v,0.000000,in_w,0.000000,out_v,0.000000,out_w,0.000000,ticks,195,count_OK,1,count_TIME_JUMP,1,count_NOT_READY,193
+0,400000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+0,400000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+0,480000000,,b'\x02',capstone_safety/safety_monitor,STALE_CMD,,reason,STALE_CMD,latched,true,in_v,0.000000,in_w,0.000000,out_v,0.000000,out_w,0.000000,ticks,198,count_OK,3,count_TIME_JUMP,1,count_NOT_READY,193,count_STALE_CMD,1
+0,580000000,,b'\x02',capstone_safety/safety_monitor,STALE_CMD,,reason,STALE_CMD,latched,true,in_v,0.000000,in_w,0.000000,out_v,0.000000,out_w,0.000000,ticks,199,count_OK,3,count_TIME_JUMP,1,count_NOT_READY,193,count_STALE_CMD,2
+1,0,,b'\x00',lifecycle_localization: Nav2 Health,Managed nodes are active,Nav2,
+1,0,,b'\x00',lifecycle_navigation: Nav2 Health,Managed nodes are active,Nav2,
+1,400000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+1,400000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+1,540000000,,b'\x02',capstone_safety/safety_monitor,STALE_CMD,,reason,STALE_CMD,latched,false,in_v,0.208144,in_w,0.388889,out_v,0.000000,out_w,0.000000,ticks,219,count_OK,3,count_TIME_JUMP,1,count_NOT_READY,193,count_STALE_CMD,22
+1,540000000,,b'\x00',capstone_safety/safety_monitor,OK,,reason,OK,latched,false,in_v,0.208144,in_w,0.388889,out_v,0.208144,out_w,0.388889,ticks,220,count_OK,4,count_TIME_JUMP,1,count_NOT_READY,193,count_STALE_CMD,22
+1,700000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+1,700000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+2,0,,b'\x00',lifecycle_localization: Nav2 Health,Managed nodes are active,Nav2,
+2,0,,b'\x00',lifecycle_navigation: Nav2 Health,Managed nodes are active,Nav2,
+2,0,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+2,0,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+2,400000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+2,400000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+2,520000000,,b'\x00',capstone_safety/safety_monitor,OK,,reason,OK,latched,false,in_v,0.274730,in_w,0.388889,out_v,0.273200,out_w,0.388889,ticks,239,count_OK,23,count_TIME_JUMP,1,count_NOT_READY,193,count_STALE_CMD,22
+2,600000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+2,600000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+3,0,,b'\x00',lifecycle_localization: Nav2 Health,Managed nodes are active,Nav2,
+3,0,,b'\x00',lifecycle_navigation: Nav2 Health,Managed nodes are active,Nav2,
+3,200000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+3,200000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+3,480000000,,b'\x00',capstone_safety/safety_monitor,OK,,reason,OK,latched,false,in_v,0.350000,in_w,0.323874,out_v,0.350000,out_w,0.334219,ticks,259,count_OK,43,count_TIME_JUMP,1,count_NOT_READY,193,count_STALE_CMD,22
+3,600000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+3,600000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+4,0,,b'\x00',lifecycle_navigation: Nav2 Health,Managed nodes are active,Nav2,
+4,0,,b'\x00',lifecycle_localization: Nav2 Health,Managed nodes are active,Nav2,
+4,200000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+4,200000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+4,400000000,,b'\x01',capstone_nav2/contracts,SCAN_TF_UNAVAILABLE,nav2_baseline,
+4,400000000,,b'\x00',capstone_nav2/contracts,SCAN_GRID_READY,nav2_baseline,
+4,460000000,,b'\x00',capstone_safety/safety_monitor,OK,,reason,OK,latched,false,in_v,0.350000,in_w,0.138697,out_v,0.350000,out_w,0.141287,ticks,279,count_OK,63,count_TIME_JUMP,1,count_NOT_READY,193,count_STALE_CMD,22
+5,0,,b'\x00',lifecycle_navigation: Nav2 Health,Managed nodes are active,Nav2,
+5,0,,b'\x00',lifecycle_localization: Nav2 Health,Managed nodes are active,Nav2,
+5,40000000,,b'\x02',capstone_safety/safety_monitor,STALE_CMD,,reason,STALE_CMD,latched,true,in_v,0.000000,in_w,0.000000,out_v,0.000000,out_w,0.000000,ticks,292,count_OK,75,count_TIME_JUMP,1,count_NOT_READY,193,count_STALE_CMD,23
+5,420000000,,b'\x02',capstone_safety/safety_monitor,STALE_CMD,,reason,STALE_CMD,latched,true,in_v,0.000000,in_w,0.000000,out_v,0.000000,out_w,0.000000,ticks,299,count_OK,75,count_TIME_JUMP,1,count_NOT_READY,193,count_STALE_CMD,30

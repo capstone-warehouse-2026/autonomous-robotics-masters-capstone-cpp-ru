@@ -1,0 +1,8 @@
+INFO: 'robot_1' extern controller: Waiting for local or remote connection on port 12594 targeting robot named 'robot_1'.
+INFO: 'robot_2' extern controller: Waiting for local or remote connection on port 12594 targeting robot named 'robot_2'.
+INFO: 'robot_1' extern controller: connected.
+INFO: 'robot_2' extern controller: connected.
+INFO: <extern>: Terminating.
+INFO: <extern>: Terminating.
+INFO: 'robot_1' extern controller: disconnected.
+INFO: 'robot_2' extern controller: disconnected.

@@ -1,0 +1,71 @@
+scope: independent_review_of_recorded_plans_and_assignments
+plans:
+- plan_id: 1
+  recomputed_costs:
+    independent: 0
+    resolved: 0
+  reported_cost: 0
+  reported_lower_bound: 0
+  reported_bound: 1.5
+  scenario_lower_bound: 0
+- plan_id: 2
+  recomputed_costs:
+    independent: 12
+    resolved: 14
+  reported_cost: 14
+  reported_lower_bound: 13
+  reported_bound: 1.5
+  scenario_lower_bound: 14
+- plan_id: 3
+  recomputed_costs:
+    independent: 0
+    resolved: 0
+  reported_cost: 0
+  reported_lower_bound: 0
+  reported_bound: 1.5
+  scenario_lower_bound: 0
+- plan_id: 4
+  recomputed_costs:
+    independent: 12
+    resolved: 14
+  reported_cost: 14
+  reported_lower_bound: 13
+  reported_bound: 1.5
+  scenario_lower_bound: 14
+assignments:
+- assignment_id: 1
+  cost_matrix:
+  - - 0
+    - 6
+  - - 6
+    - 0
+  chosen_pairs:
+  - robot_id: robot_1
+    job_id: left_to_right
+    cost: 0
+  - robot_id: robot_2
+    job_id: right_to_left
+    cost: 0
+  minimum_total_cost: 0
+- assignment_id: 2
+  cost_matrix:
+  - - 6
+    - 0
+  - - 0
+    - 6
+  chosen_pairs:
+  - robot_id: robot_1
+    job_id: return_right_to_left
+    cost: 0
+  - robot_id: robot_2
+    job_id: return_left_to_right
+    cost: 0
+  minimum_total_cost: 0
+scenario_lower_bound_reason: Swapping two robots between (-3,-3) and (3,-3) needs
+  12 horizontal actions. To exchange order without intersection, at least one must
+  leave and return to y=-3, requiring at least two vertical actions. Feasible recorded
+  cost 14 attains this lower bound. Stationary pickup plans cost 0.
+assignment_cost_reason: Each batch has one pickup at each robot current station. The
+  opposite pickup is six free horizontal grid edges away; both zero-cost local pickups
+  give the nonnegative-cost optimum 0.
+source_differences_at_capture: []

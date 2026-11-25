@@ -1,0 +1,32 @@
+episode_id: fleet_queued_deliveries
+method: cbs
+terminal_reason: completed
+terminal_state: completed
+physical_stop_confirmed_by_odometry: true
+elapsed_sim_s: 121.23999999999999
+elapsed_wall_s: 129.37342732600001
+jobs:
+  - id: left_to_right
+    robot_id: robot_1
+    state: delivered
+    picked_time: 1.0400000000000009
+    delivered_time: 58.140000000000001
+  - id: right_to_left
+    robot_id: robot_2
+    state: delivered
+    picked_time: 1.0400000000000009
+    delivered_time: 58.140000000000001
+  - id: return_left_to_right
+    robot_id: robot_2
+    state: delivered
+    picked_time: 59.160000000000011
+    delivered_time: 121.23999999999999
+  - id: return_right_to_left
+    robot_id: robot_1
+    state: delivered
+    picked_time: 59.160000000000011
+    delivered_time: 121.23999999999999
+delivered: 4
+total_jobs: 4
+plans: 4
+assignments: 2

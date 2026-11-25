@@ -1,0 +1,22 @@
+episode_id: fleet_swap
+method: ecbs
+terminal_reason: operator_cancel
+terminal_state: cancelled
+physical_stop_confirmed_by_odometry: true
+elapsed_sim_s: 8.8800000000000008
+elapsed_wall_s: 12.290367283
+jobs:
+  - id: left_to_right
+    robot_id: robot_1
+    state: picked
+    picked_time: 1.0399999999999991
+    delivered_time: -1
+  - id: right_to_left
+    robot_id: robot_2
+    state: picked
+    picked_time: 1.0399999999999991
+    delivered_time: -1
+delivered: 0
+total_jobs: 2
+plans: 2
+assignments: 1

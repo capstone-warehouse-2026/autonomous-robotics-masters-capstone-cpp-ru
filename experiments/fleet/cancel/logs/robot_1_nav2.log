@@ -1,0 +1,188 @@
+[INFO] [launch]: All log files can be found below /home/tim/autonomous-robotics-masters-capstone-cpp-ru/results/fleet-cancel-qualified/logs/ros/2026-11-25-11-39-55-943713-tim-ASUS-TUF-Gaming-F15-FX506HC-FX506HC-32025
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [map_server-1]: process started with pid [32073]
+[INFO] [amcl-2]: process started with pid [32074]
+[INFO] [planner_server-3]: process started with pid [32075]
+[INFO] [controller_server-4]: process started with pid [32076]
+[INFO] [nav2_contracts-5]: process started with pid [32077]
+[INFO] [safety_monitor_node-6]: process started with pid [32078]
+[INFO] [lifecycle_manager-7]: process started with pid [32079]
+[lifecycle_manager-7] [INFO] [1795595996.104978745] [robot_1.lifecycle_fleet]: Creating
+[lifecycle_manager-7] [INFO] [1795595996.108828365] [robot_1.lifecycle_fleet]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[safety_monitor_node-6] [INFO] [1795595996.115187206] [robot_1.safety_monitor]: created (unconfigured), autostart=true
+[planner_server-3] [INFO] [1795595996.117512694] [robot_1.planner_server]: 
+[planner_server-3] 	planner_server lifecycle node launched. 
+[planner_server-3] 	Waiting on external lifecycle transitions to activate
+[planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-3] [INFO] [1795595996.120013143] [robot_1.planner_server]: Creating
+[controller_server-4] [INFO] [1795595996.126671963] [robot_1.controller_server]: 
+[controller_server-4] 	controller_server lifecycle node launched. 
+[controller_server-4] 	Waiting on external lifecycle transitions to activate
+[controller_server-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[safety_monitor_node-6] [INFO] [1795595996.126914434] [robot_1.safety_monitor]: configured: 20.0 Hz, base frame 'base_link'
+[safety_monitor_node-6] [INFO] [1795595996.126969272] [robot_1.safety_monitor]: active: /cmd_vel is published at 20.0 Hz
+[map_server-1] [INFO] [1795595996.130057918] [robot_1.map_server]: 
+[map_server-1] 	map_server lifecycle node launched. 
+[map_server-1] 	Waiting on external lifecycle transitions to activate
+[map_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-1] [INFO] [1795595996.130164668] [robot_1.map_server]: Creating
+[controller_server-4] [INFO] [1795595996.132087685] [robot_1.controller_server]: Creating controller server
+[planner_server-3] [INFO] [1795595996.133163624] [robot_1.global_costmap.global_costmap]: 
+[planner_server-3] 	global_costmap lifecycle node launched. 
+[planner_server-3] 	Waiting on external lifecycle transitions to activate
+[planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-3] [INFO] [1795595996.133656936] [robot_1.global_costmap.global_costmap]: Creating Costmap
+[controller_server-4] [INFO] [1795595996.155472147] [robot_1.local_costmap.local_costmap]: 
+[controller_server-4] 	local_costmap lifecycle node launched. 
+[controller_server-4] 	Waiting on external lifecycle transitions to activate
+[controller_server-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-4] [INFO] [1795595996.156039420] [robot_1.local_costmap.local_costmap]: Creating Costmap
+[safety_monitor_node-6] [WARN] [1795595996.177161888] [robot_1.safety_monitor]: halt: NOT_READY
+[safety_monitor_node-6] [INFO] [1795595998.111261561] [robot_1.safety_monitor]: laser 'lidar_link' in 'base_link': x=0.000 y=0.000 yaw=0.000
+[nav2_contracts-5] [WARN] [1795596000.977805695] [robot_1.nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 2.900000 but the latest data is at time 2.880000, when looking up transform from frame [lidar_link] to frame [odom]
+[lifecycle_manager-7] [INFO] [1795596001.313047842] [robot_1.lifecycle_fleet]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-7] [INFO] [1795596001.313102909] [robot_1.lifecycle_fleet]: [34m[1mConfiguring map_server[0m[0m
+[map_server-1] [INFO] [1795596001.313540420] [robot_1.map_server]: Configuring
+[map_server-1] [INFO] [1795596001.313599597] [map_io]: Loading yaml file: /home/tim/autonomous-robotics-masters-capstone-cpp-ru/simulation/fleet/map.yaml
+[map_server-1] [INFO] [1795596001.313798521] [map_io]: resolution: 0.05
+[map_server-1] [INFO] [1795596001.313804572] [map_io]: origin[0]: -6
+[map_server-1] [INFO] [1795596001.313806337] [map_io]: origin[1]: -5
+[map_server-1] [INFO] [1795596001.313808607] [map_io]: origin[2]: 0
+[map_server-1] [INFO] [1795596001.313810517] [map_io]: free_thresh: 0.196
+[map_server-1] [INFO] [1795596001.313812381] [map_io]: occupied_thresh: 0.65
+[map_server-1] [INFO] [1795596001.313823095] [map_io]: mode: trinary
+[map_server-1] [INFO] [1795596001.313825854] [map_io]: negate: 0
+[map_server-1] [INFO] [1795596001.313977877] [map_io]: Loading image_file: /home/tim/autonomous-robotics-masters-capstone-cpp-ru/simulation/fleet/map.pgm
+[map_server-1] [INFO] [1795596001.314616597] [map_io]: Read map /home/tim/autonomous-robotics-masters-capstone-cpp-ru/simulation/fleet/map.pgm: 240 X 200 map @ 0.05 m/cell
+[lifecycle_manager-7] [INFO] [1795596001.320552058] [robot_1.lifecycle_fleet]: [34m[1mConfiguring amcl[0m[0m
+[lifecycle_manager-7] [INFO] [1795596001.336976396] [robot_1.lifecycle_fleet]: [34m[1mConfiguring planner_server[0m[0m
+[planner_server-3] [INFO] [1795596001.337169673] [robot_1.planner_server]: Configuring
+[planner_server-3] [INFO] [1795596001.337195652] [robot_1.global_costmap.global_costmap]: Configuring
+[planner_server-3] [INFO] [1795596001.343169577] [robot_1.global_costmap.global_costmap]: Using plugin "static"
+[planner_server-3] [INFO] [1795596001.345892822] [robot_1.global_costmap.global_costmap]: Subscribing to the map topic (/robot_1/map) with transient local durability
+[planner_server-3] [INFO] [1795596001.347389812] [robot_1.global_costmap.global_costmap]: Initialized plugin "static"
+[planner_server-3] [INFO] [1795596001.347407739] [robot_1.global_costmap.global_costmap]: Using plugin "obstacles"
+[planner_server-3] [INFO] [1795596001.347887360] [robot_1.global_costmap.global_costmap]: Subscribed to Topics: scan
+[planner_server-3] [INFO] [1795596001.351103200] [robot_1.global_costmap.global_costmap]: Initialized plugin "obstacles"
+[planner_server-3] [INFO] [1795596001.351127960] [robot_1.global_costmap.global_costmap]: Using plugin "inflation"
+[planner_server-3] [INFO] [1795596001.351556465] [robot_1.global_costmap.global_costmap]: Initialized plugin "inflation"
+[planner_server-3] [INFO] [1795596001.367621626] [robot_1.planner_server]: Created global planner plugin GridBased of type nav2_navfn_planner::NavfnPlanner
+[planner_server-3] [INFO] [1795596001.367663350] [robot_1.planner_server]: Configuring plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1795596001.368004382] [robot_1.planner_server]: Planner Server has GridBased  planners available.
+[lifecycle_manager-7] [INFO] [1795596001.376089847] [robot_1.lifecycle_fleet]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-4] [INFO] [1795596001.376267457] [robot_1.controller_server]: Configuring controller interface
+[controller_server-4] [INFO] [1795596001.376285977] [robot_1.controller_server]: getting progress checker plugins..
+[controller_server-4] [INFO] [1795596001.376299016] [robot_1.controller_server]: getting goal checker plugins..
+[controller_server-4] [INFO] [1795596001.376444434] [robot_1.controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-4] [INFO] [1795596001.376480354] [robot_1.local_costmap.local_costmap]: Configuring
+[controller_server-4] [INFO] [1795596001.382472716] [robot_1.local_costmap.local_costmap]: Using plugin "obstacles"
+[controller_server-4] [INFO] [1795596001.385568631] [robot_1.local_costmap.local_costmap]: Subscribed to Topics: scan
+[controller_server-4] [INFO] [1795596001.388763135] [robot_1.local_costmap.local_costmap]: Initialized plugin "obstacles"
+[controller_server-4] [INFO] [1795596001.388794552] [robot_1.local_costmap.local_costmap]: Using plugin "inflation"
+[controller_server-4] [INFO] [1795596001.389222517] [robot_1.local_costmap.local_costmap]: Initialized plugin "inflation"
+[controller_server-4] [INFO] [1795596001.405280785] [robot_1.controller_server]: Created progress_checker : progress of type nav2_controller::PoseProgressChecker
+[controller_server-4] [INFO] [1795596001.405574817] [robot_1.controller_server]: Controller Server has progress  progress checkers available.
+[controller_server-4] [INFO] [1795596001.405980017] [robot_1.controller_server]: Created goal checker : goal of type nav2_controller::SimpleGoalChecker
+[controller_server-4] [INFO] [1795596001.406267086] [robot_1.controller_server]: Controller Server has goal  goal checkers available.
+[controller_server-4] [INFO] [1795596001.407079482] [robot_1.controller_server]: Created controller : FollowPath of type nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-4] [INFO] [1795596001.411641313] [robot_1.controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-7] [INFO] [1795596001.418594494] [robot_1.lifecycle_fleet]: [34m[1mActivating map_server[0m[0m
+[map_server-1] [INFO] [1795596001.418772570] [robot_1.map_server]: Activating
+[map_server-1] [INFO] [1795596001.418972003] [robot_1.map_server]: Creating bond (map_server) to lifecycle manager.
+[planner_server-3] [INFO] [1795596001.419146387] [robot_1.global_costmap.global_costmap]: StaticLayer: Resizing costmap to 240 X 200 at 0.050000 m/pix
+[lifecycle_manager-7] [INFO] [1795596001.523456072] [robot_1.lifecycle_fleet]: Server map_server connected with bond.
+[lifecycle_manager-7] [INFO] [1795596001.523485998] [robot_1.lifecycle_fleet]: [34m[1mActivating amcl[0m[0m
+[lifecycle_manager-7] [INFO] [1795596001.627871837] [robot_1.lifecycle_fleet]: Server amcl connected with bond.
+[lifecycle_manager-7] [INFO] [1795596001.627904543] [robot_1.lifecycle_fleet]: [34m[1mActivating planner_server[0m[0m
+[planner_server-3] [INFO] [1795596001.628147389] [robot_1.planner_server]: Activating
+[planner_server-3] [INFO] [1795596001.628180715] [robot_1.global_costmap.global_costmap]: Activating
+[planner_server-3] [INFO] [1795596001.628186079] [robot_1.global_costmap.global_costmap]: Checking transform
+[planner_server-3] [INFO] [1795596001.628241111] [robot_1.global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation at time 3.520000, but only time 3.700000 is in the buffer, when looking up transform from frame [base_link] to frame [map]
+[planner_server-3] [INFO] [1795596002.128339492] [robot_1.global_costmap.global_costmap]: start
+[planner_server-3] [INFO] [1795596002.379339783] [robot_1.planner_server]: Activating plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1795596002.380601852] [robot_1.planner_server]: Creating bond (planner_server) to lifecycle manager.
+[lifecycle_manager-7] [INFO] [1795596002.484250009] [robot_1.lifecycle_fleet]: Server planner_server connected with bond.
+[lifecycle_manager-7] [INFO] [1795596002.484281643] [robot_1.lifecycle_fleet]: [34m[1mActivating controller_server[0m[0m
+[controller_server-4] [INFO] [1795596002.484566723] [robot_1.controller_server]: Activating
+[controller_server-4] [INFO] [1795596002.484596298] [robot_1.local_costmap.local_costmap]: Activating
+[controller_server-4] [INFO] [1795596002.484601698] [robot_1.local_costmap.local_costmap]: Checking transform
+[controller_server-4] [INFO] [1795596002.484699774] [robot_1.local_costmap.local_costmap]: start
+[controller_server-4] [INFO] [1795596002.585678245] [robot_1.controller_server]: Activating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-4] [INFO] [1795596002.585710727] [robot_1.controller_server]: Creating bond (controller_server) to lifecycle manager.
+[lifecycle_manager-7] [INFO] [1795596002.689778169] [robot_1.lifecycle_fleet]: Server controller_server connected with bond.
+[lifecycle_manager-7] [INFO] [1795596002.689822114] [robot_1.lifecycle_fleet]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-7] [INFO] [1795596002.689830612] [robot_1.lifecycle_fleet]: [34m[1mCreating bond timer...[0m[0m
+[nav2_contracts-5] [WARN] [1795596003.246397857] [robot_1.nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 5.100000 but the latest data is at time 5.080000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795596005.523208522] [robot_1.nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 7.300000 but the latest data is at time 7.280000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795596007.788132564] [robot_1.nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 9.500000 but the latest data is at time 9.480000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795596010.247037816] [robot_1.nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 11.900000 but the latest data is at time 11.880000, when looking up transform from frame [lidar_link] to frame [odom]
+[controller_server-4] [INFO] [1795596010.992358592] [robot_1.controller_server]: Received a goal, begin computing control effort.
+[safety_monitor_node-6] [INFO] [1795596011.027133679] [robot_1.safety_monitor]: commands pass through
+[nav2_contracts-5] [WARN] [1795596013.124327990] [robot_1.nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 14.700000 but the latest data is at time 14.680000, when looking up transform from frame [lidar_link] to frame [odom]
+[nav2_contracts-5] [WARN] [1795596015.175201326] [robot_1.nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 16.700000 but the latest data is at time 16.680000, when looking up transform from frame [lidar_link] to frame [odom]
+[controller_server-4] [INFO] [1795596016.892523750] [robot_1.controller_server]: Reached the goal!
+[safety_monitor_node-6] [WARN] [1795596017.077109690] [robot_1.safety_monitor]: halt: STALE_CMD
+[controller_server-4] [INFO] [1795596017.152022192] [robot_1.controller_server]: Received a goal, begin computing control effort.
+[safety_monitor_node-6] [INFO] [1795596017.177145767] [robot_1.safety_monitor]: commands pass through
+[nav2_contracts-5] [WARN] [1795596018.249965916] [robot_1.nav2_contracts]: scan TF: Lookup would require extrapolation into the future.  Requested time 19.700000 but the latest data is at time 19.680000, when looking up transform from frame [lidar_link] to frame [odom]
+[controller_server-4] [INFO] [1795596018.752182014] [robot_1.controller_server]: Cancellation was successful. Stopping the robot.
+[controller_server-4] [INFO] [1795596018.752219625] [robot_1.controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[safety_monitor_node-6] [WARN] [1795596018.927097294] [robot_1.safety_monitor]: halt: STALE_CMD
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[planner_server-3] [INFO] [1795596019.699175402] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[planner_server-3] [INFO] [1795596019.699284741] [robot_1.planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[planner_server-3] [INFO] [1795596019.699331403] [robot_1.planner_server]: Deactivating
+[planner_server-3] [INFO] [1795596019.699352781] [robot_1.global_costmap.global_costmap]: Deactivating
+[map_server-1] [INFO] [1795596019.699242526] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[map_server-1] [INFO] [1795596019.699297777] [robot_1.map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[map_server-1] [INFO] [1795596019.699345349] [robot_1.map_server]: Deactivating
+[map_server-1] [INFO] [1795596019.699356376] [robot_1.map_server]: Destroying bond (map_server) to lifecycle manager.
+[amcl-2] [INFO] [1795596019.699459271] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[INFO] [lifecycle_manager-7]: sending signal 'SIGINT' to process[lifecycle_manager-7]
+[INFO] [safety_monitor_node-6]: sending signal 'SIGINT' to process[safety_monitor_node-6]
+[INFO] [nav2_contracts-5]: sending signal 'SIGINT' to process[nav2_contracts-5]
+[INFO] [controller_server-4]: sending signal 'SIGINT' to process[controller_server-4]
+[INFO] [planner_server-3]: sending signal 'SIGINT' to process[planner_server-3]
+[INFO] [amcl-2]: sending signal 'SIGINT' to process[amcl-2]
+[ERROR] [safety_monitor_node-6]: process has died [pid 32078, exit code -2, cmd '/home/tim/autonomous-robotics-masters-capstone-cpp-ru/ros2_ws/install/capstone_safety/lib/capstone_safety/safety_monitor_node --ros-args -r __node:=safety_monitor -r __ns:=/robot_1 --params-file /tmp/launch_params_zd73qtjp --params-file /tmp/launch_params_m28y0gzj -r /tf:=tf -r /tf_static:=tf_static -r clock:=/clock -r /control/cmd_vel_raw:=/robot_1/control/cmd_vel_raw -r /state/odom:=/robot_1/state/odom -r /sensors/scan:=/robot_1/sensors/scan -r /cmd_vel:=/robot_1/cmd_vel -r /diagnostics:=/robot_1/diagnostics'].
+[INFO] [map_server-1]: sending signal 'SIGINT' to process[map_server-1]
+[lifecycle_manager-7] [INFO] [1795596019.700124142] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-7] [INFO] [1795596019.700210800] [robot_1.lifecycle_fleet]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_fleet)
+[lifecycle_manager-7] [INFO] [1795596019.700235013] [robot_1.lifecycle_fleet]: [34m[1mTerminating bond timer...[0m[0m
+[controller_server-4] [INFO] [1795596019.700565421] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[controller_server-4] [INFO] [1795596019.700626142] [robot_1.controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[controller_server-4] [INFO] [1795596019.700681064] [robot_1.controller_server]: Deactivating
+[controller_server-4] [INFO] [1795596019.700696697] [robot_1.controller_server]: Deactivating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-4] [INFO] [1795596019.700715550] [robot_1.local_costmap.local_costmap]: Deactivating
+[safety_monitor_node-6] [INFO] [1795596019.701246058] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[nav2_contracts-5] [INFO] [1795596019.702114151] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[nav2_contracts-5] [INFO] [1795596019.708929476] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[map_server-1] [INFO] [1795596019.709822209] [robot_1.map_server]: Cleaning up
+[map_server-1] [INFO] [1795596019.709869306] [robot_1.map_server]: Destroying bond (map_server) to lifecycle manager.
+[map_server-1] [INFO] [1795596019.721434924] [robot_1.map_server]: Destroying
+[planner_server-3] [INFO] [1795596019.728775072] [robot_1.planner_server]: Deactivating plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1795596019.728843697] [robot_1.planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-3] [INFO] [1795596019.739100197] [robot_1.planner_server]: Cleaning up
+[lifecycle_manager-7] [INFO] [1795596019.752075118] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-7] [INFO] [1795596019.753280311] [robot_1.lifecycle_fleet]: Destroying lifecycle_fleet
+[planner_server-3] [INFO] [1795596019.755776862] [robot_1.global_costmap.global_costmap]: Cleaning up
+[ERROR] [map_server-1]: process has died [pid 32073, exit code -2, cmd '/opt/ros/jazzy/lib/nav2_map_server/map_server --ros-args -r __node:=map_server -r __ns:=/robot_1 --params-file /tmp/launch_params_2lu1m6by --params-file /tmp/launch_params_y3_jr6ms --params-file /tmp/launch_params_l3gixe3y -r /tf:=tf -r /tf_static:=tf_static -r clock:=/clock'].
+[ERROR] [amcl-2]: process has died [pid 32074, exit code -2, cmd '/opt/ros/jazzy/lib/nav2_amcl/amcl --ros-args --log-level robot_1.amcl:=warn --ros-args -r __node:=amcl -r __ns:=/robot_1 --params-file /tmp/launch_params_2lu1m6by --params-file /tmp/launch_params__u1pznt9 --params-file /tmp/launch_params_umiur7vl -r /tf:=tf -r /tf_static:=tf_static -r clock:=/clock'].
+[planner_server-3] [INFO] [1795596019.760526038] [robot_1.planner_server]: Cleaning up plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1795596019.760866953] [robot_1.planner_server]: Destroying plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1795596019.769781538] [robot_1.planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-3] [INFO] [1795596019.771528802] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[planner_server-3] [INFO] [1795596019.773595936] [robot_1.global_costmap.global_costmap]: Destroying
+[planner_server-3] [INFO] [1795596019.781704403] [robot_1.planner_server]: Destroying
+[controller_server-4] [INFO] [1795596019.784957085] [robot_1.controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-4] [INFO] [1795596019.795197605] [robot_1.controller_server]: Cleaning up
+[controller_server-4] [INFO] [1795596019.795244911] [robot_1.controller_server]: Cleaning up controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-4] [INFO] [1795596019.795326515] [robot_1.local_costmap.local_costmap]: Cleaning up
+[controller_server-4] [INFO] [1795596019.806422903] [robot_1.controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-4] [INFO] [1795596019.807869493] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[controller_server-4] [INFO] [1795596019.810420046] [robot_1.local_costmap.local_costmap]: Destroying
+[controller_server-4] [INFO] [1795596019.814579877] [robot_1.controller_server]: Destroying
+[INFO] [nav2_contracts-5]: process has finished cleanly [pid 32077]
+[INFO] [lifecycle_manager-7]: process has finished cleanly [pid 32079]
+[INFO] [planner_server-3]: process has finished cleanly [pid 32075]
+[INFO] [controller_server-4]: process has finished cleanly [pid 32076]

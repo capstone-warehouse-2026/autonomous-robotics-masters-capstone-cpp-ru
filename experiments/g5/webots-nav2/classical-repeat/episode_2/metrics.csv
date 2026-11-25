@@ -1,0 +1,2 @@
+episode_id,family,method,terminal_reason,elapsed_sim_s,released,delivered,on_time,failed,unfinished,unfinished_age_mean_s,deliveries_per_hour,on_time_fraction,tardiness_mean_s,tardiness_p95_s,distance_m,distance_per_job_m,idle_s,recoveries,fallbacks,decisions,decision_latency_p95_ms
+webots_nav2_deliveries-1,blocked_route_detour,classical,completed,82.5,2,2,2,0,0,0,87.2727272727,1,0,0,16.0199547661,8.00997738305,0.18,0,0,2,0.001
