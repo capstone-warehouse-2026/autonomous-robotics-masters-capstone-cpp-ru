@@ -12,6 +12,26 @@ perception:
       pixel_stride: 2            # use every 2nd pixel in both directions
       min_free_points: 1
       min_obstacle_points: 1
+    classical:
+      floor_z: -0.095            # m, expected floor height in base_link
+      floor_tolerance: 0.02      # m, |height over the floor| <= this -> free; lower -> obstacle (hole)
+      robot_height: 1.0          # m, higher than this -> unknown (the robot passes under it)
+      ransac:                    # floor plane search on every frame; fixed floor_z if it fails
+        enabled: true
+        iterations: 100          # random plane hypotheses per frame
+        stride: 4                # every 4th pixel in both directions is a floor candidate
+        band: 0.25               # m, candidates: |z - floor_z| <= band
+        threshold: 0.02          # m, inlier distance to a hypothesis
+        max_offset: 0.08         # m, accepted |floor height under the robot - floor_z| (a 15 cm shelf is not the floor)
+        max_tilt_deg: 10.0       # largest accepted floor tilt
+        min_inliers: 300         # fewer -> RANSAC failed
+      flying_pixels:             # mixed depth at object borders -> unknown
+        enabled: true
+        jump_ratio: 0.05         # jump to BOTH neighbours > max(min_jump, jump_ratio * depth) -> flying
+        min_jump: 0.05           # m
+      clusters:                  # connected obstacle pixels with a small seen surface (noise) -> unknown
+        enabled: true
+        min_area: 0.001          # m², about 3 x 3 cm; an 8 cm rack upright is far larger at any distance
     learned:
       model_path: ""             # ONNX model of method B; "" = models/perception_cnn.onnx of this package
       threads: 2                 # CPU threads of ONNX Runtime

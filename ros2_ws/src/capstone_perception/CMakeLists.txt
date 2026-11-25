@@ -31,7 +31,8 @@ set_target_properties(${PROJECT_NAME}_core PROPERTIES POSITION_INDEPENDENT_CODE 
 target_include_directories(${PROJECT_NAME}_core PUBLIC include)
 ament_target_dependencies(${PROJECT_NAME}_core rclcpp sensor_msgs nav_msgs diagnostic_msgs cv_bridge
   message_filters tf2_ros tf2_eigen ament_index_cpp)
-target_link_libraries(${PROJECT_NAME}_core Eigen3::Eigen opencv_core onnxruntime::onnxruntime)
+# opencv_imgproc: connected components of method A (obstacle clusters).
+target_link_libraries(${PROJECT_NAME}_core Eigen3::Eigen opencv_core opencv_imgproc onnxruntime::onnxruntime)
 target_compile_options(${PROJECT_NAME}_core PRIVATE -Wall -Wextra -Wpedantic)
 
 add_executable(perception_node src/main.cpp)
@@ -50,6 +51,8 @@ if(BUILD_TESTING)
   target_link_libraries(test_perception_node ${PROJECT_NAME}_core)
   ament_add_gtest(test_grid_builder test/test_grid_builder.cpp)
   target_link_libraries(test_grid_builder ${PROJECT_NAME}_core)
+  ament_add_gtest(test_geometric_classifier test/test_geometric_classifier.cpp)
+  target_link_libraries(test_geometric_classifier ${PROJECT_NAME}_core)
   # Golden data of release_model.py; reads the model and the frame from the source tree.
   ament_add_gtest(test_cnn_classifier test/test_cnn_classifier.cpp)
   target_link_libraries(test_cnn_classifier ${PROJECT_NAME}_core opencv_imgcodecs opencv_imgproc)
