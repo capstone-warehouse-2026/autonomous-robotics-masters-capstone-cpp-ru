@@ -44,48 +44,53 @@ Pose between(const Pose &world_from_parent, const Pose &world_from_child) {
 }
 
 void Filter::predict(const Pose &increment, const Covariance &process_noise) {
-  const Eigen::Matrix2d axes = rotation(pose.z());
-  const Eigen::Vector2d displacement = axes * increment.head<2>();
-  Covariance state_jacobian = Covariance::Identity();
+  const Eigen::Matrix2d axes = rotation(pose.z()); // Получаем матрицу поворота.
+  const Eigen::Vector2d displacement = axes * increment.head<2>(); // Преобразуем в глобальные координаты.
+  Covariance state_jacobian = Covariance::Identity(); // Якобиан состояния.
   state_jacobian(0, 2) = -displacement.y();
   state_jacobian(1, 2) = displacement.x();
-  Covariance noise_jacobian = Covariance::Identity();
+  Covariance noise_jacobian = Covariance::Identity(); // Якобиан шума процесса.
   noise_jacobian.topLeftCorner<2, 2>() = axes;
   pose = compose(pose, increment);
   covariance = state_jacobian * covariance * state_jacobian.transpose() +
-      noise_jacobian * process_noise * noise_jacobian.transpose();
-  covariance = (0.5 * (covariance + covariance.transpose())).eval();
+      noise_jacobian * process_noise * noise_jacobian.transpose(); // Обновляем ковариацию состояния с учетом шума процесса.
+  covariance = (0.5 * (covariance + covariance.transpose())).eval(); // Симметризация ковариационной матрицы.
 }
 
 double Filter::nis(const Pose &measurement, const Covariance &measurement_noise) const {
+  // Оценка, насколько новое измерение согласуется с прогнозом фильтра.
   const Pose delta = innovation(measurement, pose);
   const Covariance residual_covariance = covariance + measurement_noise;
-  return delta.dot(residual_covariance.ldlt().solve(delta));
+  return delta.dot(residual_covariance.ldlt().solve(delta)); // Вычисление NIS.
 }
 
 void Filter::correct(const Pose &measurement, const Covariance &measurement_noise) {
+  // Объединение прогноза фильтра с измерением от LiDAR и map.
   const Covariance residual_covariance = covariance + measurement_noise;
-  const Covariance gain = residual_covariance.ldlt().solve(covariance.transpose()).transpose();
-  pose += gain * innovation(measurement, pose);
+  const Covariance gain = residual_covariance.ldlt().solve(covariance.transpose()).transpose(); // Вычисление коэффициента усиления Калмана.
+  pose += gain * innovation(measurement, pose); // Обновление состояния фильтра с учетом измерения.
   pose.z() = wrap_angle(pose.z());
-  // Joseph form preserves symmetry and positive semidefiniteness.
   const Covariance remaining = Covariance::Identity() - gain;
   covariance = remaining * covariance * remaining.transpose() +
-      gain * measurement_noise * gain.transpose();
+      gain * measurement_noise * gain.transpose(); // Форма Джозефа.
   covariance = (0.5 * (covariance + covariance.transpose())).eval();
 }
 
-void ScanMatcher::set_map(unsigned width, unsigned height, double resolution, const Pose &origin,
+void ScanMatcher::set_map(unsigned width,
+                          unsigned height,
+                          double resolution,
+                          const Pose &origin,
                           const std::vector<signed char> &data) {
   if (width == 0 || height == 0 || data.size() != static_cast<std::size_t>(width) * height ||
       !std::isfinite(resolution) || resolution <= 0.0 || !origin.allFinite()) {
+        // Проверка валидности входных данных.
     throw std::invalid_argument("invalid occupancy grid");
   }
-  std::vector<std::vector<Surface>> surfaces(data.size());
+  std::vector<std::vector<Surface>> surfaces(data.size()); // Создание вектора поверхностей для каждой ячейки карты.
   const int faces[][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
   for (unsigned y = 0; y < height; ++y) {
     for (unsigned x = 0; x < width; ++x) {
-      const std::size_t index = static_cast<std::size_t>(y) * width + x;
+      const std::size_t index = static_cast<std::size_t>(y) * width + x; // Индекс текущей ячейки в массиве данных карты.
       if (data[index] < 65) {
         continue;
       }
@@ -98,7 +103,7 @@ void ScanMatcher::set_map(unsigned width, unsigned height, double resolution, co
         if (neighbor >= 0 && neighbor <= 25) {
           const Eigen::Vector2d normal(face[0], face[1]);
           const Eigen::Vector2d center = resolution * (Eigen::Vector2d(x + 0.5, y + 0.5) + 0.5 * normal);
-          surfaces[index].push_back({center, normal});
+          surfaces[index].push_back({center, normal}); // Добавление поверхности в список поверхностей текущей ячейки.
         }
       }
     }
@@ -111,6 +116,7 @@ void ScanMatcher::set_map(unsigned width, unsigned height, double resolution, co
 }
 
 const ScanMatcher::Surface *ScanMatcher::nearest(const Eigen::Vector2d &point, double radius) const {
+  // Находит ближайшую поверхность к заданной точке в пределах указанного радиуса.
   const Surface *best = nullptr;
   double best_squared = radius * radius;
   const double pad = radius + 0.5 * resolution_;
@@ -124,6 +130,7 @@ const ScanMatcher::Surface *ScanMatcher::nearest(const Eigen::Vector2d &point, d
       static_cast<int>(std::floor((point.x() + pad) / resolution_)));
   const int last_y = std::min(static_cast<int>(height_) - 1,
       static_cast<int>(std::floor((point.y() + pad) / resolution_)));
+      // Итерируемся по ячейкам карты в пределах радиуса поиска и ищем ближайшую поверхность к заданной точке.
   for (int y = first_y; y <= last_y; ++y) {
     for (int x = first_x; x <= last_x; ++x) {
       for (const auto &surface : surfaces_[static_cast<std::size_t>(y) * width_ + x]) {

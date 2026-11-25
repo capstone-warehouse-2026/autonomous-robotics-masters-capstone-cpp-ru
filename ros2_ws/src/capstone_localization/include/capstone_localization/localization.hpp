@@ -14,10 +14,11 @@ namespace capstone_localization {
 using Features = std::array<float, 7>;
 
 struct LocalizationConfig {
+  // Начальное состояние фильтра локализации.
   Pose initial = Pose::Zero();
   Pose fixed_variance = Pose(0.04 * 0.04, 0.04 * 0.04, 0.025 * 0.025);
   double search_radius = 0.22;
-  double nis_limit = 16.27;  // Three coordinates, chi-squared 99.9%.
+  double nis_limit = 16.27;  // 3 координаты, 0.001 уровень значимости.
   double wheel_timeout = 0.3;
 };
 
