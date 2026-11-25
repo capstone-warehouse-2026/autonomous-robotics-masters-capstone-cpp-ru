@@ -19,6 +19,7 @@ from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
 
@@ -29,6 +30,8 @@ def generate_launch_description():
                                  'safety.launch.py')
     perception_launch = os.path.join(get_package_share_directory('capstone_perception'), 'launch',
                                      'perception.launch.py')
+    planning_launch = os.path.join(get_package_share_directory('capstone_planning'), 'launch',
+                                   'planning.launch.py')
 
     use_sim_time = LaunchConfiguration('use_sim_time')
     start_safety = LaunchConfiguration('start_safety')
@@ -36,6 +39,10 @@ def generate_launch_description():
     start_mission = LaunchConfiguration('start_mission')
     start_faults = LaunchConfiguration('start_faults')
     fault = LaunchConfiguration('fault')
+    start_path_stub = LaunchConfiguration('start_path_stub')
+    start_localization = LaunchConfiguration('start_localization')
+    start_planning = LaunchConfiguration('start_planning')
+    publish_stub_localization = LaunchConfiguration('publish_stub_localization')
     autostart_mission = LaunchConfiguration('autostart_mission')
     episode_id = LaunchConfiguration('episode_id')
     results_dir = LaunchConfiguration('results_dir')
@@ -53,6 +60,14 @@ def generate_launch_description():
                               description='start the fault injector (fault suite)'),
         DeclareLaunchArgument('fault', default_value='sensor_dropout',
                               description='sensor_dropout | controller_pause | controller_crash'),
+        DeclareLaunchArgument('start_path_stub', default_value='true',
+                              description='start the placeholder planner (disable with real G3)'),
+        DeclareLaunchArgument('start_localization', default_value='false',
+                              description='start the real G1 localization node'),
+        DeclareLaunchArgument('publish_stub_localization', default_value='true',
+                              description='false when G1 localization is running'),
+        DeclareLaunchArgument('start_planning', default_value='false',
+                              description='start the real G3 planning node'),
         DeclareLaunchArgument('autostart_mission', default_value='true',
                               description='start the episode without an external command'),
         DeclareLaunchArgument('episode_id', default_value='stub-001',
@@ -66,7 +81,26 @@ def generate_launch_description():
             executable='world_stub_node',
             name='world_stub',
             output='screen',
-            parameters=[params, {'use_sim_time': use_sim_time}],
+            parameters=[params, {
+                'use_sim_time': use_sim_time,
+                'publish_localization': ParameterValue(publish_stub_localization,
+                                                       value_type=bool),
+            }],
+        ),
+        # Real G1 localization: sensors come from the simulator adapter.
+        Node(
+            package='capstone_localization',
+            executable='localization_node',
+            name='localization',
+            output='screen',
+            condition=IfCondition(start_localization),
+            parameters=[{
+                'use_sim_time': use_sim_time,
+                'method': 'classical',
+                'initial_x': -8.0,
+                'initial_y': 0.0,
+                'initial_yaw': 0.0,
+            }],
         ),
         # PLACEHOLDER G3: ComputePathToPose action server.
         Node(
@@ -74,6 +108,7 @@ def generate_launch_description():
             executable='path_stub_node',
             name='path_stub',
             output='screen',
+            condition=IfCondition(start_path_stub),
             parameters=[params, {'use_sim_time': use_sim_time}],
         ),
         # PLACEHOLDER G4: FollowPath action server publishing /control/cmd_vel_raw.
@@ -126,5 +161,11 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(perception_launch),
             condition=IfCondition(start_perception),
             launch_arguments={'method': 'classical', 'target_frame': 'odom'}.items(),
+        ),
+        # Real G3 planning: /planning/compute_path action server.
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(planning_launch),
+            condition=IfCondition(start_planning),
+            launch_arguments={'method': 'classical'}.items(),
         ),
     ])

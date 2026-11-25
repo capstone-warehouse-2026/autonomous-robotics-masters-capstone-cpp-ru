@@ -40,6 +40,8 @@ MissionStubNode::MissionStubNode(const rclcpp::NodeOptions &options)
     : rclcpp::Node("mission_stub", options) {
   service_time_s_ = declare_parameter<double>("service_time_s", 2.0);
   mission_timeout_s_ = declare_parameter<double>("mission_timeout_s", 300.0);
+  dispatch_delay_s_ = declare_parameter<double>("dispatch_delay_s", 2.0);
+  max_path_retries_ = static_cast<int>(declare_parameter<int>("max_path_retries", 5));
   results_dir_ = declare_parameter<std::string>("results_dir", "/workspace/results");
   episode_id_ = declare_parameter<std::string>("episode_id", "stub-001");
   config_id_ = declare_parameter<std::string>("config_id", "SKELETON");
@@ -129,12 +131,18 @@ void MissionStubNode::tick() {
     case State::Idle:
       if (count_true(delivered_) == static_cast<int>(jobs_.size())) {
         finish("SUCCESS", "all jobs delivered");
-      } else if (started_) {
+      } else if (started_ && elapsed >= dispatch_delay_s_) {
         start_next_job();
       }
       break;
     case State::Planning:
     case State::Driving:
+      break;
+    case State::Retry:
+      if (now() >= retry_after_) {
+        send_path_goal(target_);
+        state_ = State::Planning;
+      }
       break;
     case State::Service:
       if ((now() - service_start_).seconds() >= service_time_s_) {
@@ -154,6 +162,7 @@ void MissionStubNode::start_next_job() {
   active_job_ = index;
   has_active_ = true;
   leg_ = Leg::Pickup;
+  path_retries_ = 0;
   target_ = jobs_[index].pickup;
   active_target_name_ = "pickup " + jobs_[index].id;
   send_path_goal(target_);
@@ -215,9 +224,18 @@ void MissionStubNode::on_path_result(const PathWrappedResult &result) {
       result.result->error_code != ComputePath::Result::NONE || result.result->path.poses.empty()) {
     const std::string message =
         result.result ? result.result->error_msg : "planning failed without a result";
+    if (path_retries_ < max_path_retries_) {
+      ++path_retries_;
+      retry_after_ = now() + rclcpp::Duration::from_seconds(0.5);
+      state_ = State::Retry;
+      RCLCPP_WARN(get_logger(), "planning failed (%s); retry %d/%d", message.c_str(),
+                  path_retries_, max_path_retries_);
+      return;
+    }
     finish("ABORTED", "planning failed: " + message);
     return;
   }
+  path_retries_ = 0;
   path_msg_ = result.result->path;
   distance_m_ += path_length(path_points());
   send_follow_goal(path_msg_);

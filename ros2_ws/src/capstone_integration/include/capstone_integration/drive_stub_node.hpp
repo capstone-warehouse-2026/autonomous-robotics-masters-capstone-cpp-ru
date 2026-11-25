@@ -12,6 +12,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <tf2_ros/buffer.hpp>
+#include <tf2_ros/transform_listener.hpp>
 
 #include "capstone_integration/path_builder.hpp"
 
@@ -37,7 +39,7 @@ class DriveStubNode : public rclcpp::Node {
   void finish(uint16_t code, const std::string &message);
   void reset_active();
 
-  static std::vector<Pose2D> path_from_message(const nav_msgs::msg::Path &path);
+  std::vector<Pose2D> path_from_message(const nav_msgs::msg::Path &path);
   double seconds_since_start() const;
 
   FollowerParams params_;
@@ -60,6 +62,8 @@ class DriveStubNode : public rclcpp::Node {
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr pause_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr crash_sub_;
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_pub_;
   rclcpp_action::Server<FollowPath>::SharedPtr server_;
   rclcpp::TimerBase::SharedPtr timer_;

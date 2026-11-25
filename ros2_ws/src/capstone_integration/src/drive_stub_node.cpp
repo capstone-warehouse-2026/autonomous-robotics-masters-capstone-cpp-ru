@@ -64,6 +64,9 @@ DriveStubNode::DriveStubNode(const rclcpp::NodeOptions &options)
         }
       });
 
+  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_, this, false);
+
   server_ = rclcpp_action::create_server<FollowPath>(
       this, "/control/follow_path",
       [this](const rclcpp_action::GoalUUID &uuid,
@@ -115,12 +118,43 @@ double DriveStubNode::seconds_since_start() const {
 std::vector<Pose2D> DriveStubNode::path_from_message(const nav_msgs::msg::Path &path) {
   std::vector<Pose2D> points;
   points.reserve(path.poses.size());
+
+  const std::string frame = path.header.frame_id.empty() ? map_frame_ : path.header.frame_id;
+  double offset_x = 0.0;
+  double offset_y = 0.0;
+  double offset_yaw = 0.0;
+  bool transform = false;
+  if (frame != odom_frame_) {
+    try {
+      const auto stamped = tf_buffer_->lookupTransform(odom_frame_, frame, tf2::TimePointZero);
+      offset_x = stamped.transform.translation.x;
+      offset_y = stamped.transform.translation.y;
+      offset_yaw = yaw_from_quaternion(stamped.transform.rotation);
+      transform = true;
+    } catch (const std::exception &error) {
+      RCLCPP_ERROR(get_logger(), "cannot transform the path from '%s' to '%s': %s",
+                   frame.c_str(), odom_frame_.c_str(), error.what());
+      return {};
+    }
+  }
+  const double c = std::cos(offset_yaw);
+  const double s = std::sin(offset_yaw);
   for (const auto &pose : path.poses) {
     const auto &p = pose.pose;
     if (!std::isfinite(p.position.x) || !std::isfinite(p.position.y)) {
       return {};
     }
-    points.push_back(Pose2D{p.position.x, p.position.y, yaw_from_quaternion(p.orientation)});
+    double x = p.position.x;
+    double y = p.position.y;
+    double yaw = yaw_from_quaternion(p.orientation);
+    if (transform) {
+      const double rotated_x = c * x - s * y + offset_x;
+      const double rotated_y = s * x + c * y + offset_y;
+      x = rotated_x;
+      y = rotated_y;
+      yaw += offset_yaw;
+    }
+    points.push_back(Pose2D{x, y, yaw});
   }
   return points;
 }

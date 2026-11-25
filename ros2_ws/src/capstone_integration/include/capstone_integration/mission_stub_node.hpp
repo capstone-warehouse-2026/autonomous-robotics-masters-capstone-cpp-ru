@@ -33,7 +33,7 @@ class MissionStubNode : public rclcpp::Node {
   explicit MissionStubNode(const rclcpp::NodeOptions &options = rclcpp::NodeOptions());
 
  private:
-  enum class State { Init, Idle, Planning, Driving, Service, Done };
+  enum class State { Init, Idle, Planning, Driving, Service, Retry, Done };
   enum class Leg { Pickup, Dropoff };
 
   void tick();
@@ -54,6 +54,8 @@ class MissionStubNode : public rclcpp::Node {
 
   double service_time_s_{2.0};
   double mission_timeout_s_{300.0};
+  double dispatch_delay_s_{2.0};
+  int max_path_retries_{5};
   std::string results_dir_{"/workspace/results"};
   std::string episode_id_{"stub-001"};
   std::string config_id_{"SKELETON"};
@@ -78,6 +80,8 @@ class MissionStubNode : public rclcpp::Node {
   nav_msgs::msg::Path path_msg_;
   rclcpp::Time start_time_{0, 0, RCL_ROS_TIME};
   rclcpp::Time service_start_{0, 0, RCL_ROS_TIME};
+  rclcpp::Time retry_after_{0, 0, RCL_ROS_TIME};
+  int path_retries_{0};
   std::string terminal_reason_{"TIMEOUT"};
   std::string terminal_message_{"mission not finished"};
   int on_time_{0};

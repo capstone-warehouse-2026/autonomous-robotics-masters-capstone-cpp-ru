@@ -44,6 +44,7 @@ WorldStubNode::WorldStubNode(const rclcpp::NodeOptions &options)
   map_height_m_ = declare_parameter<double>("map_height_m", 20.0);
   map_origin_x_ = declare_parameter<double>("map_origin_x", -10.0);
   map_origin_y_ = declare_parameter<double>("map_origin_y", -10.0);
+  publish_localization_ = declare_parameter<bool>("publish_localization", true);
 
   if (odom_rate <= 0.0 || scan_rate <= 0.0 || map_resolution_ <= 0.0 || map_width_m_ <= 0.0 ||
       map_height_m_ <= 0.0) {
@@ -63,30 +64,39 @@ WorldStubNode::WorldStubNode(const rclcpp::NodeOptions &options)
         }
       });
 
-  wheel_odom_pub_ = create_publisher<nav_msgs::msg::Odometry>("/sensors/wheel_odom", 10);
-  state_odom_pub_ = create_publisher<nav_msgs::msg::Odometry>(
-      "/state/odom", rclcpp::QoS(5).reliable());
-  pose_pub_ = create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(
-      "/localization/pose", rclcpp::QoS(5).reliable());
-  scan_pub_ = create_publisher<sensor_msgs::msg::LaserScan>(
-      "/sensors/scan", rclcpp::SensorDataQoS());
   map_pub_ = create_publisher<nav_msgs::msg::OccupancyGrid>(
       "/map", rclcpp::QoS(1).reliable().transient_local());
 
-  tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
-  static_tf_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(*this);
+  if (publish_localization_) {
+    wheel_odom_pub_ = create_publisher<nav_msgs::msg::Odometry>("/sensors/wheel_odom", 10);
+    state_odom_pub_ = create_publisher<nav_msgs::msg::Odometry>(
+        "/state/odom", rclcpp::QoS(5).reliable());
+    pose_pub_ = create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(
+        "/localization/pose", rclcpp::QoS(5).reliable());
+    scan_pub_ = create_publisher<sensor_msgs::msg::LaserScan>(
+        "/sensors/scan", rclcpp::SensorDataQoS());
 
-  geometry_msgs::msg::TransformStamped map_to_odom;
-  map_to_odom.header.stamp = now();
-  map_to_odom.header.frame_id = map_frame_;
-  map_to_odom.child_frame_id = odom_frame_;
-  map_to_odom.transform.rotation.w = 1.0;
-  static_tf_broadcaster_->sendTransform(map_to_odom);
+    tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+    static_tf_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(*this);
+
+    geometry_msgs::msg::TransformStamped map_to_odom;
+    map_to_odom.header.stamp = now();
+    map_to_odom.header.frame_id = map_frame_;
+    map_to_odom.child_frame_id = odom_frame_;
+    map_to_odom.transform.rotation.w = 1.0;
+    static_tf_broadcaster_->sendTransform(map_to_odom);
+  } else {
+    RCLCPP_WARN(get_logger(),
+                "publish_localization=false: sensors, odometry, pose and TF are left to a real "
+                "localization node; only /map is published by this stub");
+  }
 
   const auto odom_period = std::chrono::duration<double>(1.0 / odom_rate);
   const auto scan_period = std::chrono::duration<double>(1.0 / scan_rate);
-  odom_timer_ = create_wall_timer(odom_period, [this]() { publish_odometry(); });
-  scan_timer_ = create_wall_timer(scan_period, [this]() { publish_scan_and_pose(); });
+  if (publish_localization_) {
+    odom_timer_ = create_wall_timer(odom_period, [this]() { publish_odometry(); });
+    scan_timer_ = create_wall_timer(scan_period, [this]() { publish_scan_and_pose(); });
+  }
   // Three attempts: /map uses transient_local, but a late subscriber still needs the sample.
   map_timer_ = create_wall_timer(500ms, [this]() {
     publish_map();
@@ -122,7 +132,7 @@ void WorldStubNode::on_cmd_vel(const geometry_msgs::msg::TwistStamped &message) 
 }
 
 void WorldStubNode::publish_odometry() {
-  if (sensors_disabled_) {
+  if (!publish_localization_ || sensors_disabled_) {
     return;
   }
   const rclcpp::Time stamp = now();
@@ -161,7 +171,7 @@ void WorldStubNode::publish_odometry() {
 }
 
 void WorldStubNode::publish_scan_and_pose() {
-  if (sensors_disabled_) {
+  if (!publish_localization_ || sensors_disabled_) {
     return;
   }
   const rclcpp::Time stamp = now();
@@ -214,6 +224,37 @@ void WorldStubNode::publish_map() {
   for (std::uint32_t y = 0; y < height; ++y) {
     map.data[y * width] = 100;
     map.data[y * width + (width - 1)] = 100;
+  }
+
+  // Reference static map from simulation/worlds/warehouse.wbt: racks, pallets, crates and boxes.
+  // PLACEHOLDER for G1: a real SLAM/static map replaces this table.
+  struct Rectangle {
+    double cx;
+    double cy;
+    double half_x;
+    double half_y;
+  };
+  static const Rectangle obstacles[] = {
+      {-4.0, 5.0, 2.0, 0.45},  {2.0, 5.0, 2.0, 0.45},   {-4.0, 2.0, 2.0, 0.45},
+      {2.0, 2.0, 2.0, 0.45},   {-4.0, -1.0, 2.0, 0.45}, {2.0, -1.0, 2.0, 0.45},
+      {-4.0, -4.0, 2.0, 0.45}, {2.0, -4.0, 2.0, 0.45},  {7.8, 4.0, 0.6, 0.6},
+      {7.8, 2.6, 0.6, 0.6},    {6.3, 0.8, 0.7, 0.5},    {6.6, -2.6, 0.35, 0.35},
+      {7.3, -2.6, 0.35, 0.35}, {6.95, -3.3, 0.4, 0.4},  {-3.5, -7.0, 0.4, 0.4},
+      {3.5, 7.2, 0.4, 0.4},    {-9.3, 5.8, 0.3, 0.3},   {-9.3, -5.8, 0.3, 0.3},
+      {9.3, -5.8, 0.3, 0.3},
+  };
+  for (std::uint32_t y = 0; y < height; ++y) {
+    for (std::uint32_t x = 0; x < width; ++x) {
+      const double wx = map_origin_x_ + (static_cast<double>(x) + 0.5) * map_resolution_;
+      const double wy = map_origin_y_ + (static_cast<double>(y) + 0.5) * map_resolution_;
+      for (const auto &obstacle : obstacles) {
+        if (std::abs(wx - obstacle.cx) <= obstacle.half_x &&
+            std::abs(wy - obstacle.cy) <= obstacle.half_y) {
+          map.data[y * width + x] = 100;
+          break;
+        }
+      }
+    }
   }
   map_pub_->publish(map);
 }

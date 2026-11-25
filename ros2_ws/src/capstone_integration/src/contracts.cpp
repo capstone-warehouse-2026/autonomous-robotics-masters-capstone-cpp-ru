@@ -22,7 +22,8 @@ const std::vector<Contract> &contracts() {
        false},
       {"/cmd_vel", "geometry_msgs/msg/TwistStamped", 20.0, 20.0, "base_link", 1, 1, false},
       {"/mission/status", "diagnostic_msgs/msg/DiagnosticArray", 1.0, 1.0, "", 1, 1, false},
-      {"/diagnostics", "diagnostic_msgs/msg/DiagnosticArray", 0.5, 10.0, "", 0, 99, false, false},
+      {"/diagnostics", "diagnostic_msgs/msg/DiagnosticArray", 0.5, 20.0, "", 0, 99, false, false},
+      {"/evaluation/ground_truth", "nav_msgs/msg/Odometry", 0.0, 0.0, "map", 1, 1, true, false},
   };
   return table;
 }

@@ -48,6 +48,7 @@ class WorldStubNode : public rclcpp::Node {
   bool have_cmd_stamp_{false};
   int map_publish_count_{0};
   bool sensors_disabled_{false};  // fault injection: sensor dropout
+  bool publish_localization_{true};  // false: a real localization node owns sensors, odom and TF
 
   double map_resolution_{0.1};
   double map_width_m_{20.0};
