@@ -1,0 +1,15 @@
+/map:
+  history: keep_last
+  depth: 1
+  reliability: reliable
+  durability: transient_local
+/tf_static:
+  history: keep_last
+  depth: 1
+  reliability: reliable
+  durability: transient_local
+/clock:
+  history: keep_last
+  depth: 10
+  reliability: best_effort
+  durability: volatile
