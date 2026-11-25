@@ -1,0 +1,31 @@
+{
+  "window_s": 5.00,
+  "measured_run": false,
+  "failures": 1,
+  "warnings": 1,
+  "checks": [
+    {"name": "/clock", "verdict": "OK", "detail": "advancing"},
+    {"name": "/sensors/wheel_odom", "verdict": "OK", "detail": "50.4 Hz, frame 'odom'"},
+    {"name": "/sensors/imu", "verdict": "FAIL", "detail": "0 publisher(s), expected >= 1"},
+    {"name": "/sensors/scan", "verdict": "OK", "detail": "10.2 Hz, frame 'base_link'"},
+    {"name": "/sensors/rgb", "verdict": "OK", "detail": "9.4 Hz, frame 'camera_optical_frame'"},
+    {"name": "/sensors/depth", "verdict": "OK", "detail": "9.4 Hz, frame 'camera_optical_frame'"},
+    {"name": "/sensors/camera_info", "verdict": "OK", "detail": "9.4 Hz, frame 'camera_optical_frame'"},
+    {"name": "/state/odom", "verdict": "OK", "detail": "50.4 Hz, frame 'odom'"},
+    {"name": "/localization/pose", "verdict": "OK", "detail": "10.2 Hz, frame 'map'"},
+    {"name": "/map", "verdict": "OK", "detail": "present, 0 message(s) in the window"},
+    {"name": "/perception/obstacles", "verdict": "OK", "detail": "9.4 Hz, frame 'odom'"},
+    {"name": "/control/cmd_vel_raw", "verdict": "OK", "detail": "20.2 Hz, frame 'base_link'"},
+    {"name": "/cmd_vel", "verdict": "OK", "detail": "20.2 Hz, frame 'base_link'"},
+    {"name": "/mission/status", "verdict": "OK", "detail": "1.0 Hz"},
+    {"name": "/diagnostics", "verdict": "OK", "detail": "2.0 Hz"},
+    {"name": "/planning/compute_path", "verdict": "OK", "detail": "action server present"},
+    {"name": "/control/follow_path", "verdict": "OK", "detail": "action server present"},
+    {"name": "TF map->base_link", "verdict": "OK", "detail": "chain resolves"},
+    {"name": "placeholders", "verdict": "WARN", "detail": "placeholder nodes active: mission_stub, drive_stub, world_stub, path_stub"},
+    {"name": "ground_truth_leak", "verdict": "OK", "detail": "no runtime subscriber"},
+    {"name": "/fault/controller_crash", "verdict": "INFO", "detail": "topic outside the contract"},
+    {"name": "/fault/controller_pause", "verdict": "INFO", "detail": "topic outside the contract"},
+    {"name": "/fault/sensor_dropout", "verdict": "INFO", "detail": "topic outside the contract"}
+  ]
+}

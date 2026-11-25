@@ -1,0 +1,2 @@
+config_id,scenario_id,episodes,success,success_rate,ci_low,ci_high,timeout,aborted,collision,mean_elapsed_s,p95_elapsed_s,mean_distance_m
+SKELETON,S1,20,20,1.000,0.839,1.000,0,0,0,195.543,195.628,74.851

@@ -6,8 +6,8 @@
 Ветка `integration/skeleton`, release tag не выставлен. Дата: 24.11.2026.
 Артефакты: [`ros2_ws/src/capstone_integration`](../../ros2_ws/src/capstone_integration),
 [ADR 0005](../adr/0005-integration-harness.md),
-[запись вклада](../contributions/volkov.md). Отчёт о подпроекте (25 баллов) не входит в эту работу:
-студент не состоит ни в одной из групп G1–G5.
+[запись вклада](../contributions/volkov.md), [срез результатов](results/). Отчёт о подпроекте
+(25 баллов) не входит в эту работу: студент не состоит ни в одной из групп G1–G5.
 
 ## 1. Задача, исследовательский вопрос и гипотеза
 
