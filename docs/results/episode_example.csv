@@ -1,0 +1,2 @@
+episode_id,config_id,scenario_id,layout_id,scenario_seed,training_seed_bundle,terminal_reason,elapsed_sim_s,delivered,released,on_time,collision_count,distance_m,min_clearance_m,deadline_misses,safety_interventions,fallback_count,placeholder_components
+series-20,SKELETON,S1,warehouse,0,none,SUCCESS,195.580,6,6,6,0,74.908,NA,0,0,0,g1_sensors;g1_localization;g3_planning;g4_control;g5_mission

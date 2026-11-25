@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>capstone_integration</name>
+  <version>0.1.0</version>
+  <description>
+    Integration skeleton: system launch, contract audit and temporary placeholder nodes for the
+    not-yet-delivered G1/G3/G4/G5 parts. Every placeholder is labelled in logs and in the episode
+    CSV; placeholder runs must never be reported as measured results.
+  </description>
+  <maintainer email="integration@example.invalid">Integration</maintainer>
+  <license>MIT</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>diagnostic_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>nav2_msgs</depend>
+
+  <test_depend>ament_cmake_gtest</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

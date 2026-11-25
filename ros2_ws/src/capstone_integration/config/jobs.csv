@@ -1,0 +1,11 @@
+# Job manifest of the integration skeleton (PLACEHOLDER G5).
+# Chained deliveries around the six warehouse stations: the drop-off of one job is the pick-up
+# station of the next one, so the robot drives a perimeter route.
+# job_id, pickup_x, pickup_y, dropoff_x, dropoff_y, release_s, due_s
+job_id,pickup_x,pickup_y,dropoff_x,dropoff_y,release_s,due_s
+j1,-8.8,7.5,-1.0,8.8,0,120
+j2,-1.0,8.8,8.8,7.5,20,120
+j3,8.8,7.5,8.8,-7.5,50,120
+j4,8.8,-7.5,-1.0,-8.8,80,120
+j5,-1.0,-8.8,-8.8,-7.5,120,120
+j6,-8.8,-7.5,-8.8,7.5,160,120

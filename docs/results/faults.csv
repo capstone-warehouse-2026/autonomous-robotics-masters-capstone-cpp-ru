@@ -1,0 +1,6 @@
+run_id,fault,stop_latency_s,diag_latency_s,diag_reason,recovered,notes
+fault-sensor_dropout-1,sensor_dropout,0.347,0.326,capstone_safety/safety_monitor: STALE_SCAN,true,recovered after the fault was released
+fault-controller_pause-1,controller_pause,0.203,0.163,capstone_safety/safety_monitor: STALE_CMD,true,recovered after the fault was released
+fault-controller_crash-1,controller_crash,0.153,0.132,capstone_safety/safety_monitor: STALE_CMD,false,no recovery within the window
+broken_model,broken_model,NA,NA,classical fallback,true,node survived; classical fallback engaged 4 times
+clock_freeze,clock_freeze,NA,NA,none,false,NOT DETECTED: cmd_vel stayed 0.4999442031256956 during the pause; halt in the window=none; before=0.47237404670141664 after=0.4999981316031871
