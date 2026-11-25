@@ -17,7 +17,7 @@ BUILD_ARGS := --symlink-install $(if $(PKG),--packages-up-to $(PKG)) \
 TEST_ARGS := $(if $(PKG),--packages-select $(PKG))
 TEST_RESULT_ARGS := $(if $(PKG),--test-result-base build/$(PKG))
 
-.PHONY: help setup doctor images build test shell smoke sim sim-gui rqt-graph rqt rviz g2-dataset g2-labels g2-dataset-splits g2-train g2-eval g2-model down clean dev-image dirs
+.PHONY: help setup doctor images build test shell smoke sim sim-gui rqt-graph rqt rviz g2-dataset g2-labels g2-dataset-splits g2-train g2-eval g2-model g3-dataset g3-train g3-eval g3-model down clean dev-image dirs
 
 help: ## Показать эту справку
 	@echo "Команды проекта (PKG=имя_пакета ограничивает build/test одним пакетом):"
@@ -120,6 +120,25 @@ g2-dataset-splits: ## G2: записать и разметить все план
 		$(MAKE) --no-print-directory g2-dataset LAYOUT=$$layout RUN=$$layout SAMPLES=$(SAMPLES) && \
 		$(MAKE) --no-print-directory g2-labels RUN=$$layout || exit 1; \
 	done
+
+G3_RUN := $(COMPOSE) --profile train run --rm -w /workspace/ml/planning train
+
+g3-dataset: dirs ## G3: сгенерировать эпизоды и метки задержки в data/g3 (симулятор ml/planning/sim.py)
+	$(COMPOSE) --profile train build train
+	$(G3_RUN) python3 dataset.py
+
+g3-train: dirs ## G3: обучить CNN-стоимость метода B и абляцию без истории (TRAIN_ARGS=...)
+	$(COMPOSE) --profile train build train
+	$(G3_RUN) python3 train.py $(TRAIN_ARGS)
+	$(G3_RUN) python3 train.py --no-history $(TRAIN_ARGS)
+
+g3-eval: build ## G3: сравнить A, B и B без истории в замкнутом цикле на тестовых складах data/g3/test
+	$(DEV_RUN) '$(DEV_ENV) && cd ml/planning && python3 evaluate.py \
+		--replay /workspace/install/capstone_planning/lib/capstone_planning/planning_replay $(EVAL_ARGS)'
+
+g3-model: dirs ## G3: положить data/g3/models/latest в пакет capstone_planning (модель и эталон теста C++)
+	$(COMPOSE) --profile train build train
+	$(G3_RUN) python3 release_model.py
 
 down: ## Остановить все контейнеры проекта
 	$(COMPOSE) --profile dev --profile gui down --remove-orphans

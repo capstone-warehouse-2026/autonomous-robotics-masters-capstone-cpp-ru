@@ -1,0 +1,5 @@
+{
+  "train": {"layouts": [0, 39], "episodes_per_layout": 10},
+  "val": {"layouts": [1000, 1009], "episodes_per_layout": 10},
+  "test": {"layouts": [2000, 2009], "episodes_per_layout": 10}
+}
