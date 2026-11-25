@@ -3,6 +3,7 @@
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
@@ -23,6 +24,7 @@ class NavigationClient {
     double planning_timeout{0.2};
     double navigation_timeout{120.0};
     double stop_timeout{2.0};
+    double stop_confirmation_time{0.2};
     double input_timeout{0.3};
   };
   using Event = std::function<void(const std::string &, const std::string &)>;
@@ -49,6 +51,8 @@ class NavigationClient {
   using Clock = std::chrono::steady_clock;
 
   void on_odometry(const nav_msgs::msg::Odometry &message);
+  void process_pending_odometry();
+  void accept_odometry(const nav_msgs::msg::Odometry &message, Clock::time_point received_at);
   void on_plan_response(std::uint64_t generation, const PlanHandle::SharedPtr &handle);
   void on_plan_result(std::uint64_t generation, const PlanHandle::WrappedResult &result);
   void send_follow(const nav_msgs::msg::Path &path);
@@ -67,6 +71,15 @@ class NavigationClient {
   PlanHandle::SharedPtr plan_handle_;
   FollowHandle::SharedPtr follow_handle_;
   nav_msgs::msg::Odometry odometry_;
+  struct PendingOdometry {
+    nav_msgs::msg::Odometry message;
+    Clock::time_point received_at;
+  };
+  std::optional<PendingOdometry> pending_odometry_;
+  std::optional<double> previous_clock_;
+  struct QuietInterval { double stamp; Clock::time_point received_at; };
+  std::optional<QuietInterval> quiet_interval_;
+  double stop_requested_stamp_{0.0};
   State state_{State::Idle};
   std::uint64_t generation_{0};
   bool plan_pending_{false};

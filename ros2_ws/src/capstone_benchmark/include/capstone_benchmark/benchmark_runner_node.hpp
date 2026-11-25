@@ -2,6 +2,7 @@
 #include <chrono>
 #include <fstream>
 #include <memory>
+#include <optional>
 #include <string>
 #include <diagnostic_msgs/msg/diagnostic_array.hpp>
 #include <nav_msgs/msg/odometry.hpp>
@@ -33,6 +34,8 @@ class BenchmarkRunnerNode : public rclcpp::Node {
   double age(Clock::time_point point) const;
   std::string method_, output_directory_, reset_service_, episode_id_, commit_;
   double horizon_{300}, startup_timeout_{10}, clock_timeout_{1}, cancel_timeout_{3};
+  double service_settle_time_{0};
+  std::optional<Clock::time_point> services_ready_since_;
   bool enabled_{false}, finished_{false}, have_clock_{false}, have_odom_{false}, started_{false};
   int exit_code_{0};
   int clock_updates_{0};

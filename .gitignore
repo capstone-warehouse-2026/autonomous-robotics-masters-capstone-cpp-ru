@@ -17,4 +17,6 @@ results/
 .DS_Store
 .cache/
 simulation/worlds/.*.wbproj
+simulation/integration/.*.wbproj
+simulation/fleet/.*.wbproj
 /data/

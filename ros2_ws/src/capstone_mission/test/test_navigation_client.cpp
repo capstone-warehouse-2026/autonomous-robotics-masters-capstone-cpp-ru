@@ -51,6 +51,11 @@ class NavigationTest : public ::testing::Test {
     pose_pub_ = server_->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(
         "localization/pose", 5);
     clock_pub_ = server_->create_publisher<rosgraph_msgs::msg::Clock>("clock", 10);
+    scan_pub_ = server_->create_publisher<sensor_msgs::msg::LaserScan>(
+        "sensors/scan", rclcpp::SensorDataQoS());
+    grid_pub_ = server_->create_publisher<nav_msgs::msg::OccupancyGrid>("perception/obstacles", 1);
+    diagnostics_pub_ = server_->create_publisher<diagnostic_msgs::msg::DiagnosticArray>(
+        "diagnostics", 10);
     status_sub_ = server_->create_subscription<diagnostic_msgs::msg::DiagnosticArray>(
         "mission/status", 10, [this](const diagnostic_msgs::msg::DiagnosticArray &message) {
           if (message.status.empty()) return;
@@ -63,7 +68,7 @@ class NavigationTest : public ::testing::Test {
     timer_ = server_->create_wall_timer(10ms, [this] { publish_and_finish(); });
     Client::Limits limits;
     limits.planning_timeout = 0.2;
-    limits.stop_timeout = 0.25;
+    limits.stop_timeout = 0.5;
     limits.navigation_timeout = 1.0;
     client_ = std::make_unique<Client>(*node_, limits,
         [](const std::string &, const std::string &) {});
@@ -97,7 +102,8 @@ class NavigationTest : public ::testing::Test {
     }
     if (publish_odom_) {
       nav_msgs::msg::Odometry odom;
-      odom.header.stamp = sim_clock_ ? rclcpp::Time(static_cast<int64_t>(sim_time_ * 1e9)) :
+      odom.header.stamp = sim_clock_ ? rclcpp::Time(static_cast<int64_t>(
+                                          (sim_time_ + input_lead_) * 1e9)) :
                                       server_->now();
       odom.header.frame_id = "odom";
       odom.child_frame_id = "base_link";
@@ -109,6 +115,7 @@ class NavigationTest : public ::testing::Test {
       pose.header.frame_id = "map";
       pose.pose = odom.pose;
       pose_pub_->publish(pose);
+      if (publish_safety_inputs_) publish_safety_inputs(odom.header.stamp);
     }
     if (plan_ && plan_->is_active()) {
       auto result = std::make_shared<Plan::Result>();
@@ -136,6 +143,58 @@ class NavigationTest : public ::testing::Test {
     }
   }
 
+  void publish_safety_inputs(const builtin_interfaces::msg::Time &stamp) {
+    sensor_msgs::msg::LaserScan scan;
+    scan.header.stamp = stamp;
+    scan.header.frame_id = "lidar_link";
+    scan.angle_increment = 0.1F;
+    scan.ranges = {1.0F};
+    scan_pub_->publish(scan);
+    nav_msgs::msg::OccupancyGrid grid;
+    grid.header.stamp = stamp;
+    grid.header.frame_id = "odom";
+    grid.info.width = grid.info.height = 1;
+    grid.info.resolution = 0.1F;
+    grid.data = {0};
+    grid_pub_->publish(grid);
+    diagnostic_msgs::msg::DiagnosticArray diagnostics;
+    diagnostics.header.stamp = stamp;
+    diagnostic_msgs::msg::DiagnosticStatus status;
+    status.name = "capstone_safety/safety_monitor";
+    status.message = "OK";
+    diagnostics.status.push_back(status);
+    diagnostics_pub_->publish(diagnostics);
+  }
+
+  void spin_for(std::chrono::milliseconds duration) {
+    until([] { return false; }, duration);
+  }
+
+  void enable_client_simulation_time() {
+    ASSERT_TRUE(node_->set_parameter(rclcpp::Parameter("use_sim_time", true)).successful);
+    sim_clock_ = true;
+    ASSERT_TRUE(until([this] {
+      return node_->now().seconds() > 0 && node_->now().seconds() < 100 && client_->ready();
+    }));
+  }
+
+  void set_simulation_clock(const rclcpp::Time &stamp) {
+    rosgraph_msgs::msg::Clock clock;
+    clock.clock = stamp;
+    clock_pub_->publish(clock);
+    ASSERT_TRUE(until([this, stamp] { return node_->now() == stamp; }));
+  }
+
+  void publish_odometry(const rclcpp::Time &stamp, double x) {
+    nav_msgs::msg::Odometry odom;
+    odom.header.stamp = stamp;
+    odom.header.frame_id = "odom";
+    odom.child_frame_id = "base_link";
+    odom.pose.pose.orientation.w = 1;
+    odom.pose.pose.position.x = x;
+    odom_pub_->publish(odom);
+  }
+
   template<class Predicate>
   bool until(Predicate predicate, std::chrono::milliseconds timeout = 1500ms) {
     const auto end = std::chrono::steady_clock::now() + timeout;
@@ -156,8 +215,10 @@ class NavigationTest : public ::testing::Test {
     client_->start(target);
   }
 
-  void start_mission(int jobs = 1, bool simulation_clock = false, bool autostart = true) {
+  void start_mission(int jobs = 1, bool simulation_clock = false, bool autostart = true,
+                     bool require_safety = false) {
     sim_clock_ = simulation_clock;
+    publish_safety_inputs_ = require_safety;
     scenario_path_ = "/tmp/g5_ros_test_" + std::to_string(getpid()) + ".yaml";
     std::ofstream file(scenario_path_);
     file << "episode_id: test\ninitial_station: home\nhorizon: 30\nstations:\n"
@@ -168,8 +229,8 @@ class NavigationTest : public ::testing::Test {
     }
     file.close();
     rclcpp::NodeOptions options;
-    options.parameter_overrides({{"manifest_path", scenario_path_}, {"require_safety", false},
-        {"event_log", ""}, {"clock_timeout", 0.2}, {"stop_timeout", 0.3},
+    options.parameter_overrides({{"manifest_path", scenario_path_}, {"require_safety", require_safety},
+        {"event_log", ""}, {"clock_timeout", mission_clock_timeout_}, {"stop_timeout", 0.3},
         {"use_sim_time", simulation_clock}, {"autostart", autostart},
         {"bt_xml", std::string(CAPSTONE_MISSION_SOURCE_DIR) + "/behavior_trees/delivery.xml"}});
     mission_ = std::make_shared<capstone_mission::MissionNode>(options);
@@ -180,9 +241,13 @@ class NavigationTest : public ::testing::Test {
   std::string scenario_path_, mission_status_, episode_id_;
   int delivered_{0}, reject_first_{0}, fail_follow_number_{-1};
   bool sim_clock_{false}, freeze_{false};
-  double sim_time_{10.0};
+  double sim_time_{10.0}, input_lead_{0.0}, mission_clock_timeout_{0.2};
+  bool publish_safety_inputs_{false};
   rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pose_pub_;
   rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr clock_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub_;
+  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr grid_pub_;
+  rclcpp::Publisher<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr diagnostics_pub_;
   rclcpp::Subscription<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr status_sub_;
   rclcpp::Node::SharedPtr node_, server_;
   rclcpp::executors::SingleThreadedExecutor executor_;
@@ -250,7 +315,7 @@ TEST_F(NavigationTest, GoalAcceptedAfterCancelDeadlineIsStillCancelled) {
   start();
   client_->cancel("cancel_before_response");
   // Сервер ещё не обрабатывал запрос, а клиент уже исчерпал срок подтверждения.
-  std::this_thread::sleep_for(300ms);
+  std::this_thread::sleep_for(550ms);
   client_->poll();
   ASSERT_EQ(client_->state(), Client::State::Failed);
   EXPECT_FALSE(client_->safe_to_retry());
@@ -278,6 +343,21 @@ TEST_F(NavigationTest, SuccessWhileStillMovingIsFault) {
   EXPECT_FALSE(client_->safe_to_retry());
 }
 
+TEST_F(NavigationTest, QuietSampleThenLateMotionDoesNotConfirmStop) {
+  start();
+  ASSERT_TRUE(until([this] { return client_->state() == Client::State::Stopping; }));
+  spin_for(60ms);
+  EXPECT_EQ(client_->state(), Client::State::Stopping);
+  moving_ = true;
+  spin_for(40ms);
+  EXPECT_EQ(client_->state(), Client::State::Stopping);
+  moving_ = false;
+  spin_for(120ms);
+  EXPECT_EQ(client_->state(), Client::State::Stopping);
+  ASSERT_TRUE(until([this] { return client_->state() == Client::State::Succeeded; }));
+  EXPECT_TRUE(client_->safe_to_retry());
+}
+
 TEST_F(NavigationTest, PlanningTimeoutCancelsOwnedGoal) {
   hold_plan_ = true;
   start();
@@ -298,6 +378,107 @@ TEST_F(NavigationTest, StaleOdometryCancelsMovement) {
   EXPECT_FALSE(client_->safe_to_retry());
   EXPECT_EQ(cancel_count_, 1);
 }
+
+TEST_F(NavigationTest, OdometryBeforeClockRetainsFreshSampleUntilOriginalStampIsDue) {
+  enable_client_simulation_time();
+  hold_follow_ = true;
+  start();
+  ASSERT_TRUE(until([this] { return client_->state() == Client::State::Following; }));
+  timer_->cancel();
+  const auto accepted = client_->odometry().header.stamp;
+  const auto future = node_->now() + rclcpp::Duration::from_seconds(0.02);
+  publish_odometry(future, 7.0);
+  spin_for(40ms);
+  EXPECT_EQ(client_->state(), Client::State::Following);
+  EXPECT_TRUE(client_->fresh_odometry());
+  EXPECT_EQ(client_->odometry().header.stamp, accepted);
+  EXPECT_NE(client_->odometry().pose.pose.position.x, 7.0);
+  EXPECT_EQ(cancel_count_, 0);
+
+  set_simulation_clock(future);
+  ASSERT_TRUE(until([this] { return client_->odometry().pose.pose.position.x == 7.0; }));
+  EXPECT_EQ(client_->odometry().header.stamp, static_cast<builtin_interfaces::msg::Time>(future));
+  EXPECT_EQ(client_->state(), Client::State::Following);
+  EXPECT_EQ(cancel_count_, 0);
+}
+
+TEST_F(NavigationTest, FutureOdometryExpiresByOriginalSteadyArrivalWhileClockIsFrozen) {
+  enable_client_simulation_time();
+  hold_follow_ = true;
+  start();
+  ASSERT_TRUE(until([this] { return client_->state() == Client::State::Following; }));
+  timer_->cancel();
+  const auto future = node_->now() + rclcpp::Duration::from_seconds(0.02);
+  publish_odometry(future, 7.0);
+  spin_for(180ms);
+  // Повтор того же будущего измерения не обновляет steady-время ожидающего образца.
+  publish_odometry(future, 7.0);
+  spin_for(160ms);
+  EXPECT_FALSE(client_->fresh_odometry());
+  EXPECT_EQ(client_->reason(), "stale_odometry");
+  EXPECT_EQ(cancel_count_, 1);
+  set_simulation_clock(future);
+  EXPECT_NE(client_->odometry().pose.pose.position.x, 7.0);
+  EXPECT_FALSE(client_->fresh_odometry());
+}
+
+TEST_F(NavigationTest, BackwardClockClearsPendingAndAcceptedOdometry) {
+  enable_client_simulation_time();
+  timer_->cancel();
+  const auto current = node_->now();
+  const auto future = current + rclcpp::Duration::from_seconds(0.02);
+  publish_odometry(future, 7.0);
+  spin_for(30ms);
+  set_simulation_clock(current - rclcpp::Duration::from_seconds(0.02));
+  EXPECT_FALSE(client_->fresh_odometry());
+  publish_odometry(node_->now(), 2.0);
+  ASSERT_TRUE(until([this] { return client_->fresh_odometry(); }));
+  set_simulation_clock(future);
+  EXPECT_DOUBLE_EQ(client_->odometry().pose.pose.position.x, 2.0);
+}
+
+TEST_F(NavigationTest, ImplausiblyFutureOdometryDoesNotReplaceCurrentMeasurement) {
+  enable_client_simulation_time();
+  timer_->cancel();
+  const auto current = node_->now();
+  const auto accepted = client_->odometry().header.stamp;
+  publish_odometry(current + rclcpp::Duration::from_seconds(20.0), 7.0);
+  spin_for(30ms);
+  EXPECT_TRUE(client_->fresh_odometry());
+  EXPECT_EQ(client_->odometry().header.stamp, accepted);
+  EXPECT_NE(client_->odometry().pose.pose.position.x, 7.0);
+}
+
+TEST_F(NavigationTest, ActiveMissionCompletesWithScanGridAndPoseBeforeClock) {
+  hold_follow_ = true;
+  start_mission(1, true, true, true);
+  ASSERT_TRUE(until([this] { return follow_count_ == 1; }));
+  // Все измерения опережают /clock на один физический шаг Webots.
+  input_lead_ = 0.02;
+  spin_for(160ms);
+  EXPECT_EQ(mission_status_, "running");
+  EXPECT_EQ(cancel_count_, 0);
+  hold_follow_ = false;
+  ASSERT_TRUE(until([this] { return mission_status_ == "completed"; }, 2500ms));
+  EXPECT_EQ(delivered_, 1);
+  EXPECT_EQ(cancel_count_, 0);
+}
+
+TEST_F(NavigationTest, PendingMissionInputsDoNotHideFrozenClockAndExpiredMeasurements) {
+  hold_follow_ = true;
+  mission_clock_timeout_ = 1.0;
+  start_mission(1, true, true, true);
+  ASSERT_TRUE(until([this] { return follow_count_ == 1; }));
+  input_lead_ = 0.02;
+  freeze_ = true;
+  ASSERT_TRUE(until([this] { return cancel_count_ == 1; }, 600ms));
+  EXPECT_EQ(delivered_, 0);
+  // После настоящего нового измерения можно подтвердить остановку отменённой цели.
+  input_lead_ = 0.0;
+  freeze_ = false;
+  ASSERT_TRUE(until([this] { return mission_status_ == "cancelled"; }, 1500ms));
+}
+
 TEST_F(NavigationTest, MissionCompletesPickupBeforeDelivery) {
   start_mission();
   ASSERT_TRUE(until([this] { return mission_status_ == "completed"; }, 2500ms));
@@ -330,6 +511,10 @@ TEST_F(NavigationTest, FrozenSimulationTimeCancelsActiveDelivery) {
   start_mission(1, true);
   ASSERT_TRUE(until([this] { return follow_count_ == 1; }));
   freeze_ = true;
+  ASSERT_TRUE(until([this] { return cancel_count_ == 1; }, 1000ms));
+  EXPECT_NE(mission_status_, "completed");
+  // Подтверждение .2 с физической тишины требует возобновления измерений по ROS-времени.
+  freeze_ = false;
   ASSERT_TRUE(until([this] { return mission_status_ == "cancelled"; }, 1500ms));
   EXPECT_EQ(delivered_, 0);
   EXPECT_EQ(cancel_count_, 1);

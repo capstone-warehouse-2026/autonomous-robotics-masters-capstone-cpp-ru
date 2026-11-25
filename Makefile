@@ -1,4 +1,4 @@
-# Everyday commands; everything runs inside Docker, so the host needs only git, make and Docker.
+# Основные команды используют Docker; g5-system-* и fleet-* работают в нативном ROS 2.
 # `make` without arguments prints the list. PKG=<package> limits build/test to one package.
 
 SHELL := /bin/bash
@@ -178,3 +178,26 @@ g5-smoke: dev-image ## G5: один ROS-эпизод с reset, остановк�
 	$(MAKE) build PKG=capstone_benchmark
 	$(DEV_RUN) '$(DEV_ENV) && ros2 launch capstone_benchmark debug_episode.launch.py \
 		method:=$(G5_METHOD) output:=$(G5_SMOKE_OUTPUT) commit:="$$(git -C /workspace rev-parse HEAD)"'
+
+# Физическая интеграция: нативный ROS 2 Jazzy + Webots, Docker не требуется.
+G5_SYSTEM_ARGS ?=
+.PHONY: g5-system-setup g5-system-build g5-system-test
+g5-system-setup: ## G5 + базовые G3/G4: скачать проверенный Webots и локальный Xvfb
+	@scripts/setup_webots_native.sh
+
+g5-system-build: ## Собрать физический стенд с Nav2 в установленном ROS 2 Jazzy
+	@scripts/build_g5_system.sh
+
+g5-system-test: ## Webots + Nav2 + G5; G5_METHOD=classical|learned, G5_SYSTEM_ARGS='--mode cancel'
+	@scripts/run_g5_system.sh --method $(G5_METHOD) $(G5_SYSTEM_ARGS)
+
+FLEET_METHOD ?= cbs
+FLEET_ARGS ?=
+.PHONY: fleet-setup fleet-build fleet-test
+fleet-setup: g5-system-setup ## Скачать Webots для физического испытания нескольких роботов
+
+fleet-build: ## Собрать распределение заявок, CBS/ECBS и исполнитель Nav2
+	@scripts/build_g5_system.sh capstone_fleet_runtime
+
+fleet-test: ## Испытать встречные доставки двух роботов; FLEET_METHOD=cbs|ecbs
+	@scripts/run_fleet_system.sh --method $(FLEET_METHOD) $(FLEET_ARGS)

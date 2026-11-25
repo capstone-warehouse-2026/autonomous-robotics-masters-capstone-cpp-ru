@@ -78,6 +78,7 @@ void MissionNode::read_parameters() {
   navigation_limits_.planning_timeout = declare_parameter<double>("planning_timeout", 0.2);
   navigation_limits_.navigation_timeout = declare_parameter<double>("navigation_timeout", 120.0);
   navigation_limits_.stop_timeout = declare_parameter<double>("stop_timeout", 2.0);
+  navigation_limits_.stop_confirmation_time = declare_parameter<double>("stop_confirmation_time", 0.2);
   navigation_limits_.input_timeout = declare_parameter<double>("input_timeout", 0.3);
   if (!std::isfinite(clock_timeout_) || clock_timeout_ <= 0.0 ||
       !std::isfinite(readiness_timeout_) || readiness_timeout_ <= 0.0) {
@@ -126,18 +127,14 @@ void MissionNode::create_ros_interfaces() {
   localization_sub_ = create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
       "localization/pose", rclcpp::QoS(5).reliable(),
       [this](const geometry_msgs::msg::PoseWithCovarianceStamped &message) {
-        if (message.header.frame_id != "map" || !std::isfinite(message.pose.pose.position.x) ||
-            !std::isfinite(message.pose.pose.position.y)) return;
-        localization_ = message;
-        localization_received_ = Clock::now();
+        on_localization(message);
       });
   scan_sub_ = create_subscription<sensor_msgs::msg::LaserScan>(
       "sensors/scan", rclcpp::SensorDataQoS(),
       [this](const sensor_msgs::msg::LaserScan &message) {
         if (message.header.frame_id.empty() || message.ranges.empty() ||
             !std::isfinite(message.angle_increment) || message.angle_increment <= 0.0) return;
-        scan_stamp_ = rclcpp::Time(message.header.stamp);
-        scan_received_ = Clock::now();
+        receive_sensor_stamp(message.header.stamp, scan_stamp_, scan_received_, pending_scan_);
       });
   grid_sub_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
       "perception/obstacles", rclcpp::QoS(1).reliable(),
@@ -146,8 +143,7 @@ void MissionNode::create_ros_interfaces() {
             message.info.height == 0 || !std::isfinite(message.info.resolution) ||
             message.info.resolution <= 0.0 ||
             message.data.size() != static_cast<std::size_t>(message.info.width) * message.info.height) return;
-        grid_stamp_ = rclcpp::Time(message.header.stamp);
-        grid_received_ = Clock::now();
+        receive_sensor_stamp(message.header.stamp, grid_stamp_, grid_received_, pending_grid_);
       });
   start_service_ = create_service<Trigger>("mission/start",
       [this](const Trigger::Request::SharedPtr, Trigger::Response::SharedPtr response) {
@@ -236,6 +232,91 @@ void MissionNode::on_diagnostics(const diagnostic_msgs::msg::DiagnosticArray &me
       safety_received_ = Clock::now();
       safety_reason_ = status.message;
     }
+  }
+}
+
+void MissionNode::receive_sensor_stamp(const builtin_interfaces::msg::Time &incoming,
+                                       rclcpp::Time &accepted, Clock::time_point &received,
+                                       std::optional<PendingStamp> &pending) {
+  if (incoming.sec < 0 || incoming.nanosec >= 1000000000) return;
+  process_pending_inputs();
+  const rclcpp::Time stamp(incoming);
+  const double age = (now() - stamp).seconds();
+  if (age < 0.0) {
+    if (age >= -navigation_limits_.input_timeout && !pending) {
+      pending = PendingStamp{stamp, Clock::now()};
+    }
+    return;
+  }
+  if (age <= navigation_limits_.input_timeout && stamp >= accepted) {
+    accepted = stamp;
+    received = Clock::now();
+  }
+}
+
+void MissionNode::on_localization(
+    const geometry_msgs::msg::PoseWithCovarianceStamped &message) {
+  if (message.header.frame_id != "map" || !std::isfinite(message.pose.pose.position.x) ||
+      !std::isfinite(message.pose.pose.position.y) || message.header.stamp.sec < 0 ||
+      message.header.stamp.nanosec >= 1000000000) return;
+  process_pending_inputs();
+  const rclcpp::Time stamp(message.header.stamp);
+  const double age = (now() - stamp).seconds();
+  if (age < 0.0) {
+    if (age >= -navigation_limits_.input_timeout && !pending_localization_) {
+      pending_localization_ = PendingLocalization{message, Clock::now()};
+    }
+    return;
+  }
+  if (age <= navigation_limits_.input_timeout &&
+      stamp >= rclcpp::Time(localization_.header.stamp)) {
+    localization_ = message;
+    localization_received_ = Clock::now();
+  }
+}
+
+void MissionNode::process_pending_inputs() {
+  const double current = now().seconds();
+  if (previous_input_clock_ && current < *previous_input_clock_) {
+    pending_scan_.reset();
+    pending_grid_.reset();
+    pending_localization_.reset();
+    scan_stamp_ = grid_stamp_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
+    localization_ = geometry_msgs::msg::PoseWithCovarianceStamped{};
+    scan_received_ = grid_received_ = localization_received_ = Clock::time_point{};
+  }
+  previous_input_clock_ = current;
+  // Один ожидающий stamp на вход. Его исходное steady-время не меняется при ожидании.
+  auto promote_stamp = [this, current](std::optional<PendingStamp> &pending,
+                                      rclcpp::Time &accepted, Clock::time_point &received) {
+    if (!pending) return;
+    const double age = current - pending->stamp.seconds();
+    if (elapsed(pending->received_at) > navigation_limits_.input_timeout ||
+        age > navigation_limits_.input_timeout || age < -navigation_limits_.input_timeout) {
+      pending.reset();
+    } else if (age >= 0.0) {
+      if (pending->stamp >= accepted) {
+        accepted = pending->stamp;
+        received = pending->received_at;
+      }
+      pending.reset();
+    }
+  };
+  promote_stamp(pending_scan_, scan_stamp_, scan_received_);
+  promote_stamp(pending_grid_, grid_stamp_, grid_received_);
+  if (!pending_localization_) return;
+  const auto &pending = *pending_localization_;
+  const rclcpp::Time stamp(pending.message.header.stamp);
+  const double age = current - stamp.seconds();
+  if (elapsed(pending.received_at) > navigation_limits_.input_timeout ||
+      age > navigation_limits_.input_timeout || age < -navigation_limits_.input_timeout) {
+    pending_localization_.reset();
+  } else if (age >= 0.0) {
+    if (stamp >= rclcpp::Time(localization_.header.stamp)) {
+      localization_ = pending.message;
+      localization_received_ = pending.received_at;
+    }
+    pending_localization_.reset();
   }
 }
 
@@ -440,6 +521,7 @@ void MissionNode::finish_cancel() {
 }
 
 void MissionNode::on_timer() {
+  process_pending_inputs();
   navigation_->poll();
   if (state_ == State::Cancelling) finish_cancel();
   if (state_ == State::Running) {
@@ -456,6 +538,13 @@ void MissionNode::on_timer() {
     if (state_ == State::Running && clock_seen_) {
       release_jobs();
       if (!active_job_.empty() && (!safety_inputs_fresh() || !fresh_localization())) {
+        RCLCPP_ERROR(get_logger(),
+            "stale navigation input: pose age=%.3f/wall=%.3f, scan age=%.3f/wall=%.3f, "
+            "grid age=%.3f/wall=%.3f, safety heartbeat age=%.3f",
+            (now() - rclcpp::Time(localization_.header.stamp)).seconds(),
+            elapsed(localization_received_), (now() - scan_stamp_).seconds(),
+            elapsed(scan_received_), (now() - grid_stamp_).seconds(),
+            elapsed(grid_received_), elapsed(safety_received_));
         begin_cancel("stale_navigation_input");
       }
       if (state_ != State::Running) return;

@@ -3,6 +3,7 @@
 #include <chrono>
 #include <fstream>
 #include <memory>
+#include <optional>
 #include <string>
 
 #include <behaviortree_cpp/bt_factory.h>
@@ -30,6 +31,16 @@ class MissionNode : public rclcpp::Node {
   using Clock = std::chrono::steady_clock;
   using Trigger = std_srvs::srv::Trigger;
 
+  struct PendingStamp { rclcpp::Time stamp; Clock::time_point received_at; };
+  struct PendingLocalization {
+    geometry_msgs::msg::PoseWithCovarianceStamped message;
+    Clock::time_point received_at;
+  };
+  void process_pending_inputs();
+  void on_localization(const geometry_msgs::msg::PoseWithCovarianceStamped &message);
+  void receive_sensor_stamp(const builtin_interfaces::msg::Time &incoming,
+                            rclcpp::Time &accepted, Clock::time_point &received,
+                            std::optional<PendingStamp> &pending);
   void read_parameters();
   void load_configuration();
   void create_ros_interfaces();
@@ -72,6 +83,9 @@ class MissionNode : public rclcpp::Node {
   geometry_msgs::msg::PoseWithCovarianceStamped localization_;
   Clock::time_point localization_received_{}, scan_received_{}, grid_received_{};
   rclcpp::Time scan_stamp_{0, 0, RCL_ROS_TIME}, grid_stamp_{0, 0, RCL_ROS_TIME};
+  std::optional<PendingStamp> pending_scan_, pending_grid_;
+  std::optional<PendingLocalization> pending_localization_;
+  std::optional<double> previous_input_clock_;
   Scenario scenario_;
   JobQueue queue_;
   std::unique_ptr<DqnModel> model_;

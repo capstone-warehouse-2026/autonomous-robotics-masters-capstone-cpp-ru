@@ -20,6 +20,11 @@ BenchmarkRunnerNode::BenchmarkRunnerNode(const rclcpp::NodeOptions &options)
   startup_timeout_ = declare_parameter("startup_timeout", 10.0);
   clock_timeout_ = declare_parameter("clock_timeout", 1.0);
   cancel_timeout_ = declare_parameter("cancel_timeout", 3.0);
+  service_settle_time_ = declare_parameter("service_settle_time", 0.0);
+  if (!std::isfinite(service_settle_time_) || service_settle_time_ < 0 ||
+      service_settle_time_ >= startup_timeout_) {
+    throw std::invalid_argument("service_settle_time must be nonnegative and below startup_timeout");
+  }
   for (double value : {horizon_, startup_timeout_, clock_timeout_, cancel_timeout_}) {
     if (!std::isfinite(value) || value <= 0) throw std::invalid_argument("timeouts must be positive");
   }
@@ -79,8 +84,16 @@ void BenchmarkRunnerNode::on_tick() {
   }
   if (age(stage_since_) > startup_timeout_) { stop("startup_timeout"); return; }
   if (stage_ == Stage::WaitingServices) {
-    if (simulation_reset_->service_is_ready() && mission_reset_->service_is_ready() &&
-        mission_start_->service_is_ready() && mission_cancel_->service_is_ready()) {
+    const bool all_ready = simulation_reset_->service_is_ready() && mission_reset_->service_is_ready() &&
+                           mission_start_->service_is_ready() && mission_cancel_->service_is_ready();
+    if (!all_ready) {
+      services_ready_since_.reset();
+      return;
+    }
+    if (!services_ready_since_) services_ready_since_ = Clock::now();
+    // FastDDS может объявить request-канал готовым раньше discovery ответного reader.
+    // Ожидание ограничено startup_timeout и не блокирует callbacks или таймеры.
+    if (age(*services_ready_since_) >= service_settle_time_) {
       request(simulation_reset_, Stage::ResetSimulation, Stage::ResetMission);
     }
   } else if (stage_ == Stage::ResetMission) {
