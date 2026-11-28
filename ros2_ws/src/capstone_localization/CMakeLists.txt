@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.22)
 project(capstone_localization LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,7 +29,11 @@ install(TARGETS localization_replay localization_node DESTINATION lib/${PROJECT_
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
-  ament_add_gtest(test_localization_node test/test_localization_node.cpp)
+  find_package(ament_cmake_ros REQUIRED)
+  ament_add_ros_isolated_gtest(test_localization_node test/test_localization_node.cpp)
+  # An inherited Docker domain would disable the runner's automatic isolation.
+  set_tests_properties(test_localization_node PROPERTIES
+    ENVIRONMENT_MODIFICATION "ROS_DOMAIN_ID=unset:")
   target_link_libraries(test_localization_node ${PROJECT_NAME}_core)
   ament_add_gtest(test_estimator test/test_estimator.cpp)
   target_link_libraries(test_estimator ${PROJECT_NAME}_core)

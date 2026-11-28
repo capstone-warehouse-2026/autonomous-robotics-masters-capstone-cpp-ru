@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.22)
 project(capstone_safety LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -37,7 +37,11 @@ install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
-  ament_add_gtest(test_safety_monitor_node test/test_safety_monitor_node.cpp TIMEOUT 120)
+  find_package(ament_cmake_ros REQUIRED)
+  ament_add_ros_isolated_gtest(test_safety_monitor_node test/test_safety_monitor_node.cpp TIMEOUT 120)
+  # An inherited Docker domain would disable the runner's automatic isolation.
+  set_tests_properties(test_safety_monitor_node PROPERTIES
+    ENVIRONMENT_MODIFICATION "ROS_DOMAIN_ID=unset:")
   target_link_libraries(test_safety_monitor_node ${PROJECT_NAME}_core)
   ament_add_gtest(test_safety_core test/test_safety_core.cpp)
   target_link_libraries(test_safety_core ${PROJECT_NAME}_logic)

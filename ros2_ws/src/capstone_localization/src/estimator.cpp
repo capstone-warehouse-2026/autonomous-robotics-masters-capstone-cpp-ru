@@ -149,35 +149,45 @@ const ScanMatcher::Surface *ScanMatcher::nearest(const Eigen::Vector2d &point, d
   return best;
 }
 
-std::optional<Match> ScanMatcher::match(const Points &scan, const Pose &prediction, double search_radius) const {
+std::optional<Match> ScanMatcher::match(
+                                        const Points &scan,
+                                        const Pose &prediction,
+                                        double search_radius) const {
+  // Ищем положение робота, которое лучше всего согласуется с данным сканированием и картой.
   constexpr int kIterations = 12;
   constexpr std::size_t kMinimumInliers = 12;
   constexpr double kHuberScale = 0.08;
   if (!ready() || scan.size() < kMinimumInliers || !prediction.allFinite()) {
+    // Проверка готовности сопоставителя сканирования и валидности входных данных.
     return std::nullopt;
   }
   Pose estimate = between(origin_, prediction);
   Match result;
   for (int iteration = 0; iteration <= kIterations; ++iteration) {
+    // Инициализация переменных для накопления информации о градиенте и ковариации.
     Covariance information = Covariance::Zero();
     Pose gradient = Pose::Zero();
     std::size_t inliers = 0;
     double squared = 0.0;
-    const Eigen::Matrix2d axes = rotation(estimate.z());
+    const Eigen::Matrix2d axes = rotation(estimate.z()); // Преобразование в координаты сетки.
     for (const auto &point : scan) {
+      // Перебор точек сканирования и проверка их валидности.
       if (!point.allFinite()) {
         continue;
       }
       const Eigen::Vector2d lever = axes * point;
       const Eigen::Vector2d map_point = estimate.head<2>() + lever;
-      const auto *surface = nearest(map_point, search_radius);
+      const auto *surface = nearest(map_point, search_radius); // Поиск ближайшей поверхности к точке сканирования.
       if (!surface) {
         continue;
       }
-      const double residual = surface->normal.dot(map_point - surface->center);
-      const Pose jacobian(surface->normal.x(), surface->normal.y(),
-          surface->normal.dot(Eigen::Vector2d(-lever.y(), lever.x())));
-      const double weight = std::abs(residual) <= kHuberScale ? 1.0 : kHuberScale / std::abs(residual);
+      const double residual = surface->normal.dot(map_point - surface->center); // Вычисление отклонения между точкой сканирования и ближайшей поверхностью.
+      const Pose jacobian(
+                          surface->normal.x(),
+                          surface->normal.y(),
+                          surface->normal.dot(
+                            Eigen::Vector2d(-lever.y(), lever.x()))); // Вычисление якобиана для текущей точки сканирования.
+      const double weight = std::abs(residual) <= kHuberScale ? 1.0 : kHuberScale / std::abs(residual); // Вычисление веса для текущей точки сканирования с использованием функции Хьюбера.
       information.noalias() += weight * jacobian * jacobian.transpose();
       gradient.noalias() += weight * jacobian * residual;
       squared += residual * residual;
