@@ -289,11 +289,26 @@ DEF STATION_6 Solid {
 }
 
 # The robot: round differential-drive base, radius 0.272 m; driven by capstone_sim (resource/tiago_base.urdf).
-# Built-in IMU (accelerometer, gyro, inertial unit) and wheel encoders; lidarSlot and bodySlot are free for G1 sensors.
+# The IMU and encoders are inside TiagoBase. The LiDAR plane clears the body and lower shelf plank.
 TiagoBase {
   translation -8 0 0.095
   name "tiago_base"
   controller "<extern>"
+  supervisor TRUE
+  lidarSlot [
+    Lidar {
+      translation 0 0 0.224
+      name "capstone lidar"
+      horizontalResolution 721
+      fieldOfView 4.71238898
+      verticalFieldOfView 0.00654
+      numberOfLayers 1
+      projection "cylindrical"
+      minRange 0.12
+      maxRange 10
+      noise 0.0005
+    }
+  ]
   bodySlot [
     # G2 RGB-D camera (Orbbec Astra, 640x480, depth 0.6-8 m) on a mast, about 0.93 m above the floor,
     # tilted 0.4 rad down. The same pose is set in capstone_sim/resource/tiago_base.urdf.

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.22)
 project(capstone_perception LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -47,16 +47,20 @@ install(DIRECTORY launch config models DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
-  ament_add_gtest(test_perception_node test/test_perception_node.cpp)
+  find_package(ament_cmake_ros REQUIRED)
+  ament_add_ros_isolated_gtest(test_perception_node test/test_perception_node.cpp)
   target_link_libraries(test_perception_node ${PROJECT_NAME}_core)
   ament_add_gtest(test_grid_builder test/test_grid_builder.cpp)
   target_link_libraries(test_grid_builder ${PROJECT_NAME}_core)
   ament_add_gtest(test_geometric_classifier test/test_geometric_classifier.cpp)
   target_link_libraries(test_geometric_classifier ${PROJECT_NAME}_core)
   # Golden data of release_model.py; reads the model and the frame from the source tree.
-  ament_add_gtest(test_cnn_classifier test/test_cnn_classifier.cpp)
+  ament_add_ros_isolated_gtest(test_cnn_classifier test/test_cnn_classifier.cpp)
   target_link_libraries(test_cnn_classifier ${PROJECT_NAME}_core opencv_imgcodecs opencv_imgproc)
   target_compile_definitions(test_cnn_classifier PRIVATE CAPSTONE_PERCEPTION_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+  # An inherited Docker domain would disable the runner's automatic isolation.
+  set_tests_properties(test_perception_node test_cnn_classifier PROPERTIES
+    ENVIRONMENT_MODIFICATION "ROS_DOMAIN_ID=unset:")
 endif()
 
 ament_package()

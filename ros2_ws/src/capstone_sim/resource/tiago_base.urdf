@@ -11,6 +11,21 @@
       <!-- Stop the wheels when no /cmd_vel arrives for this long (steady clock), docs/INTERFACES.md. -->
       <cmdVelTimeout>0.3</cmdVelTimeout>
     </plugin>
+    <plugin type="capstone_sim::LocalizationSensors">
+      <leftEncoder>wheel_left_joint_sensor</leftEncoder>
+      <rightEncoder>wheel_right_joint_sensor</rightEncoder>
+      <wheelRadius>0.0985</wheelRadius>
+      <wheelSeparation>0.4044</wheelSeparation>
+      <lidar>capstone lidar</lidar>
+      <!-- TiagoBase lidarSlot pose (0.202 0 -0.004) + Lidar pose (0 0 0.224). -->
+      <lidarTranslation>0.202 0 0.22</lidarTranslation>
+      <accelerometer>accelerometer</accelerometer>
+      <gyro>gyro</gyro>
+    </plugin>
+    <plugin type="capstone_sim::GroundTruth"/>
+    <device reference="capstone lidar" type="Lidar">
+      <ros><enabled>false</enabled></ros>
+    </device>
     <!-- G2 RGB-D camera (capstone_sim_rgbd): Orbbec Astra in the bodySlot of warehouse.wbt.
          mountTranslation/mountRotation (roll pitch yaw, rad) must match the Astra pose there. -->
     <plugin type="capstone_sim_rgbd::RgbdCamera">

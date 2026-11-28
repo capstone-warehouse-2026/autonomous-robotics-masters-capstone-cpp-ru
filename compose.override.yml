@@ -1,0 +1,19 @@
+services:
+  simulator:
+    platform: linux/amd64
+    build:
+      shm_size: 1gb
+
+  autonomy:
+    platform: linux/amd64
+
+  dev:
+    platform: linux/amd64
+    build:
+      shm_size: 1gb
+    environment:
+      CMAKE_BUILD_PARALLEL_LEVEL: "2"
+      MAKEFLAGS: "-j2"
+
+  train:
+    platform: linux/amd64

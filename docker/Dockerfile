@@ -16,6 +16,7 @@ RUN mkdir -p /tmp/manifests \
 # Development environment: compilers, tools and every rosdep dependency declared in package.xml.
 # `make shell/build/test` run this image with the repository mounted at /workspace.
 FROM common AS dev
+ENV CMAKE_BUILD_PARALLEL_LEVEL=2 MAKEFLAGS="-j2"
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential cmake ccache gdb python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
@@ -34,7 +35,9 @@ RUN echo "2bd39b28a2708bb7e37f5cc83ecd7089dcb0a90f9a030c9fa0ece0fe8be26ea1  /tmp
 ENV onnxruntime_ROOT=/opt/onnxruntime
 COPY --from=manifests /tmp/manifests /tmp/manifests
 RUN apt-get update \
-    && rosdep update --rosdistro "$ROS_DISTRO" \
+    && (for attempt in 1 2 3; do \
+          rosdep update --rosdistro "$ROS_DISTRO" && exit 0; \
+        done; exit 1) \
     && rosdep install --from-paths /tmp/manifests --ignore-src --rosdistro "$ROS_DISTRO" -y \
     && rm -rf /var/lib/apt/lists/* /tmp/manifests
 COPY docker/dev_env.sh /etc/capstone_dev.sh

@@ -1,0 +1,89 @@
+{
+  "schema": "g1-train0-commissioning-v1",
+  "classification": "commissioning_only",
+  "training_eligible": false,
+  "scored_eligible": false,
+  "layout_id": "train_0",
+  "layout_seed": 0,
+  "class_baseline": "1b68ab04a09613d29c383d04051716218490553a",
+  "source_checkout_dirty": true,
+  "platform": "Ubuntu 24.04 / ROS 2 Jazzy / Webots R2025a",
+  "image_ids": {
+    "simulator": "sha256:2710cec5fcefe92dc27f352ff0f2cb4cb96360001a9054140455307954418a3c",
+    "slam": "sha256:96660695770f54db9c825bcc2305b8004ff3605e34a9591b3457b9c8474f6af3"
+  },
+  "evidence_relative_to_mobile_robots": {
+    "live": "HW1-official-downloads/hw1-train0-slam.EiJSzlu1",
+    "offline_reload": "HW1-official-downloads/hw1-train0-slam-reload.MqZECrxj"
+  },
+  "hashes": {
+    "train_0.wbt": "b94461d2163b71a31ae6f2bac62aef870ae79e4bf4683e9519bb1163d9c56d34",
+    "train_0-map.yaml": "5c4495a40d07d509144f0c0796688c8748b9c1f11af8cdffe3bca8e646cea95d",
+    "train_0-map.pgm": "b09a39381a7cf351d2471507594ad4da2aeda76e69122081b870f4f604a43b6c",
+    "live-map.json": "54551b8f53e4b09163b2c77eec591033ba6be3446ae73ba565a2aa6d27b3f258",
+    "route.json": "14abfd2687969d71440084e344b520a0f06b92a125b6ffd2b9d81083627eec4a",
+    "reloaded-map.json": "f723e98b8873f6528f1057edbea391d92c8b8370e7ca6348af3d7b889a94e713",
+    "occupancy_grid_signed_bytes_row_major": "1906e4fbb898a25a80749ea4b2d925a195701408a2977706d276910ae58e140e"
+  },
+  "map": {
+    "frame_id": "map",
+    "mode": "trinary",
+    "grid": [
+      249,
+      396
+    ],
+    "resolution_m": 0.05,
+    "exported_origin": [
+      -2.099,
+      -9.79,
+      0
+    ],
+    "counts": {
+      "unknown": 57154,
+      "free": 40543,
+      "occupied": 907
+    },
+    "cell_equality": "offline reload == decoded PGM only"
+  },
+  "live": {
+    "motion_completed": true,
+    "route_samples": 324,
+    "map_messages": 40,
+    "scan_stamp_tf_ok": 714,
+    "scan_stamp_tf_failed": 0,
+    "control": "Supervisor oracle for motion only; not G1 or SLAM input",
+    "integrated_runner_exit": 1,
+    "integrated_runner_failure": "old reload comparison rejected normal three-decimal Nav2 origin"
+  },
+  "offline_reload": {
+    "exit": 0,
+    "network": "none",
+    "simulator_started": false
+  },
+  "next_capture": {
+    "id": "g1-train_0-nominal-0000",
+    "route_id": "route_sf_train_0_nominal_00",
+    "candidate_world_xy": [
+      [
+        -8,
+        0
+      ],
+      [
+        -7.6,
+        0
+      ],
+      [
+        -7.6,
+        0.32
+      ]
+    ],
+    "candidate_map_from_world_xy_yaw": [
+      8,
+      0,
+      0
+    ],
+    "candidate_map_from_world_validated": false,
+    "status": "planned_pending_frame_and_route",
+    "qualifying_capture_exists": false
+  }
+}

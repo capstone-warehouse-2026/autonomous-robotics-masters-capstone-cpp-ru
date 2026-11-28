@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.22)
 project(capstone_control LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -40,7 +40,11 @@ install(TARGETS control_node DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
-  ament_add_gtest(test_control_node test/test_control_node.cpp)
+  find_package(ament_cmake_ros REQUIRED)
+  ament_add_ros_isolated_gtest(test_control_node test/test_control_node.cpp)
+  # An inherited Docker domain would disable the runner's automatic isolation.
+  set_tests_properties(test_control_node PROPERTIES
+    ENVIRONMENT_MODIFICATION "ROS_DOMAIN_ID=unset:")
   target_link_libraries(test_control_node ${PROJECT_NAME}_core)
 
   # Closed-loop cases solve one MPC per period: a few seconds in Release, longer under sanitizers.
